@@ -126,7 +126,8 @@
 
         async function init(lon) {
             scene = new THREE.Scene();
-            camera = new THREE.PerspectiveCamera(75, window.innerWidth/window.innerHeight, 0.1, 2000);
+            // Field of View 70 is ideal for AR to match the phone's camera focal length
+            camera = new THREE.PerspectiveCamera(70, window.innerWidth/window.innerHeight, 1, 2000);
             renderer = new THREE.WebGLRenderer({ alpha: true, antialias: true });
             renderer.setSize(window.innerWidth, window.innerHeight);
             document.body.appendChild(renderer.domElement);
@@ -146,12 +147,12 @@
                     const phi = Math.PI/2 - decRad;
                     
                     const mesh = new THREE.Mesh(
-                        new THREE.SphereGeometry(1.8, 8, 8), 
+                        new THREE.SphereGeometry(2.0, 8, 8), 
                         new THREE.MeshBasicMaterial({ color: 0xffffff })
                     );
                     
-                    // Radius set to 800 for better "fixed" sky feeling
-                    mesh.position.set(800*Math.sin(phi)*Math.cos(raRad), 800*Math.cos(phi), 800*Math.sin(phi)*Math.sin(raRad));
+                    // Radius set to 1000 to place stars at "infinity" to stop drifting
+                    mesh.position.set(1000*Math.sin(phi)*Math.cos(raRad), 1000*Math.cos(phi), 1000*Math.sin(phi)*Math.sin(raRad));
                     mesh.userData = s;
                     
                     const el = document.createElement('div');
@@ -229,8 +230,19 @@
                 }
                 
                 window.addEventListener('deviceorientation', (e) => {
-                    camera.rotation.set(THREE.MathUtils.degToRad(e.beta), THREE.MathUtils.degToRad(e.alpha), -THREE.MathUtils.degToRad(e.gamma), 'YXZ');
-                });
+                    // STAGNANT SKY FIX: Use absolute heading (alpha) and prioritize horizontal movement (Y)
+                    const alpha = e.webkitCompassHeading ? (360 - e.webkitCompassHeading) : e.alpha;
+                    const beta = e.beta;
+                    const gamma = e.gamma;
+                    
+                    // Order 'YXZ' ensures North stays North during 180 degree turns
+                    camera.rotation.set(
+                        THREE.MathUtils.degToRad(beta),
+                        THREE.MathUtils.degToRad(alpha),
+                        -THREE.MathUtils.degToRad(gamma),
+                        'YXZ'
+                    );
+                }, false);
                 
                 init(p.coords.longitude);
                 document.getElementById('status-text').innerText = "SCANNER ACTIVE";
