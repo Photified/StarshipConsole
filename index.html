@@ -119,10 +119,13 @@
         let raycaster = new THREE.Raycaster(), mouse = new THREE.Vector2();
 
         // CONSTELLATION CONNECTION DATABASE
-        const connections = [
-            ["BET", "ALN"], ["ALN", "RIG"], ["BEL", "ALN"], ["ALN", "SAI"], ["BET", "BEL"], // Orion
-            ["DUB", "MER"], ["MER", "PHE"], ["PHE", "MEG"], ["MEG", "ALI"], ["ALI", "MIZ"], ["MIZ", "ALK"] // Big Dipper
-        ];
+       // Add these to your connections array in index.html
+const connections = [
+    ["BET", "ALN"], ["ALN", "RIG"], ["BEL", "ALN"], ["ALN", "SAI"], ["BET", "BEL"], // Orion
+    ["DUB", "MER"], ["MER", "PHE"], ["PHE", "MEG"], ["MEG", "ALI"], ["ALI", "MIZ"], ["MIZ", "ALK"], // Big Dipper
+    ["CAS1", "CAS2"], // Cassiopeia snippet
+    ["VEG", "DENEB"], ["DENEB", "ALTAIR"], ["ALTAIR", "VEG"] // Summer Triangle
+];
 
         async function init(lon) {
             scene = new THREE.Scene();
