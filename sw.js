@@ -1,36 +1,40 @@
-const cacheName = 'starship-console-v1';
+const cacheName = 'starship-console-v2'; // Increment this (v2, v3) when you update your stars
 const assets = [
   './',
   './index.html',
   './stars.json',
   './manifest.json',
   './icon-512.png',
+  './icon-192.png',
   'https://unpkg.com/three@0.160.0/build/three.module.js'
 ];
 
-// Install the Service Worker and cache all files
+// 1. Install: Caches the core system files
 self.addEventListener('install', event => {
   event.waitUntil(
     caches.open(cacheName).then(cache => {
-      console.log('LCARS Memory Bank: Caching System Files');
+      console.log('LCARS Memory Bank: Caching System Files...');
       return cache.addAll(assets);
     })
   );
 });
 
-// Activate and clean up old caches
+// 2. Activate: Purges old cache versions so updates actually show up
 self.addEventListener('activate', event => {
   event.waitUntil(
     caches.keys().then(keys => {
       return Promise.all(keys
         .filter(key => key !== cacheName)
-        .map(key => caches.delete(key))
+        .map(key => {
+            console.log('LCARS: Purging outdated cache sector...');
+            return caches.delete(key);
+        })
       );
     })
   );
 });
 
-// Fetch files from cache first, then network
+// 3. Fetch: Serves files from cache for instant offline access
 self.addEventListener('fetch', event => {
   event.respondWith(
     caches.match(event.request).then(cachedResponse => {

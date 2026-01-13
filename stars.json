@@ -1,14 +1,14 @@
 [
-  { "id": "ORI1", "name": "BETELGEUSE", "ra": 5.92, "dec": 7.4, "dist": "642", "con": "ORION", "fact": "RED SUPERGIANT. RIGHT SHOULDER OF ORION." },
-  { "id": "ORI5", "name": "ALNILAM", "ra": 5.60, "dec": -1.2, "dist": "1344", "con": "ORION", "fact": "CENTER STAR OF ORION'S BELT." },
-  { "id": "ORI2", "name": "RIGEL", "ra": 5.24, "dec": -8.2, "dist": "860", "con": "ORION", "fact": "BLUE SUPERGIANT. LEFT KNEE OF ORION." },
-  { "id": "ORI4", "name": "BELLATRIX", "ra": 5.42, "dec": 6.3, "dist": "240", "con": "ORION", "fact": "AMAZON STAR. LEFT SHOULDER." },
-  { "id": "ORI3", "name": "SAIPH", "ra": 5.79, "dec": -9.6, "dist": "720", "con": "ORION", "fact": "RIGHT KNEE OF THE HUNTER." },
-  { "id": "UMA1", "name": "DUBHE", "ra": 11.06, "dec": 61.7, "dist": "123", "con": "URSA MAJOR", "fact": "POINTER STAR IN THE BIG DIPPER." },
-  { "id": "UMA2", "name": "MERAK", "ra": 11.03, "dec": 56.4, "dist": "79", "con": "URSA MAJOR", "fact": "POINTER TO POLARIS." },
-  { "id": "UMA3", "name": "PHECDA", "ra": 11.89, "dec": 53.6, "dist": "83", "con": "URSA MAJOR", "fact": "BASE OF THE DIPPER BOWL." },
-  { "id": "UMA4", "name": "MEGREZ", "ra": 12.25, "dec": 57.0, "dist": "81", "con": "URSA MAJOR", "fact": "JUNCTION OF BOWL AND HANDLE." },
-  { "id": "UMA5", "name": "ALIOTH", "ra": 12.90, "dec": 55.9, "dist": "81", "con": "URSA MAJOR", "fact": "BRIGHTEST STAR IN THE CONSTELLATION." },
-  { "id": "UMA6", "name": "MIZAR", "ra": 13.40, "dec": 54.9, "dist": "78", "con": "URSA MAJOR", "fact": "FAMOUS DOUBLE STAR IN THE HANDLE." },
-  { "id": "UMA7", "name": "ALKAID", "ra": 13.79, "dec": 49.3, "dist": "101", "con": "URSA MAJOR", "fact": "TIP OF THE BIG DIPPER'S HANDLE." }
+  { "id": "BET", "name": "BETELGEUSE", "ra": 5.92, "dec": 7.41, "dist": "642", "con": "ORION", "fact": "Red Supergiant shoulder." },
+  { "id": "RIG", "name": "RIGEL", "ra": 5.24, "dec": -8.20, "dist": "863", "con": "ORION", "fact": "Blue Supergiant foot." },
+  { "id": "BEL", "name": "BELLATRIX", "ra": 5.42, "dec": 6.35, "dist": "243", "con": "ORION", "fact": "Amazon Star shoulder." },
+  { "id": "ALN", "name": "ALNILAM", "ra": 5.60, "dec": -1.20, "dist": "1344", "con": "ORION", "fact": "Center of Orion's Belt." },
+  { "id": "SAI", "name": "SAIPH", "ra": 5.79, "dec": -9.60, "dist": "720", "con": "ORION", "fact": "Right knee of Hunter." },
+  { "id": "DUB", "name": "DUBHE", "ra": 11.06, "dec": 61.75, "dist": "123", "con": "URSA MAJOR", "fact": "Big Dipper pointer." },
+  { "id": "MER", "name": "MERAK", "ra": 11.03, "dec": 56.38, "dist": "79", "con": "URSA MAJOR", "fact": "Pointer to Polaris." },
+  { "id": "PHE", "name": "PHECDA", "ra": 11.89, "dec": 53.6, "dist": "83", "con": "URSA MAJOR", "fact": "Bottom of bowl." },
+  { "id": "MEG", "name": "MEGREZ", "ra": 12.25, "dec": 57.0, "dist": "81", "con": "URSA MAJOR", "fact": "Base of handle." },
+  { "id": "ALI", "name": "ALIOTH", "ra": 12.90, "dec": 55.9, "dist": "81", "con": "URSA MAJOR", "fact": "Brightest in dipper." },
+  { "id": "MIZ", "name": "MIZAR", "ra": 13.40, "dec": 54.9, "dist": "78", "con": "URSA MAJOR", "fact": "Double star system." },
+  { "id": "ALK", "name": "ALKAID", "ra": 13.79, "dec": 49.3, "dist": "101", "con": "URSA MAJOR", "fact": "Tip of handle." }
 ]

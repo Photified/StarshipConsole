@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Starship Console - LCARS Elite</title>
+    <title>Starship Console Elite</title>
     <link rel="manifest" href="manifest.json">
     <style>
         :root { 
@@ -19,17 +19,16 @@
 
         #camera-feed { 
             position: fixed; top: 0; left: 0; width: 100%; height: 100%; 
-            object-fit: cover; z-index: -1; opacity: 0.4; 
+            object-fit: cover; z-index: -1; opacity: 0.5; 
         }
 
-        /* LCARS COMPLEX FRAME */
+        /* FULL LCARS GRID SYSTEM */
         #lcars-container {
             position: absolute; top: 0; left: 0; width: 100%; height: 100%;
             display: grid; grid-template-rows: 140px 1fr 100px;
             pointer-events: none; z-index: 10;
         }
 
-        /* HEADER AREA */
         .header-wrap { display: flex; pointer-events: auto; }
         .elbow-main { 
             width: 120px; height: 120px; background: var(--pink); 
@@ -41,10 +40,8 @@
             display: flex; align-items: center; justify-content: flex-end; 
             padding-right: 20px; color: black; font-size: 20px; 
         }
-        .bar-sub { background: var(--blue); height: 15px; width: 80%; border-bottom-left-radius: 10px; }
+        .bar-sub { background: var(--blue); height: 15px; width: 85%; border-bottom-left-radius: 10px; }
 
-        /* SIDEBAR SENSORS */
-        .middle-wrap { display: flex; height: 100%; }
         .sidebar { 
             width: 100px; display: flex; flex-direction: column; 
             gap: 5px; padding-top: 10px; pointer-events: auto; 
@@ -54,36 +51,32 @@
             color: black; font-size: 10px; display: flex; align-items: center; 
             padding-left: 10px; 
         }
-        .data-stream { 
-            font-size: 8px; color: var(--gold); padding: 5px; 
-            line-height: 1.2; opacity: 0.6; pointer-events: none; 
-        }
-
-        /* DYNAMIC READOUT */
+        
+        /* DATA READOUT MODAL */
         #readout { 
             display: none; position: fixed; top: 50%; left: 55%; transform: translate(-50%, -50%); 
-            width: 75%; max-width: 320px; background: rgba(0,0,0,0.9); border: 2px solid var(--gold); 
+            width: 75%; max-width: 320px; background: rgba(0,0,0,0.95); border: 2px solid var(--gold); 
             z-index: 100; padding: 20px; border-radius: 25px; pointer-events: auto;
             box-shadow: 0 0 20px var(--gold);
         }
         .readout-title { color: var(--gold); border-bottom: 2px solid var(--gold); margin-bottom: 12px; font-size: 22px; }
 
-        /* FOOTER CONTROLS */
+        /* FOOTER AREA */
         .footer-wrap { 
             background: var(--orange); border-top-left-radius: 50px; 
             display: flex; align-items: center; padding-left: 130px; 
-            pointer-events: auto; 
+            pointer-events: auto; height: 60px; align-self: end;
         }
         .btn-main { 
-            background: var(--gold); border: none; padding: 15px 30px; 
-            border-radius: 25px; font-weight: bold; cursor: pointer; color: black; 
+            background: var(--gold); border: none; padding: 12px 25px; 
+            border-radius: 25px; font-weight: bold; cursor: pointer; color: black; font-size: 14px;
         }
 
-        /* STAR LABELS */
+        /* INTERACTIVE 3D LABELS */
         .label { 
             position: absolute; color: white; border-left: 3px solid var(--gold); 
             padding-left: 8px; font-size: 11px; pointer-events: none;
-            background: rgba(0,0,0,0.4);
+            background: rgba(0,0,0,0.6); white-space: nowrap;
         }
     </style>
 </head>
@@ -93,28 +86,20 @@
         <div class="header-wrap">
             <div class="elbow-main"></div>
             <div class="top-bars">
-                <div class="bar-top" id="sector-display">SECTOR 001 SCANNING</div>
+                <div class="bar-top">M702 SECTOR 50201 SCANNING</div>
                 <div class="bar-sub"></div>
-                <div class="data-stream" id="telemetry">
-                    481117450284102... 152635608277857... 053921717629317...
-                </div>
             </div>
         </div>
-
         <div class="middle-wrap">
             <div class="sidebar">
-                <div class="nav-pill" style="background:var(--pink)">SENSORS</div>
-                <div class="nav-pill">NAV-GRID</div>
-                <div class="nav-pill" style="background:var(--gold)">LIBRARY</div>
-                <div class="nav-pill" style="background:var(--red)" onclick="location.reload()">RESET</div>
-                <div class="data-stream">
-                    ERR_NONE<br>SYS_OK<br>BUFF_64K<br>GRID_ACTIVE
-                </div>
+                <div class="nav-pill" style="background:var(--pink)">STELLAR</div>
+                <div class="nav-pill">OBJECTS</div>
+                <div class="nav-pill" style="background:var(--orange)">SECTOR 7G</div>
+                <div class="nav-pill" style="background:var(--red); margin-top:20px;" onclick="location.reload()">RESET</div>
             </div>
         </div>
-
         <div class="footer-wrap">
-            <button id="start-btn" class="btn-main">INITIALIZE CONSOLE</button>
+            <button id="start-btn" class="btn-main">ENGAGE SENSORS</button>
             <div id="status-text" style="margin-left:20px; color:black; font-size:12px;">NAV-LINK READY</div>
         </div>
     </div>
@@ -123,8 +108,8 @@
 
     <div id="readout">
         <div class="readout-title" id="obj-name">SCANNING...</div>
-        <div id="obj-data" style="font-size: 14px; margin-bottom: 20px; line-height: 1.5;"></div>
-        <button class="btn-main" style="width:100%" onclick="document.getElementById('readout').style.display='none'">RESUME SCAN</button>
+        <div id="obj-data" style="font-size:14px; margin-bottom:20px; line-height:1.5;"></div>
+        <button class="btn-main" style="width:100%" onclick="document.getElementById('readout').style.display='none'">DISMISS</button>
     </div>
 
     <script type="importmap"> { "imports": { "three": "https://unpkg.com/three@0.160.0/build/three.module.js" } } </script>
@@ -133,123 +118,74 @@
         let scene, camera, renderer, starGroup, starMap = new Map();
         let raycaster = new THREE.Raycaster(), mouse = new THREE.Vector2();
 
-        // Constellation Line Definitions
+        // CONSTELLATION CONNECTION DATABASE
         const connections = [
-            ["ORI1", "ORI5"], ["ORI5", "ORI2"], ["ORI4", "ORI5"], ["ORI5", "ORI3"], // Orion
-            ["UMA1", "UMA2"], ["UMA2", "UMA3"], ["UMA3", "UMA4"], ["UMA4", "UMA5"], ["UMA5", "UMA6"], ["UMA6", "UMA7"] // Big Dipper
+            ["BET", "ALN"], ["ALN", "RIG"], ["BEL", "ALN"], ["ALN", "SAI"], ["BET", "BEL"], // Orion
+            ["DUB", "MER"], ["MER", "PHE"], ["PHE", "MEG"], ["MEG", "ALI"], ["ALI", "MIZ"], ["MIZ", "ALK"] // Big Dipper
         ];
 
         async function init(lon) {
             scene = new THREE.Scene();
-            camera = new THREE.PerspectiveCamera(75, window.innerWidth/window.innerHeight, 0.1, 1000);
+            camera = new THREE.PerspectiveCamera(75, window.innerWidth/window.innerHeight, 0.1, 2000);
             renderer = new THREE.WebGLRenderer({ alpha: true, antialias: true });
             renderer.setSize(window.innerWidth, window.innerHeight);
             document.body.appendChild(renderer.domElement);
 
             starGroup = new THREE.Group();
             
-            // Load Star Data
-            const response = await fetch('stars.json');
-            const stars = await response.json();
-            
-            const d = (new Date().getTime() / 86400000) + 2440587.5 - 2451545.0;
-            const lst = (280.46 + 360.985 * d + lon) % 360;
-
-            stars.forEach(s => {
-                const raRad = (s.ra * 15 - lst) * (Math.PI/180);
-                const decRad = s.dec * (Math.PI/180);
-                const phi = Math.PI/2 - decRad;
-                
-                const mesh = new THREE.Mesh(
-                    new THREE.SphereGeometry(1.4, 8, 8), 
-                    new THREE.MeshBasicMaterial({ color: 0xffffff })
-                );
-                mesh.position.set(130*Math.sin(phi)*Math.cos(raRad), 130*Math.cos(phi), 130*Math.sin(phi)*Math.sin(raRad));
-                mesh.userData = s;
-                
-                // Add labels for major stars
-                const el = document.createElement('div');
-                el.className = 'label';
-                el.innerText = s.name;
-                document.body.appendChild(el);
-                mesh.userData.label = el;
-
-                starMap.set(s.id, mesh);
-                starGroup.add(mesh);
-            });
-
-            // Draw Constellation Lines
-            const lineMat = new THREE.LineBasicMaterial({ color: 0x9999ff, transparent: true, opacity: 0.4 });
-            connections.forEach(pair => {
-                const p1 = starMap.get(pair[0]);
-                const p2 = starMap.get(pair[1]);
-                if(p1 && p2) {
-                    const geo = new THREE.BufferGeometry().setFromPoints([p1.position, p2.position]);
-                    starGroup.add(new THREE.Line(geo, lineMat));
-                }
-            });
-
-            scene.add(starGroup);
-            animate();
-        }
-
-        window.addEventListener('touchstart', (e) => {
-            mouse.x = (e.touches[0].clientX / window.innerWidth) * 2 - 1;
-            mouse.y = -(e.touches[0].clientY / window.innerHeight) * 2 + 1;
-            checkIntersection();
-        });
-
-        function checkIntersection() {
-            raycaster.setFromCamera(mouse, camera);
-            const hits = raycaster.intersectObjects(starGroup.children.filter(o => o instanceof THREE.Mesh));
-            if(hits.length > 0) {
-                const d = hits[0].object.userData;
-                document.getElementById('obj-name').innerText = d.name;
-                document.getElementById('obj-data').innerHTML = `
-                    POSITION: RA ${d.ra}h / DEC ${d.dec}°<br>
-                    DISTANCE: ${d.dist} LY<br>
-                    SECTOR: ${d.con}<br><br>
-                    SENSORS INDICATE: ${d.fact}
-                `;
-                document.getElementById('readout').style.display = 'block';
-            }
-        }
-
-        document.getElementById('start-btn').addEventListener('click', async () => {
-            document.getElementById('start-btn').style.display = 'none';
-            document.getElementById('status-text').innerText = "CALIBRATING...";
-            
             try {
-                navigator.geolocation.getCurrentPosition(async (p) => {
-                    const stream = await navigator.mediaDevices.getUserMedia({ video: { facingMode: 'environment' } });
-                    document.getElementById('camera-feed').srcObject = stream;
+                const response = await fetch('stars.json');
+                const stars = await response.json();
+                
+                const d = (new Date().getTime() / 86400000) + 2440587.5 - 2451545.0;
+                const lst = (280.46 + 360.985 * d + lon) % 360;
+
+                stars.forEach(s => {
+                    const raRad = (s.ra * 15 - lst) * (Math.PI/180);
+                    const decRad = s.dec * (Math.PI/180);
+                    const phi = Math.PI/2 - decRad;
                     
-                    if (window.DeviceOrientationEvent && DeviceOrientationEvent.requestPermission) {
-                        await DeviceOrientationEvent.requestPermission();
-                    }
+                    const mesh = new THREE.Mesh(
+                        new THREE.SphereGeometry(1.8, 8, 8), 
+                        new THREE.MeshBasicMaterial({ color: 0xffffff })
+                    );
                     
-                    window.addEventListener('deviceorientation', (e) => {
-                        camera.rotation.set(THREE.MathUtils.degToRad(e.beta), THREE.MathUtils.degToRad(e.alpha), -THREE.MathUtils.degToRad(e.gamma), 'YXZ');
-                    });
+                    // Radius set to 800 for better "fixed" sky feeling
+                    mesh.position.set(800*Math.sin(phi)*Math.cos(raRad), 800*Math.cos(phi), 800*Math.sin(phi)*Math.sin(raRad));
+                    mesh.userData = s;
                     
-                    init(p.coords.longitude);
-                    document.getElementById('status-text').innerText = "SCANNER ACTIVE";
+                    const el = document.createElement('div');
+                    el.className = 'label';
+                    el.innerText = s.name;
+                    document.body.appendChild(el);
+                    mesh.userData.label = el;
+
+                    starMap.set(s.id, mesh);
+                    starGroup.add(mesh);
                 });
-            } catch (err) {
-                alert("SENSOR ACCESS DENIED. CHECK PERMISSIONS.");
+
+                // DRAW CONSTELLATION LINES
+                const lineMat = new THREE.LineBasicMaterial({ color: 0x9999ff, transparent: true, opacity: 0.4 });
+                connections.forEach(pair => {
+                    const p1 = starMap.get(pair[0]);
+                    const p2 = starMap.get(pair[1]);
+                    if(p1 && p2) {
+                        const geo = new THREE.BufferGeometry().setFromPoints([p1.position, p2.position]);
+                        starGroup.add(new THREE.Line(geo, lineMat));
+                    }
+                });
+
+                scene.add(starGroup);
+                animate();
+            } catch (e) {
+                console.error("Database failed", e);
             }
-        });
+        }
 
         function animate() {
             requestAnimationFrame(animate);
             renderer.render(scene, camera);
             
-            // Update Text Telemetry
-            if(Math.random() > 0.95) {
-                document.getElementById('telemetry').innerText = Math.random().toString().substring(2, 15) + " ... " + Math.random().toString().substring(2, 10);
-            }
-
-            // Sync HTML Labels to 3D positions
             starGroup.children.forEach(mesh => {
                 if(mesh.userData.label) {
                     const v = mesh.position.clone().project(camera);
@@ -262,6 +198,47 @@
                     }
                 }
             });
+        }
+
+        window.addEventListener('click', (e) => {
+            mouse.x = (e.clientX / window.innerWidth) * 2 - 1;
+            mouse.y = -(e.clientY / window.innerHeight) * 2 + 1;
+            raycaster.setFromCamera(mouse, camera);
+            const hits = raycaster.intersectObjects(starGroup.children.filter(o => o instanceof THREE.Mesh));
+            if(hits.length > 0) {
+                const d = hits[0].object.userData;
+                document.getElementById('obj-name').innerText = d.name;
+                document.getElementById('obj-data').innerHTML = `
+                    SECTOR: ${d.con}<br>
+                    DISTANCE: ${d.dist} LY<br><br>
+                    TACTICAL DATA:<br>
+                    ${d.fact}
+                `;
+                document.getElementById('readout').style.display = 'block';
+            }
+        });
+
+        document.getElementById('start-btn').addEventListener('click', async () => {
+            document.getElementById('start-btn').style.display = 'none';
+            navigator.geolocation.getCurrentPosition(async (p) => {
+                const stream = await navigator.mediaDevices.getUserMedia({ video: { facingMode: 'environment' } });
+                document.getElementById('camera-feed').srcObject = stream;
+                
+                if (window.DeviceOrientationEvent && DeviceOrientationEvent.requestPermission) {
+                    await DeviceOrientationEvent.requestPermission();
+                }
+                
+                window.addEventListener('deviceorientation', (e) => {
+                    camera.rotation.set(THREE.MathUtils.degToRad(e.beta), THREE.MathUtils.degToRad(e.alpha), -THREE.MathUtils.degToRad(e.gamma), 'YXZ');
+                });
+                
+                init(p.coords.longitude);
+                document.getElementById('status-text').innerText = "SCANNER ACTIVE";
+            });
+        });
+
+        if ('serviceWorker' in navigator) {
+            window.addEventListener('load', () => { navigator.serviceWorker.register('./sw.js'); });
         }
     </script>
 </body>
