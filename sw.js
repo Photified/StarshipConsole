@@ -1,4 +1,4 @@
-const cacheName = 'starship-console-v6'; // Increment this (v2, v3) when you update your stars
+const cacheName = 'starship-console-v8';
 const assets = [
   './',
   './index.html',

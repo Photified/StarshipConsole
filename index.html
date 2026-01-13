@@ -29,19 +29,27 @@
             pointer-events: none; z-index: 10;
         }
 
-        .header-wrap { display: flex; pointer-events: auto; }
+        .header-wrap { display: flex; pointer-events: auto; align-items: flex-start; }
+        
+        /* THE ELBOW JOINT */
         .elbow-main { 
             width: 120px; height: 120px; background: var(--pink); 
-            border-bottom-left-radius: 45px; margin-right: 5px; 
+            border-bottom-left-radius: 45px; margin-right: 5px; flex-shrink: 0;
         }
+        
         .top-bars { flex-grow: 1; display: flex; flex-direction: column; gap: 5px; }
+        
+        /* HEADER TEXT ALIGNMENT FIX */
         .bar-top { 
-            background: var(--orange); height: 45px; border-bottom-left-radius: 20px;
-            display: flex; align-items: center; justify-content: flex-end; 
-            padding-right: 20px; color: black; font-size: 20px; 
+            background: var(--orange); height: 50px; border-bottom-left-radius: 20px;
+            display: flex; align-items: center; justify-content: flex-start; 
+            padding-left: 25px; /* Pushes text away from the elbow */
+            color: black; font-size: 22px; line-height: 1;
         }
+        
         .bar-sub { background: var(--blue); height: 15px; width: 85%; border-bottom-left-radius: 10px; }
 
+        .middle-wrap { display: flex; height: 100%; }
         .sidebar { 
             width: 100px; display: flex; flex-direction: column; 
             gap: 5px; padding-top: 10px; pointer-events: auto; 
@@ -72,6 +80,14 @@
             border-radius: 25px; font-weight: bold; cursor: pointer; color: black; font-size: 14px;
         }
 
+        /* CALIBRATION OVERLAY */
+        #calibration-overlay {
+            display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0,0,0,0.95); z-index: 200; pointer-events: auto;
+            flex-direction: column; align-items: center; justify-content: center; text-align: center; padding: 30px;
+        }
+        .cal-text { color: var(--gold); font-size: 18px; margin-bottom: 30px; line-height: 1.5; }
+
         /* INTERACTIVE 3D LABELS */
         .label { 
             position: absolute; color: white; border-left: 3px solid var(--gold); 
@@ -81,6 +97,15 @@
     </style>
 </head>
 <body>
+
+    <div id="calibration-overlay">
+        <div class="cal-text">
+            <span style="font-size: 24px; color: var(--pink);">SENSOR CALIBRATION</span><br><br>
+            TO LOCK NAVIGATION:<br>
+            WAVE DEVICE IN A FIGURE-8 MOTION
+        </div>
+        <button class="btn-main" id="cal-confirm">CALIBRATION COMPLETE</button>
+    </div>
 
     <div id="lcars-container">
         <div class="header-wrap">
@@ -118,18 +143,17 @@
         let scene, camera, renderer, starGroup, starMap = new Map();
         let raycaster = new THREE.Raycaster(), mouse = new THREE.Vector2();
 
-        // CONSTELLATION CONNECTION DATABASE
-       // Add these to your connections array in index.html
-const connections = [
-    ["BET", "ALN"], ["ALN", "RIG"], ["BEL", "ALN"], ["ALN", "SAI"], ["BET", "BEL"], // Orion
-    ["DUB", "MER"], ["MER", "PHE"], ["PHE", "MEG"], ["MEG", "ALI"], ["ALI", "MIZ"], ["MIZ", "ALK"], // Big Dipper
-    ["CAS1", "CAS2"], // Cassiopeia snippet
-    ["VEG", "DENEB"], ["DENEB", "ALTAIR"], ["ALTAIR", "VEG"] // Summer Triangle
-];
+        // CONSTELLATION DATABASE
+        const connections = [
+            ["BET", "ALN"], ["ALN", "RIG"], ["BEL", "ALN"], ["ALN", "SAI"], ["BET", "BEL"], // Orion
+            ["DUB", "MER"], ["MER", "PHE"], ["PHE", "MEG"], ["MEG", "ALI"], ["ALI", "MIZ"], ["MIZ", "ALK"], // Big Dipper
+            ["CAS1", "CAS2"], ["CAS2", "CAS3"], // Cassiopeia
+            ["VEG", "DENEB"], ["DENEB", "ALTAIR"], ["ALTAIR", "VEG"] // Summer Triangle
+        ];
 
         async function init(lon) {
             scene = new THREE.Scene();
-            // Field of View 70 matches the average phone camera to stop visual drift
+            // FOV 70 matches standard phone cameras to prevent 'drift'
             camera = new THREE.PerspectiveCamera(70, window.innerWidth/window.innerHeight, 1, 3000);
             renderer = new THREE.WebGLRenderer({ alpha: true, antialias: true });
             renderer.setSize(window.innerWidth, window.innerHeight);
@@ -140,7 +164,6 @@ const connections = [
             try {
                 const response = await fetch('stars.json');
                 const stars = await response.json();
-                
                 const d = (new Date().getTime() / 86400000) + 2440587.5 - 2451545.0;
                 const lst = (280.46 + 360.985 * d + lon) % 360;
 
@@ -148,13 +171,9 @@ const connections = [
                     const raRad = (s.ra * 15 - lst) * (Math.PI/180);
                     const decRad = s.dec * (Math.PI/180);
                     const phi = Math.PI/2 - decRad;
+                    const mesh = new THREE.Mesh(new THREE.SphereGeometry(2.5, 8, 8), new THREE.MeshBasicMaterial({ color: 0xffffff }));
                     
-                    const mesh = new THREE.Mesh(
-                        new THREE.SphereGeometry(2.5, 8, 8), 
-                        new THREE.MeshBasicMaterial({ color: 0xffffff })
-                    );
-                    
-                    // Radius set to 1200 pushes stars to the background so they don't 'drift'
+                    // 1200 Radius = Infinity Focus (No Parallax/Drifting)
                     mesh.position.set(1200*Math.sin(phi)*Math.cos(raRad), 1200*Math.cos(phi), 1200*Math.sin(phi)*Math.sin(raRad));
                     mesh.userData = s;
                     
@@ -163,16 +182,13 @@ const connections = [
                     el.innerText = s.name;
                     document.body.appendChild(el);
                     mesh.userData.label = el;
-
                     starMap.set(s.id, mesh);
                     starGroup.add(mesh);
                 });
 
-                // DRAW CONSTELLATION LINES
                 const lineMat = new THREE.LineBasicMaterial({ color: 0x9999ff, transparent: true, opacity: 0.4 });
                 connections.forEach(pair => {
-                    const p1 = starMap.get(pair[0]);
-                    const p2 = starMap.get(pair[1]);
+                    const p1 = starMap.get(pair[0]); const p2 = starMap.get(pair[1]);
                     if(p1 && p2) {
                         const geo = new THREE.BufferGeometry().setFromPoints([p1.position, p2.position]);
                         starGroup.add(new THREE.Line(geo, lineMat));
@@ -181,25 +197,21 @@ const connections = [
 
                 scene.add(starGroup);
                 animate();
-            } catch (e) {
-                console.error("Database failed", e);
-            }
+            } catch (e) { console.error("Database failed", e); }
         }
 
         function animate() {
             requestAnimationFrame(animate);
             renderer.render(scene, camera);
-            
             starGroup.children.forEach(mesh => {
                 if(mesh.userData.label) {
                     const v = mesh.position.clone().project(camera);
+                    // Check if star is in front of camera and within screen bounds
                     if(v.z < 1 && v.x > -1 && v.x < 1 && v.y > -1 && v.y < 1) {
                         mesh.userData.label.style.display = 'block';
                         mesh.userData.label.style.left = `${(v.x * .5 + .5) * window.innerWidth + 10}px`;
                         mesh.userData.label.style.top = `${(-(v.y * .5) + .5) * window.innerHeight}px`;
-                    } else {
-                        mesh.userData.label.style.display = 'none';
-                    }
+                    } else { mesh.userData.label.style.display = 'none'; }
                 }
             });
         }
@@ -212,49 +224,33 @@ const connections = [
             if(hits.length > 0) {
                 const d = hits[0].object.userData;
                 document.getElementById('obj-name').innerText = d.name;
-                document.getElementById('obj-data').innerHTML = `
-                    SECTOR: ${d.con}<br>
-                    DISTANCE: ${d.dist} LY<br><br>
-                    TACTICAL DATA:<br>
-                    ${d.fact}
-                `;
+                document.getElementById('obj-data').innerHTML = `SECTOR: ${d.con}<br>DISTANCE: ${d.dist} LY<br><br>TACTICAL DATA:<br>${d.fact}`;
                 document.getElementById('readout').style.display = 'block';
             }
         });
 
         document.getElementById('start-btn').addEventListener('click', async () => {
             document.getElementById('start-btn').style.display = 'none';
+            document.getElementById('calibration-overlay').style.display = 'flex';
+            
             navigator.geolocation.getCurrentPosition(async (p) => {
                 const stream = await navigator.mediaDevices.getUserMedia({ video: { facingMode: 'environment' } });
                 document.getElementById('camera-feed').srcObject = stream;
-                
-                if (window.DeviceOrientationEvent && DeviceOrientationEvent.requestPermission) {
-                    await DeviceOrientationEvent.requestPermission();
-                }
+                if (window.DeviceOrientationEvent && DeviceOrientationEvent.requestPermission) await DeviceOrientationEvent.requestPermission();
                 
                 window.addEventListener('deviceorientation', (e) => {
-                    // STAGNANT FIX: Use absolute heading and force instant rotation
                     const alpha = e.webkitCompassHeading ? (360 - e.webkitCompassHeading) : e.alpha;
-                    const beta = e.beta;
-                    const gamma = e.gamma;
-                    
-                    // Order 'YXZ' prevents the stars from sliding diagonally during a turn
-                    camera.rotation.set(
-                        THREE.MathUtils.degToRad(beta),
-                        THREE.MathUtils.degToRad(alpha),
-                        -THREE.MathUtils.degToRad(gamma),
-                        'YXZ'
-                    );
+                    // RAW SENSOR DATA + YXZ ORDER = STAGNANT SKY
+                    camera.rotation.set(THREE.MathUtils.degToRad(e.beta), THREE.MathUtils.degToRad(alpha), -THREE.MathUtils.degToRad(e.gamma), 'YXZ');
                 }, false);
-                
                 init(p.coords.longitude);
-                document.getElementById('status-text').innerText = "SCANNER ACTIVE";
             });
         });
 
-        if ('serviceWorker' in navigator) {
-            window.addEventListener('load', () => { navigator.serviceWorker.register('./sw.js'); });
-        }
+        document.getElementById('cal-confirm').addEventListener('click', () => {
+            document.getElementById('calibration-overlay').style.display = 'none';
+            document.getElementById('status-text').innerText = "SCANNER ACTIVE";
+        });
     </script>
 </body>
 </html>
