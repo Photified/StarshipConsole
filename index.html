@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Starship Console - LCARS Interface</title>
+    <style>
+        /* LCARS Color Palette */
+        :root {
+            --orange: #ff9900;
+            --pink: #cc99cc;
+            --blue: #9999ff;
+            --gold: #ffcc66;
+            --red: #cc0000;
+            --bg-black: #000000;
+        }
+
+        body { 
+            margin: 0; overflow: hidden; background: var(--bg-black); 
+            font-family: Arial, sans-serif; font-weight: bold; color: white;
+            text-transform: uppercase;
+        }
+
+        #camera-feed { position: fixed; top: 0; left: 0; width: 100%; height: 100%; object-fit: cover; z-index: -1; }
+
+        /* The Elbow Header */
+        #lcars-header {
+            position: absolute; top: 0; left: 0; width: 100%; height: 120px;
+            display: grid; grid-template-columns: 100px 1fr; gap: 5px; z-index: 10;
+        }
+
+        .elbow {
+            width: 100px; height: 100px;
+            background: var(--pink);
+            border-bottom-left-radius: 40px;
+            position: relative;
+        }
+
+        .top-bar {
+            background: var(--orange);
+            height: 40px; border-bottom-left-radius: 20px;
+            display: flex; align-items: center; justify-content: flex-end; padding-right: 20px;
+            font-size: 18px; color: black;
+        }
+
+        /* Side Menu Buttons */
+        #side-menu {
+            position: absolute; left: 0; top: 110px; width: 95px; display: flex; flex-direction: column; gap: 5px; z-index: 10;
+        }
+        .nav-pill {
+            background: var(--blue); height: 35px; border-top-right-radius: 20px; border-bottom-right-radius: 20px;
+            color: black; font-size: 10px; display: flex; align-items: center; padding-left: 10px;
+        }
+
+        /* Star Labels */
+        .label {
+            position: absolute; background: rgba(0,0,0,0.7); border-left: 5px solid var(--gold);
+            padding: 4px 8px; font-size: 12px; color: var(--gold); pointer-events: none;
+        }
+
+        /* Bottom Control Panel */
+        #lcars-footer {
+            position: absolute; bottom: 0; left: 0; width: 100%; height: 60px;
+            background: var(--orange); border-top-left-radius: 40px;
+            z-index: 10; display: flex; align-items: center; padding-left: 120px;
+        }
+
+        .btn-engage {
+            background: var(--gold); border: none; padding: 10px 20px;
+            border-radius: 20px; font-weight: bold; cursor: pointer; color: black;
+        }
+    </style>
+</head>
+<body>
+
+    <div id="lcars-header">
+        <div class="elbow"></div>
+        <div class="top-bar">ST-CONSOLE 402-9</div>
+    </div>
+
+    <div id="side-menu">
+        <div class="nav-pill" style="background: var(--pink);">SENSORS</div>
+        <div class="nav-pill">NAV-LINK</div>
+        <div class="nav-pill" style="background: var(--orange);">GRID</div>
+        <div class="nav-pill" onclick="location.reload()" style="background: var(--red);">RESET</div>
+    </div>
+
+    <video id="camera-feed" autoplay playsinline></video>
+
+    <div id="lcars-footer">
+        <button id="start-btn" class="btn-engage">ENGAGE STELLAR SENSORS</button>
+        <div id="status" style="margin-left: 20px; font-size: 12px; color: black;">SYSTEM READY</div>
+    </div>
+
+    <script type="importmap">
+        { "imports": { "three": "https://unpkg.com/three@0.160.0/build/three.module.js" } }
+    </script>
+
+    <script type="module">
+        import * as THREE from 'three';
+
+        let scene, camera, renderer, starGroup, labels = [];
+        const startBtn = document.getElementById('start-btn');
+
+        const stars = [
+            ["POLARIS", 2.53, 89.2], ["SIRIUS", 6.75, -16.7], ["VEGA", 18.61, 38.8], ["BETELGEUSE", 5.92, 7.4]
+        ];
+
+        async function init(lon) {
+            scene = new THREE.Scene();
+            camera = new THREE.PerspectiveCamera(70, window.innerWidth / window.innerHeight, 0.1, 1000);
+            renderer = new THREE.WebGLRenderer({ alpha: true, antialias: true });
+            renderer.setSize(window.innerWidth, window.innerHeight);
+            document.body.appendChild(renderer.domElement);
+
+            starGroup = new THREE.Group();
+            const d = (new Date().getTime() / 86400000) + 2440587.5 - 2451545.0;
+            const lst = (280.46 + 360.985 * d + lon) % 360;
+
+            stars.forEach(s => {
+                const raRad = (s[1] * 15 - lst) * (Math.PI / 180);
+                const decRad = s[2] * (Math.PI / 180);
+                const phi = Math.PI/2 - decRad;
+
+                const mesh = new THREE.Mesh(new THREE.SphereGeometry(1.2, 8, 8), new THREE.MeshBasicMaterial({ color: 0xffffff }));
+                mesh.position.set(100 * Math.sin(phi) * Math.cos(raRad), 100 * Math.cos(phi), 100 * Math.sin(phi) * Math.sin(raRad));
+                
+                const el = document.createElement('div');
+                el.className = 'label';
+                el.innerText = s[0];
+                document.body.appendChild(el);
+                labels.push({ mesh, el });
+                starGroup.add(mesh);
+            });
+            scene.add(starGroup);
+            animate();
+        }
+
+        startBtn.addEventListener('click', async () => {
+            startBtn.style.display = 'none';
+            document.getElementById('status').innerText = "CALIBRATING...";
+            
+            navigator.geolocation.getCurrentPosition(async (p) => {
+                const stream = await navigator.mediaDevices.getUserMedia({ video: { facingMode: 'environment' } });
+                document.getElementById('camera-feed').srcObject = stream;
+                
+                if (DeviceOrientationEvent.requestPermission) await DeviceOrientationEvent.requestPermission();
+                
+                window.addEventListener('deviceorientation', (e) => {
+                    camera.rotation.set(THREE.MathUtils.degToRad(e.beta), THREE.MathUtils.degToRad(e.alpha), -THREE.MathUtils.degToRad(e.gamma), 'YXZ');
+                });
+                init(p.coords.longitude);
+                document.getElementById('status').innerText = "LINK ESTABLISHED";
+            });
+        });
+
+        function animate() {
+            requestAnimationFrame(animate);
+            renderer.render(scene, camera);
+            labels.forEach(l => {
+                const v = l.mesh.position.clone().project(camera);
+                if(v.z < 1) {
+                    l.el.style.display = 'block';
+                    l.el.style.left = `${(v.x * .5 + .5) * window.innerWidth + 10}px`;
+                    l.el.style.top = `${(-(v.y * .5) + .5) * window.innerHeight}px`;
+                } else { l.el.style.display = 'none'; }
+            });
+        }
+    </script>
+</body>
+</html>
