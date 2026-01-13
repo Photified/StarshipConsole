@@ -126,8 +126,8 @@
 
         async function init(lon) {
             scene = new THREE.Scene();
-            // Field of View 70 is ideal for AR to match the phone's camera focal length
-            camera = new THREE.PerspectiveCamera(70, window.innerWidth/window.innerHeight, 1, 2000);
+            // Field of View 70 matches the average phone camera to stop visual drift
+            camera = new THREE.PerspectiveCamera(70, window.innerWidth/window.innerHeight, 1, 3000);
             renderer = new THREE.WebGLRenderer({ alpha: true, antialias: true });
             renderer.setSize(window.innerWidth, window.innerHeight);
             document.body.appendChild(renderer.domElement);
@@ -147,12 +147,12 @@
                     const phi = Math.PI/2 - decRad;
                     
                     const mesh = new THREE.Mesh(
-                        new THREE.SphereGeometry(2.0, 8, 8), 
+                        new THREE.SphereGeometry(2.5, 8, 8), 
                         new THREE.MeshBasicMaterial({ color: 0xffffff })
                     );
                     
-                    // Radius set to 1000 to place stars at "infinity" to stop drifting
-                    mesh.position.set(1000*Math.sin(phi)*Math.cos(raRad), 1000*Math.cos(phi), 1000*Math.sin(phi)*Math.sin(raRad));
+                    // Radius set to 1200 pushes stars to the background so they don't 'drift'
+                    mesh.position.set(1200*Math.sin(phi)*Math.cos(raRad), 1200*Math.cos(phi), 1200*Math.sin(phi)*Math.sin(raRad));
                     mesh.userData = s;
                     
                     const el = document.createElement('div');
@@ -230,12 +230,12 @@
                 }
                 
                 window.addEventListener('deviceorientation', (e) => {
-                    // STAGNANT SKY FIX: Use absolute heading (alpha) and prioritize horizontal movement (Y)
+                    // STAGNANT FIX: Use absolute heading and force instant rotation
                     const alpha = e.webkitCompassHeading ? (360 - e.webkitCompassHeading) : e.alpha;
                     const beta = e.beta;
                     const gamma = e.gamma;
                     
-                    // Order 'YXZ' ensures North stays North during 180 degree turns
+                    // Order 'YXZ' prevents the stars from sliding diagonally during a turn
                     camera.rotation.set(
                         THREE.MathUtils.degToRad(beta),
                         THREE.MathUtils.degToRad(alpha),
