@@ -3,56 +3,128 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Starship Console - LCARS</title>
+    <title>Starship Console - LCARS Elite</title>
     <link rel="manifest" href="manifest.json">
     <style>
-        :root { --orange: #ff9900; --pink: #cc99cc; --blue: #9999ff; --gold: #ffcc66; --red: #cc0000; }
-        body { margin: 0; overflow: hidden; background: #000; font-family: Arial, sans-serif; font-weight: bold; text-transform: uppercase; color: white; }
-        #camera-feed { position: fixed; top: 0; left: 0; width: 100%; height: 100%; object-fit: cover; z-index: -1; opacity: 0.5; }
+        :root { 
+            --orange: #ff9900; --pink: #cc99cc; --blue: #9999ff; 
+            --gold: #ffcc66; --red: #cc0000; --dark-blue: #333366;
+        }
         
-        /* LCARS FRAME */
-        #ui-layer { position: absolute; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; z-index: 10; border: 4px solid black; box-sizing: border-box; }
-        #header { position: absolute; top: 0; left: 0; width: 100%; display: flex; pointer-events: auto; }
-        .elbow { width: 100px; height: 100px; background: var(--pink); border-bottom-left-radius: 40px; }
-        .bar { flex-grow: 1; background: var(--orange); height: 40px; border-bottom-left-radius: 20px; display: flex; align-items: center; justify-content: flex-end; padding-right: 20px; color: black; font-size: 18px; }
-        
-        #side-nav { position: absolute; left: 0; top: 110px; width: 90px; display: flex; flex-direction: column; gap: 5px; pointer-events: auto; }
-        .pill { background: var(--blue); height: 35px; border-radius: 0 20px 20px 0; color: black; font-size: 11px; display: flex; align-items: center; padding-left: 10px; cursor: pointer; }
+        body { 
+            margin: 0; overflow: hidden; background: #000; 
+            font-family: Arial, sans-serif; font-weight: bold; 
+            text-transform: uppercase; color: white; 
+        }
 
-        /* DATA READOUT */
+        #camera-feed { 
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%; 
+            object-fit: cover; z-index: -1; opacity: 0.4; 
+        }
+
+        /* LCARS COMPLEX FRAME */
+        #lcars-container {
+            position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+            display: grid; grid-template-rows: 140px 1fr 100px;
+            pointer-events: none; z-index: 10;
+        }
+
+        /* HEADER AREA */
+        .header-wrap { display: flex; pointer-events: auto; }
+        .elbow-main { 
+            width: 120px; height: 120px; background: var(--pink); 
+            border-bottom-left-radius: 45px; margin-right: 5px; 
+        }
+        .top-bars { flex-grow: 1; display: flex; flex-direction: column; gap: 5px; }
+        .bar-top { 
+            background: var(--orange); height: 45px; border-bottom-left-radius: 20px;
+            display: flex; align-items: center; justify-content: flex-end; 
+            padding-right: 20px; color: black; font-size: 20px; 
+        }
+        .bar-sub { background: var(--blue); height: 15px; width: 80%; border-bottom-left-radius: 10px; }
+
+        /* SIDEBAR SENSORS */
+        .middle-wrap { display: flex; height: 100%; }
+        .sidebar { 
+            width: 100px; display: flex; flex-direction: column; 
+            gap: 5px; padding-top: 10px; pointer-events: auto; 
+        }
+        .nav-pill { 
+            background: var(--blue); height: 35px; border-radius: 0 20px 20px 0; 
+            color: black; font-size: 10px; display: flex; align-items: center; 
+            padding-left: 10px; 
+        }
+        .data-stream { 
+            font-size: 8px; color: var(--gold); padding: 5px; 
+            line-height: 1.2; opacity: 0.6; pointer-events: none; 
+        }
+
+        /* DYNAMIC READOUT */
         #readout { 
             display: none; position: fixed; top: 50%; left: 55%; transform: translate(-50%, -50%); 
-            width: 70%; max-width: 300px; background: rgba(0,0,0,0.9); border: 2px solid var(--gold); 
-            z-index: 100; padding: 20px; border-radius: 20px; pointer-events: auto;
+            width: 75%; max-width: 320px; background: rgba(0,0,0,0.9); border: 2px solid var(--gold); 
+            z-index: 100; padding: 20px; border-radius: 25px; pointer-events: auto;
+            box-shadow: 0 0 20px var(--gold);
         }
-        .readout-header { color: var(--gold); border-bottom: 2px solid var(--gold); margin-bottom: 10px; font-size: 20px; }
+        .readout-title { color: var(--gold); border-bottom: 2px solid var(--gold); margin-bottom: 12px; font-size: 22px; }
 
-        #footer { position: absolute; bottom: 0; width: 100%; height: 60px; background: var(--orange); border-top-left-radius: 40px; z-index: 10; display: flex; align-items: center; padding-left: 110px; pointer-events: auto; }
-        .btn { background: var(--gold); border: none; padding: 10px 25px; border-radius: 20px; font-weight: bold; cursor: pointer; color: black; }
+        /* FOOTER CONTROLS */
+        .footer-wrap { 
+            background: var(--orange); border-top-left-radius: 50px; 
+            display: flex; align-items: center; padding-left: 130px; 
+            pointer-events: auto; 
+        }
+        .btn-main { 
+            background: var(--gold); border: none; padding: 15px 30px; 
+            border-radius: 25px; font-weight: bold; cursor: pointer; color: black; 
+        }
+
+        /* STAR LABELS */
+        .label { 
+            position: absolute; color: white; border-left: 3px solid var(--gold); 
+            padding-left: 8px; font-size: 11px; pointer-events: none;
+            background: rgba(0,0,0,0.4);
+        }
     </style>
 </head>
 <body>
 
-    <div id="ui-layer">
-        <div id="header"><div class="elbow"></div><div class="bar">SENSORS SCANNING</div></div>
-        <div id="side-nav">
-            <div class="pill" style="background:var(--pink)">STELLAR</div>
-            <div class="pill">OBJECTS</div>
-            <div class="pill" style="background:var(--orange)">SECTOR 7G</div>
+    <div id="lcars-container">
+        <div class="header-wrap">
+            <div class="elbow-main"></div>
+            <div class="top-bars">
+                <div class="bar-top" id="sector-display">SECTOR 001 SCANNING</div>
+                <div class="bar-sub"></div>
+                <div class="data-stream" id="telemetry">
+                    481117450284102... 152635608277857... 053921717629317...
+                </div>
+            </div>
+        </div>
+
+        <div class="middle-wrap">
+            <div class="sidebar">
+                <div class="nav-pill" style="background:var(--pink)">SENSORS</div>
+                <div class="nav-pill">NAV-GRID</div>
+                <div class="nav-pill" style="background:var(--gold)">LIBRARY</div>
+                <div class="nav-pill" style="background:var(--red)" onclick="location.reload()">RESET</div>
+                <div class="data-stream">
+                    ERR_NONE<br>SYS_OK<br>BUFF_64K<br>GRID_ACTIVE
+                </div>
+            </div>
+        </div>
+
+        <div class="footer-wrap">
+            <button id="start-btn" class="btn-main">INITIALIZE CONSOLE</button>
+            <div id="status-text" style="margin-left:20px; color:black; font-size:12px;">NAV-LINK READY</div>
         </div>
     </div>
     
     <video id="camera-feed" autoplay playsinline></video>
 
     <div id="readout">
-        <div class="readout-header" id="obj-name">SCANNING...</div>
-        <div id="obj-data" style="font-size: 13px; margin-bottom: 15px; line-height: 1.4;"></div>
-        <button class="btn" style="width:100%" onclick="document.getElementById('readout').style.display='none'">DISMISS</button>
-    </div>
-
-    <div id="footer">
-        <button id="start-btn" class="btn">ENGAGE SENSORS</button>
-        <div id="status" style="margin-left: 20px; color: black; font-size: 12px;">READY</div>
+        <div class="readout-title" id="obj-name">SCANNING...</div>
+        <div id="obj-data" style="font-size: 14px; margin-bottom: 20px; line-height: 1.5;"></div>
+        <button class="btn-main" style="width:100%" onclick="document.getElementById('readout').style.display='none'">RESUME SCAN</button>
     </div>
 
     <script type="importmap"> { "imports": { "three": "https://unpkg.com/three@0.160.0/build/three.module.js" } } </script>
@@ -60,6 +132,12 @@
         import * as THREE from 'three';
         let scene, camera, renderer, starGroup, starMap = new Map();
         let raycaster = new THREE.Raycaster(), mouse = new THREE.Vector2();
+
+        // Constellation Line Definitions
+        const connections = [
+            ["ORI1", "ORI5"], ["ORI5", "ORI2"], ["ORI4", "ORI5"], ["ORI5", "ORI3"], // Orion
+            ["UMA1", "UMA2"], ["UMA2", "UMA3"], ["UMA3", "UMA4"], ["UMA4", "UMA5"], ["UMA5", "UMA6"], ["UMA6", "UMA7"] // Big Dipper
+        ];
 
         async function init(lon) {
             scene = new THREE.Scene();
@@ -74,7 +152,6 @@
             const response = await fetch('stars.json');
             const stars = await response.json();
             
-            // Calculate Sidereal Time
             const d = (new Date().getTime() / 86400000) + 2440587.5 - 2451545.0;
             const lst = (280.46 + 360.985 * d + lon) % 360;
 
@@ -84,23 +161,25 @@
                 const phi = Math.PI/2 - decRad;
                 
                 const mesh = new THREE.Mesh(
-                    new THREE.SphereGeometry(1.2, 8, 8), 
+                    new THREE.SphereGeometry(1.4, 8, 8), 
                     new THREE.MeshBasicMaterial({ color: 0xffffff })
                 );
-                mesh.position.set(120*Math.sin(phi)*Math.cos(raRad), 120*Math.cos(phi), 120*Math.sin(phi)*Math.sin(raRad));
+                mesh.position.set(130*Math.sin(phi)*Math.cos(raRad), 130*Math.cos(phi), 130*Math.sin(phi)*Math.sin(raRad));
                 mesh.userData = s;
                 
+                // Add labels for major stars
+                const el = document.createElement('div');
+                el.className = 'label';
+                el.innerText = s.name;
+                document.body.appendChild(el);
+                mesh.userData.label = el;
+
                 starMap.set(s.id, mesh);
                 starGroup.add(mesh);
             });
 
-            // Draw Constellation Lines (Connections by ID)
-            const lineMat = new THREE.LineBasicMaterial({ color: 0x9999ff, transparent: true, opacity: 0.5 });
-            const connections = [
-                ["S1", "S2"], ["S2", "S3"], ["S3", "S4"], ["S4", "S1"], // Sample Rectangle/Constellation
-                ["D1", "D2"], ["D2", "D3"], ["D3", "D4"] // Sample Dipper tail
-            ];
-
+            // Draw Constellation Lines
+            const lineMat = new THREE.LineBasicMaterial({ color: 0x9999ff, transparent: true, opacity: 0.4 });
             connections.forEach(pair => {
                 const p1 = starMap.get(pair[0]);
                 const p2 = starMap.get(pair[1]);
@@ -114,46 +193,76 @@
             animate();
         }
 
-        // Tapping Stars
-        window.addEventListener('click', (e) => {
-            mouse.x = (e.clientX / window.innerWidth) * 2 - 1;
-            mouse.y = -(e.clientY / window.innerHeight) * 2 + 1;
+        window.addEventListener('touchstart', (e) => {
+            mouse.x = (e.touches[0].clientX / window.innerWidth) * 2 - 1;
+            mouse.y = -(e.touches[0].clientY / window.innerHeight) * 2 + 1;
+            checkIntersection();
+        });
+
+        function checkIntersection() {
             raycaster.setFromCamera(mouse, camera);
             const hits = raycaster.intersectObjects(starGroup.children.filter(o => o instanceof THREE.Mesh));
             if(hits.length > 0) {
                 const d = hits[0].object.userData;
                 document.getElementById('obj-name').innerText = d.name;
-                document.getElementById('obj-data').innerHTML = `COORD: ${d.ra}h / ${d.dec}°<br>DIST: ${d.dist} LY<br>CON: ${d.con}<br><br>${d.fact}`;
+                document.getElementById('obj-data').innerHTML = `
+                    POSITION: RA ${d.ra}h / DEC ${d.dec}°<br>
+                    DISTANCE: ${d.dist} LY<br>
+                    SECTOR: ${d.con}<br><br>
+                    SENSORS INDICATE: ${d.fact}
+                `;
                 document.getElementById('readout').style.display = 'block';
             }
-        });
+        }
 
         document.getElementById('start-btn').addEventListener('click', async () => {
             document.getElementById('start-btn').style.display = 'none';
-            document.getElementById('status').innerText = "CALIBRATING...";
-            navigator.geolocation.getCurrentPosition(async (p) => {
-                const stream = await navigator.mediaDevices.getUserMedia({ video: { facingMode: 'environment' } });
-                document.getElementById('camera-feed').srcObject = stream;
-                if (window.DeviceOrientationEvent && DeviceOrientationEvent.requestPermission) await DeviceOrientationEvent.requestPermission();
-                window.addEventListener('deviceorientation', (e) => {
-                    camera.rotation.set(THREE.MathUtils.degToRad(e.beta), THREE.MathUtils.degToRad(e.alpha), -THREE.MathUtils.degToRad(e.gamma), 'YXZ');
+            document.getElementById('status-text').innerText = "CALIBRATING...";
+            
+            try {
+                navigator.geolocation.getCurrentPosition(async (p) => {
+                    const stream = await navigator.mediaDevices.getUserMedia({ video: { facingMode: 'environment' } });
+                    document.getElementById('camera-feed').srcObject = stream;
+                    
+                    if (window.DeviceOrientationEvent && DeviceOrientationEvent.requestPermission) {
+                        await DeviceOrientationEvent.requestPermission();
+                    }
+                    
+                    window.addEventListener('deviceorientation', (e) => {
+                        camera.rotation.set(THREE.MathUtils.degToRad(e.beta), THREE.MathUtils.degToRad(e.alpha), -THREE.MathUtils.degToRad(e.gamma), 'YXZ');
+                    });
+                    
+                    init(p.coords.longitude);
+                    document.getElementById('status-text').innerText = "SCANNER ACTIVE";
                 });
-                init(p.coords.longitude);
-                document.getElementById('status').innerText = "SCANNER ACTIVE";
-            });
+            } catch (err) {
+                alert("SENSOR ACCESS DENIED. CHECK PERMISSIONS.");
+            }
         });
 
-        function animate() { requestAnimationFrame(animate); renderer.render(scene, camera); }
+        function animate() {
+            requestAnimationFrame(animate);
+            renderer.render(scene, camera);
+            
+            // Update Text Telemetry
+            if(Math.random() > 0.95) {
+                document.getElementById('telemetry').innerText = Math.random().toString().substring(2, 15) + " ... " + Math.random().toString().substring(2, 10);
+            }
+
+            // Sync HTML Labels to 3D positions
+            starGroup.children.forEach(mesh => {
+                if(mesh.userData.label) {
+                    const v = mesh.position.clone().project(camera);
+                    if(v.z < 1 && v.x > -1 && v.x < 1 && v.y > -1 && v.y < 1) {
+                        mesh.userData.label.style.display = 'block';
+                        mesh.userData.label.style.left = `${(v.x * .5 + .5) * window.innerWidth + 10}px`;
+                        mesh.userData.label.style.top = `${(-(v.y * .5) + .5) * window.innerHeight}px`;
+                    } else {
+                        mesh.userData.label.style.display = 'none';
+                    }
+                }
+            });
+        }
     </script>
-	<script>
-    if ('serviceWorker' in navigator) {
-        window.addEventListener('load', () => {
-            navigator.serviceWorker.register('./sw.js')
-                .then(reg => console.log('Starship Systems: Service Worker Registered'))
-                .catch(err => console.log('Starship Systems: Offline Mode Failed', err));
-        });
-    }
-</script>
-	
 </body>
 </html>
