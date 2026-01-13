@@ -1,0 +1,10 @@
+[
+  { "id": "S1", "name": "Betelgeuse", "ra": 5.92, "dec": 7.4, "dist": "642", "con": "Orion", "fact": "Red Supergiant shoulder of Orion." },
+  { "id": "S2", "name": "Bellatrix", "ra": 5.42, "dec": 6.3, "dist": "240", "con": "Orion", "fact": "Amazon Star, left shoulder." },
+  { "id": "S3", "name": "Rigel", "ra": 5.24, "dec": -8.2, "dist": "860", "con": "Orion", "fact": "Brightest star in Orion." },
+  { "id": "S4", "name": "Saiph", "ra": 5.79, "dec": -9.6, "dist": "720", "con": "Orion", "fact": "Right knee of the hunter." },
+  { "id": "D1", "name": "Dubhe", "ra": 11.06, "dec": 61.7, "dist": "123", "con": "Ursa Major", "fact": "Big Dipper pointer star." },
+  { "id": "D2", "name": "Merak", "ra": 11.03, "dec": 56.4, "dist": "79", "con": "Ursa Major", "fact": "Pointer to the North Star." },
+  { "id": "D3", "name": "Phecda", "ra": 11.89, "dec": 53.6, "dist": "83", "con": "Ursa Major", "fact": "Lower left of the dipper bowl." },
+  { "id": "D4", "name": "Megrez", "ra": 12.25, "dec": 57.0, "dist": "81", "con": "Ursa Major", "fact": "Base of the dipper handle." }
+]
