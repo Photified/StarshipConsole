@@ -143,7 +143,6 @@
             margin-top: -55px; margin-left: -20px;
             font-size: 20px; font-weight: bold;
             border-bottom-right-radius: 20px;
-            /* FIXED SPACING ISSUE */
             margin-bottom: 25px;
         }
         
@@ -192,7 +191,7 @@
         <div class="middle-wrap">
             <div class="sidebar">
                 <div class="action-btn" id="btn-nav" style="background:var(--pink)">NAV</div>
-                <div class="action-btn" id="btn-phys" style="background:var(--orange)">PHYSICS</div>
+                <div class="action-btn" id="btn-vis" style="background:var(--orange)">ANALYSIS</div>
                 <div class="action-btn" id="btn-intel" style="background:var(--blue)">INTEL</div>
                 <div class="zoom-container">
                     <span class="zoom-label">MAGNIFICATION</span>
@@ -231,7 +230,7 @@
         
         let hoveredStar = null; 
 
-        // RESTORED CONSTELLATION COLORS
+        // LCARS COLORS for specific constellations
         const conColors = {
             "URSA MAJOR": 0x00ff00,    // Green
             "URSA MINOR": 0xcc00ff,    // Purple
@@ -266,7 +265,7 @@
             ['ALN_SAG', 'ASK'], ['ASK', 'NUN'], ['ASK', 'KAUS']
         ];
 
-        // MOCK COORDINATES FOR LAYMAN LAYOUT
+        // MOCK COORDINATES
         const coordMap = {
             "SIR": [6.75, -16.72], "CAN": [6.40, -52.70], "RIGK": [14.66, -60.83], "ARC": [14.26, 19.18],
             "VEG": [18.62, 38.78], "CAP": [5.27, 45.99], "RIG": [5.24, -8.20], "PRO": [7.65, 5.22],
@@ -319,7 +318,7 @@
 
             try {
                 // Ensure to load fresh data
-                const response = await fetch('stars.json?v=12'); 
+                const response = await fetch('stars.json?v=13'); 
                 const stars = await response.json();
                 
                 const d = (new Date().getTime() / 86400000) + 2440587.5 - 2451545.0;
@@ -514,11 +513,11 @@
             let color = 'white';
             let shadow = 'white';
             
-            if (d.spec && (d.spec.includes('B') || d.spec.includes('O'))) { color = '#aaddff'; shadow = '#0088ff'; }
-            else if (d.spec && d.spec.includes('A')) { color = '#ffffff'; shadow = '#ccccff'; }
-            else if (d.spec && (d.spec.includes('F') || d.spec.includes('G'))) { color = '#ffee00'; shadow = '#ffaa00'; }
-            else if (d.spec && d.spec.includes('K')) { color = '#ffaa55'; shadow = '#ff6600'; }
-            else if (d.spec && d.spec.includes('M')) { color = '#ff5555'; shadow = '#cc0000'; }
+            if (d.type && d.type.includes('Blue')) { color = '#aaddff'; shadow = '#0088ff'; }
+            else if (d.type && d.type.includes('White')) { color = '#ffffff'; shadow = '#ccccff'; }
+            else if (d.type && d.type.includes('Yellow')) { color = '#ffee00'; shadow = '#ffaa00'; }
+            else if (d.type && d.type.includes('Orange')) { color = '#ffaa55'; shadow = '#ff6600'; }
+            else if (d.type && d.type.includes('Red')) { color = '#ff5555'; shadow = '#cc0000'; }
 
             visual.style.background = `radial-gradient(circle at 30% 30%, ${color}, transparent)`;
             visual.style.boxShadow = `0 0 20px ${shadow}`;
@@ -562,17 +561,18 @@
                 content = `
                     <div class='data-row'><div class='data-label'>SECTOR</div><div class='data-value'>${d.con || "Unknown"}</div></div>
                     <div class='data-row'><div class='data-label'>DISTANCE</div><div class='data-value'>${d.dist || "Unknown"}</div></div>
+                    <div class='data-row'><div class='data-label'>VISIBILITY</div><div class='data-value'>${d.vis || "Unknown"}</div></div>
                 `;
-            } else if (btnType === 'PHYSICS') {
+            } else if (btnType === 'VIS') {
                 content = `
-                    <div class='data-row'><div class='data-label'>MAGNITUDE</div><div class='data-value'>${d.mag || "Unknown"}</div></div>
-                    <div class='data-row'><div class='data-label'>SPECTRAL</div><div class='data-value'>${d.spec || "Unknown"}</div></div>
-                    <div class='data-row'><div class='data-label'>LUMINOSITY</div><div class='data-value'>${d.lum || "Unknown"}</div></div>
+                    <div class='data-row'><div class='data-label'>TYPE</div><div class='data-value'>${d.type || "Unknown"}</div></div>
+                    <div class='data-row'><div class='data-label'>BRIGHTNESS</div><div class='data-value'>${d.lum || "Unknown"}</div></div>
+                    <div class='data-row'><div class='data-label'>TEMP</div><div class='data-value'>${d.temp || "Unknown"}</div></div>
                 `;
             } else if (btnType === 'INTEL') {
-                content = `
-                    <div class='data-row'><div class='data-label'>DATA LOG</div><div class='data-value' style='color:#ffcc66; font-size:13px; line-height:1.4'>"${d.intel || "No detailed scan available."}"</div></div>
-                `;
+                let facts = d.facts || ["No intel available."];
+                if(typeof facts === 'string') facts = [facts];
+                content = facts.map(f => `<div style='margin-bottom:8px; color:#ffcc66; font-size:13px; line-height:1.4'>• ${f}</div>`).join('');
             }
 
             document.getElementById('obj-body').innerHTML = content;
@@ -580,7 +580,7 @@
         }
 
         document.getElementById('btn-nav').addEventListener('click', () => showData('NAV'));
-        document.getElementById('btn-phys').addEventListener('click', () => showData('PHYSICS'));
+        document.getElementById('btn-vis').addEventListener('click', () => showData('VIS'));
         document.getElementById('btn-intel').addEventListener('click', () => showData('INTEL'));
 
         document.getElementById('start-btn').addEventListener('click', () => {
