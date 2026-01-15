@@ -30,6 +30,36 @@
     ]
   },
   {
+    "id": "GRS_1915", "name": "GRS 1915+105", "con": "Aquila", "dist": "35,000 LY", "vis": "Invisible",
+    "type": "Microquasar", "lum": "X-Ray Flares", "temp": "N/A",
+    "mass": "14x Sun", "rad": "Event Horizon (Small)", "age": "Unknown", "planets": "Red Giant Companion", "rot": "1,150x per second",
+    "facts": [
+      "This black hole spins at over 950 times per second, near the physical limit of the universe.",
+      "It drags spacetime around with it so violently that it creates 'superluminal' jets.",
+      "It consumes its companion star, creating massive 'heartbeat' pulses of X-rays."
+    ]
+  },
+  {
+    "id": "V404_CYG", "name": "V404 CYGNI", "con": "Cygnus", "dist": "7,800 LY", "vis": "Invisible",
+    "type": "Microquasar", "lum": "Erratic X-Ray", "temp": "N/A",
+    "mass": "9x Sun", "rad": "Event Horizon", "age": "Unknown", "planets": "K-Type Star", "rot": "Unknown",
+    "facts": [
+      "A 'monster' black hole that woke up in 2015 after sleeping for 26 years.",
+      "When active, it is the brightest object in the X-ray sky.",
+      "Its jets wobble around like a spinning top due to the Lense-Thirring effect."
+    ]
+  },
+  {
+    "id": "V616_MON", "name": "A0620-00", "con": "Monoceros", "dist": "3,300 LY", "vis": "Invisible",
+    "type": "Stellar Black Hole", "lum": "Dark", "temp": "Absolute Zero",
+    "mass": "6.6x Sun", "rad": "12 Miles", "age": "Unknown", "planets": "K-Type Star", "rot": "Unknown",
+    "facts": [
+      "One of the closest known black holes to Earth.",
+      "It is distinct because it is not currently 'feeding', making it extremely hard to detect.",
+      "It distorts its companion star into a tear-drop shape."
+    ]
+  },
+  {
     "id": "SIR", "name": "SIRIUS", "con": "Canis Major", "dist": "8.6 LY", "vis": "Extremely Bright",
     "type": "Blue Dwarf", "lum": "25x Sun", "temp": "1.7x Sun",
     "mass": "2.0x Sun", "rad": "1.7x Wider than Sun", "age": "242 Million Years", "planets": "None Detected", "rot": "5.4 Days",
