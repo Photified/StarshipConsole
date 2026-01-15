@@ -385,59 +385,62 @@
         
         // FULL DATA - CONSTELLATION LINES
         const constellationPairs = [
-            ['ALK', 'MIZ'],
-            ['MIZ', 'ALI'],
-            ['ALI', 'MEG'],
-            ['MEG', 'PHEC'], 
-            ['PHEC', 'MER'],
-            ['MER', 'DUB'],
-            ['DUB', 'MEG'],
-            ['POLA', 'KOC'],
-            ['KOC', 'PHER'], 
-            ['BET', 'BEL'],
-            ['MINT', 'ALNI'],
-            ['ALNI', 'ALN'],
-            ['SAI', 'RIG'], 
-            ['BEL', 'MINT'],
-            ['BET', 'ALNI'],
-            ['SAI', 'ALNI'],
-            ['RIG', 'MINT'], 
-            ['ANT', 'GRA'],
-            ['GRA', 'DSCH'],
-            ['ANT', 'WEI'],
-            ['WEI', 'SAR'],
-            ['SAR', 'SHA'],
-            ['SHA', 'LES'], 
-            ['DEN', 'SAD'],
-            ['SAD', 'ALB'],
-            ['SAD', 'GIE'], 
-            ['REG', 'ALGIE'],
-            ['ALGIE', 'ZOS'],
-            ['CAS', 'POL'],
-            ['POL', 'ALH'],
-            ['SIR', 'MIRZ'],
-            ['SIR', 'ADH'],
-            ['ADH', 'WES'],
-            ['WES', 'ALUD'],
-            ['ACR', 'GAC'],
-            ['MIM', 'GAC'], 
-            ['CAPH', 'SCH'],
-            ['SCH', 'RUCH'],
-            ['RUCH', 'SEGIN'],
-            ['MARK', 'SCH_PEG'],
-            ['SCH_PEG', 'ALPHER'], 
-            ['ALPHER', 'MIR_AND'],
-            ['MIR_AND', 'ALMA'], 
-            ['KAUS', 'KAUSM'],
-            ['KAUSM', 'KAUSB'],
-            ['KAUSM', 'ALN_SAG'], 
-            ['ALN_SAG', 'ASK'],
-            ['ASK', 'NUN'],
-            ['ASK', 'KAUS']
+            ['ALK','MIZ'],
+            ['MIZ','ALI'],
+            ['ALI','MEG'],
+            ['MEG','PHEC'], 
+            ['PHEC','MER'],
+            ['MER','DUB'],
+            ['DUB','MEG'],
+            ['POLA','KOC'],
+            ['KOC','PHER'], 
+            ['BET','BEL'],
+            ['MINT','ALNI'],
+            ['ALNI','ALN'],
+            ['SAI','RIG'], 
+            ['BEL','MINT'],
+            ['BET','ALNI'],
+            ['SAI','ALNI'],
+            ['RIG','MINT'], 
+            ['ANT','GRA'],
+            ['GRA','DSCH'],
+            ['ANT','WEI'],
+            ['WEI','SAR'],
+            ['SAR','SHA'],
+            ['SHA','LES'], 
+            ['DEN','SAD'],
+            ['SAD','ALB'],
+            ['SAD','GIE'], 
+            ['REG','ALGIE'],
+            ['ALGIE','ZOS'],
+            ['CAS','POL'],
+            ['POL','ALH'],
+            ['SIR','MIRZ'],
+            ['SIR','ADH'],
+            ['ADH','WES'],
+            ['WES','ALUD'],
+            ['ACR','GAC'],
+            ['MIM','GAC'], 
+            ['CAPH','SCH'],
+            ['SCH','RUCH'],
+            ['RUCH','SEGIN'],
+            ['MARK','SCH_PEG'],
+            ['SCH_PEG','ALPHER'], 
+            ['ALPHER','MIR_AND'],
+            ['MIR_AND','ALMA'], 
+            ['KAUS','KAUSM'],
+            ['KAUSM','KAUSB'],
+            ['KAUSM','ALN_SAG'], 
+            ['ALN_SAG','ASK'],
+            ['ASK','NUN'],
+            ['ASK','KAUS']
         ];
 
-        // FULL DATA - COORDINATES
+        // FULL DATA - COORDINATES (Including Black Holes)
         const coordMap = {
+            "SGR_A": [17.76, -29.00],
+            "CYG_X1": [19.96, 35.20],
+            "GAIA_BH1": [17.47, -0.01],
             "SIR": [6.75, -16.72],
             "CAN": [6.40, -52.70],
             "RIGK": [14.66, -60.83],
@@ -599,6 +602,13 @@
                         new THREE.MeshBasicMaterial({ color: starColor })
                     );
                     
+                    // --- NEW VISUAL LOGIC FOR BLACK HOLES ---
+                    if (s.type && s.type.includes('Black Hole')) {
+                        // Make them distinct violet markers on the map
+                        mesh.material.color.setHex(0x9933ff);
+                        mesh.scale.set(1.5, 1.5, 1.5); // Slightly larger marker
+                    }
+
                     const r = 1200;
                     mesh.position.set(
                         r * Math.sin(phi) * Math.cos(raRad),
@@ -607,12 +617,12 @@
                     );
                     
                     mesh.userData = s;
-                    mesh.userData.baseColor = starColor;
+                    mesh.userData.baseColor = s.type.includes('Black Hole') ? 0x9933ff : starColor;
 
                     const el = document.createElement('div');
                     el.className = 'label'; el.innerText = s.name;
-                    el.style.color = '#' + starColor.toString(16).padStart(6, '0');
-                    el.style.borderLeftColor = '#' + starColor.toString(16).padStart(6, '0');
+                    el.style.color = '#' + mesh.userData.baseColor.toString(16).padStart(6, '0');
+                    el.style.borderLeftColor = '#' + mesh.userData.baseColor.toString(16).padStart(6, '0');
                     
                     document.body.appendChild(el);
                     mesh.userData.label = el;
@@ -771,6 +781,16 @@
             let color = 'white';
             let shadow = 'white';
             
+            // --- BLACK HOLE VISUAL LOGIC ---
+            if (d.type && d.type.includes('Black Hole')) {
+                // Create an "Accretion Disk" look
+                visual.style.background = `radial-gradient(circle at 50% 50%, black 30%, #aa00ff 50%, transparent 70%)`;
+                visual.style.boxShadow = `0 0 30px #aa00ff`;
+                visual.style.border = 'none'; // Remove standard border
+                return; // Exit early
+            }
+
+            // Standard Star Visuals
             if (d.type && d.type.includes('Blue')) { color = '#aaddff'; shadow = '#0088ff'; }
             else if (d.type && d.type.includes('White')) { color = '#ffffff'; shadow = '#ccccff'; }
             else if (d.type && d.type.includes('Yellow')) { color = '#ffee00'; shadow = '#ffaa00'; }
@@ -779,6 +799,7 @@
 
             visual.style.background = `radial-gradient(circle at 30% 30%, ${color}, transparent)`;
             visual.style.boxShadow = `0 0 20px ${shadow}`;
+            visual.style.border = '1px solid rgba(255,255,255,0.2)';
         }
 
         function showData(btnType) {

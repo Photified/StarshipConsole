@@ -1,5 +1,35 @@
 [
   {
+    "id": "SGR_A", "name": "SAGITTARIUS A*", "con": "Sagittarius", "dist": "26,000 LY", "vis": "Invisible",
+    "type": "Supermassive Black Hole", "lum": "Variable (X-Ray)", "temp": "N/A",
+    "mass": "4.3 Million x Sun", "rad": "14.6 Million Miles", "age": "Ancient", "planets": "Dozens of S-Stars", "rot": "Near Light Speed",
+    "facts": [
+      "The monster at the center of the Milky Way galaxy.",
+      "Its gravity is so strong it whips nearby stars around it at 5,000 km/s.",
+      "It is relatively quiet, only occasionally flaring when it eats an asteroid or gas cloud."
+    ]
+  },
+  {
+    "id": "CYG_X1", "name": "CYGNUS X-1", "con": "Cygnus", "dist": "6,070 LY", "vis": "Invisible",
+    "type": "Stellar Black Hole", "lum": "X-Ray Source", "temp": "N/A",
+    "mass": "21x Sun", "rad": "300km (Event Horizon)", "age": "5 Million Years", "planets": "Blue Supergiant Companion", "rot": "800x per second",
+    "facts": [
+      "The first black hole ever widely accepted by science.",
+      "It is slowly eating its companion star, a blue supergiant.",
+      "Stephen Hawking famously bet physicist Kip Thorne that this object was NOT a black hole (and lost)."
+    ]
+  },
+  {
+    "id": "GAIA_BH1", "name": "GAIA BH1", "con": "Ophiuchus", "dist": "1,560 LY", "vis": "Invisible",
+    "type": "Quiescent Black Hole", "lum": "Dark", "temp": "Absolute Zero",
+    "mass": "9.6x Sun", "rad": "18 Miles", "age": "Unknown", "planets": "1 Sun-like Star", "rot": "Unknown",
+    "facts": [
+      "The closest known black hole to Earth.",
+      "It is 'sleeping' (quiescent), meaning it is not actively eating its neighbor.",
+      "Discovered only by the wobble it causes on the star orbiting it."
+    ]
+  },
+  {
     "id": "SIR", "name": "SIRIUS", "con": "Canis Major", "dist": "8.6 LY", "vis": "Extremely Bright",
     "type": "Blue Dwarf", "lum": "25x Sun", "temp": "1.7x Sun",
     "mass": "2.0x Sun", "rad": "1.7x Wider than Sun", "age": "242 Million Years", "planets": "None Detected", "rot": "5.4 Days",
