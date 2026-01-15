@@ -146,9 +146,32 @@
             margin-bottom: 25px;
         }
         
-        .data-label { color: var(--gold); font-size: 10px; display: inline-block; width: 80px; text-align: right; margin-right: 10px;}
-        .data-value { color: var(--blue); font-size: 16px; display: inline-block; font-weight: normal; }
-        .data-row { margin-bottom: 6px; border-bottom: 1px solid #333; padding-bottom: 2px; }
+        /* FIXED DATA ROW STYLING - FLEXBOX FOR ALIGNMENT */
+        .data-row { 
+            display: flex; 
+            align-items: flex-start; /* Align text to top */
+            margin-bottom: 8px; 
+            border-bottom: 1px solid #333; 
+            padding-bottom: 4px; 
+        }
+        
+        .data-label { 
+            color: var(--gold); 
+            font-size: 11px; 
+            width: 100px; /* Fixed width so all labels align perfectly */
+            text-align: right; 
+            margin-right: 15px;
+            flex-shrink: 0; /* Prevents label from squishing */
+            padding-top: 2px; /* Slight offset to align with larger value font */
+        }
+        
+        .data-value { 
+            color: var(--blue); 
+            font-size: 16px; 
+            font-weight: normal; 
+            flex-grow: 1; /* Allows text to fill remaining space */
+            text-align: left;
+        }
 
         .close-btn {
             position: absolute; top: -20px; right: -10px;
@@ -230,7 +253,7 @@
         
         let hoveredStar = null; 
 
-        // CONSTELLATION COLORS
+        // LCARS COLORS for specific constellations
         const conColors = {
             "URSA MAJOR": 0x00ff00,    // Green
             "URSA MINOR": 0xcc00ff,    // Purple
@@ -245,7 +268,6 @@
         };
         const defaultStarColor = 0xffffff;
 
-        // CONSTELLATION ATLAS (ID Pairs)
         const constellationPairs = [
             ['ALK', 'MIZ'], ['MIZ', 'ALI'], ['ALI', 'MEG'], ['MEG', 'PHEC'], 
             ['PHEC', 'MER'], ['MER', 'DUB'], ['DUB', 'MEG'],
@@ -265,7 +287,7 @@
             ['ALN_SAG', 'ASK'], ['ASK', 'NUN'], ['ASK', 'KAUS']
         ];
 
-        // MOCK COORDINATES
+        // MOCK COORDINATES FOR LAYMAN LAYOUT
         const coordMap = {
             "SIR": [6.75, -16.72], "CAN": [6.40, -52.70], "RIGK": [14.66, -60.83], "ARC": [14.26, 19.18],
             "VEG": [18.62, 38.78], "CAP": [5.27, 45.99], "RIG": [5.24, -8.20], "PRO": [7.65, 5.22],
@@ -475,6 +497,7 @@
                 const deltaY = event.clientY - onPointerDownPointerY;
                 lon = (onPointerDownLon - deltaX * sensitivity);
                 lat = (onPointerDownLat + deltaY * sensitivity);
+                // LOOK ANGLE INCREASED TO 89.9 DEGREES
                 lat = Math.max(-89.9, Math.min(89.9, lat)); 
                 return; 
             }
