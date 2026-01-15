@@ -257,9 +257,6 @@
         ];
 
         // MOCK COORDINATES FOR LAYMAN LAYOUT
-        // Since we removed RA/DEC from the JSON for simplicity, we mock them for the 3D position
-        // based on the previous turn's data to keep the visual correct.
-        // This map lets us look up the position even if the JSON is simple.
         const coordMap = {
             "SIR": [6.75, -16.72], "CAN": [6.40, -52.70], "RIGK": [14.66, -60.83], "ARC": [14.26, 19.18],
             "VEG": [18.62, 38.78], "CAP": [5.27, 45.99], "RIG": [5.24, -8.20], "PRO": [7.65, 5.22],
@@ -321,7 +318,6 @@
                 const starMap = {}; 
 
                 stars.forEach(s => {
-                    // Fallback to coordinates map if json is missing them
                     const coords = coordMap[s.id] || [0, 0];
                     
                     const raRad = (coords[0] * 15 - lst) * (Math.PI/180);
@@ -329,10 +325,10 @@
                     const phi = Math.PI/2 - decRad;
                     
                     let starColor = 0xffffff;
-                    if(s.desc.includes("Blue")) starColor = 0xaaddff;
-                    if(s.desc.includes("Red")) starColor = 0xff5555;
-                    if(s.desc.includes("Orange")) starColor = 0xffaa55;
-                    if(s.desc.includes("Yellow")) starColor = 0xffee00;
+                    if(s.desc && s.desc.includes("Blue")) starColor = 0xaaddff;
+                    if(s.desc && s.desc.includes("Red")) starColor = 0xff5555;
+                    if(s.desc && s.desc.includes("Orange")) starColor = 0xffaa55;
+                    if(s.desc && s.desc.includes("Yellow")) starColor = 0xffee00;
 
                     const mesh = new THREE.Mesh(
                         new THREE.SphereGeometry(12, 8, 8), 
@@ -473,7 +469,8 @@
                 const deltaY = event.clientY - onPointerDownPointerY;
                 lon = (onPointerDownLon - deltaX * sensitivity);
                 lat = (onPointerDownLat + deltaY * sensitivity);
-                lat = Math.max(-85, Math.min(85, lat)); 
+                // --- FIX: INCREASED LOOK ANGLE TO 89.9 DEGREES ---
+                lat = Math.max(-89.9, Math.min(89.9, lat)); 
                 return; 
             }
             if(!starGroup) return;
@@ -508,11 +505,11 @@
             let color = 'white';
             let shadow = 'white';
             
-            if (d.desc.includes('Blue')) { color = '#aaddff'; shadow = '#0088ff'; }
-            else if (d.desc.includes('White')) { color = '#ffffff'; shadow = '#ccccff'; }
-            else if (d.desc.includes('Yellow')) { color = '#ffee00'; shadow = '#ffaa00'; }
-            else if (d.desc.includes('Orange')) { color = '#ffaa55'; shadow = '#ff6600'; }
-            else if (d.desc.includes('Red')) { color = '#ff5555'; shadow = '#cc0000'; }
+            if (d.desc && d.desc.includes('Blue')) { color = '#aaddff'; shadow = '#0088ff'; }
+            else if (d.desc && d.desc.includes('White')) { color = '#ffffff'; shadow = '#ccccff'; }
+            else if (d.desc && d.desc.includes('Yellow')) { color = '#ffee00'; shadow = '#ffaa00'; }
+            else if (d.desc && d.desc.includes('Orange')) { color = '#ffaa55'; shadow = '#ff6600'; }
+            else if (d.desc && d.desc.includes('Red')) { color = '#ff5555'; shadow = '#cc0000'; }
 
             visual.style.background = `radial-gradient(circle at 30% 30%, ${color}, transparent)`;
             visual.style.boxShadow = `0 0 20px ${shadow}`;
