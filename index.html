@@ -236,57 +236,56 @@
         };
         const defaultStarColor = 0xffffff;
 
-        // ACCURATE CONSTELLATION MAPPING (ID-to-ID)
-        // This maps the specific IDs found in your stars.json file
+        // ACCURATE CONSTELLATION ATLAS
+        // "SCH_PEG" and "ALN_SAG" are patched IDs to handle duplicates in the JSON
         const constellationPairs = [
             // URSA MAJOR (Big Dipper)
             ['ALK', 'MIZ'], ['MIZ', 'ALI'], ['ALI', 'MEG'], ['MEG', 'PHEC'], 
             ['PHEC', 'MER'], ['MER', 'DUB'], ['DUB', 'MEG'],
             
             // URSA MINOR (Little Dipper)
-            ['POLA', 'KOC'], // Polaris to Kochab (simplified, missing faint stars in between)
-            ['KOC', 'PHER'], 
+            ['POLA', 'KOC'], ['KOC', 'PHER'], 
 
             // ORION
             ['BET', 'BEL'], // Shoulders
-            ['MINT', 'ALNI'], ['ALNI', 'ALN'], // Belt
+            ['MINT', 'ALNI'], ['ALNI', 'ALN'], // Belt (ALN = Alnilam)
             ['SAI', 'RIG'], // Knees
-            ['BEL', 'MINT'], ['BET', 'ALNI'], ['SAI', 'ALNI'], ['RIG', 'MINT'], // Body connections
+            ['BEL', 'MINT'], ['BET', 'ALNI'], ['SAI', 'ALNI'], ['RIG', 'MINT'], // Body
 
             // SCORPIUS
             ['ANT', 'GRA'], ['GRA', 'DSCH'], // Head
-            ['ANT', 'WEI'], ['WEI', 'SAR'], ['SAR', 'SHA'], ['SHA', 'LES'], // Tail/Stinger
+            ['ANT', 'WEI'], ['WEI', 'SAR'], ['SAR', 'SHA'], ['SHA', 'LES'], // Tail
 
-            // CYGNUS (Northern Cross)
-            ['DEN', 'SAD'], ['SAD', 'ALB'], // Main Spine
-            ['SAD', 'GIE'], // Wing
+            // CYGNUS
+            ['DEN', 'SAD'], ['SAD', 'ALB'], ['SAD', 'GIE'], 
 
-            // LEO
+            // LEO & GEMINI
             ['REG', 'ALGIE'], ['ALGIE', 'ZOS'],
-
-            // GEMINI
             ['CAS', 'POL'], ['POL', 'ALH'],
 
             // CANIS MAJOR
             ['SIR', 'MIRZ'], ['SIR', 'ADH'], ['ADH', 'WES'], ['WES', 'ALUD'],
 
-            // CRUX (Southern Cross)
-            ['ACR', 'GAC'], ['MIM', 'GAC'], // Main cross shape
+            // CRUX
+            ['ACR', 'GAC'], ['MIM', 'GAC'], 
 
-            // CASSIOPEIA (W Shape - Gamma missing in file, bridging Schedar to Ruchbah)
+            // CASSIOPEIA (W Shape) - SCH = Schedar
             ['CAPH', 'SCH'], ['SCH', 'RUCH'], ['RUCH', 'SEGIN'],
 
-            // PEGASUS / ANDROMEDA
-            ['MARK', 'SCH'], ['SCH', 'ALPHER'], // Great Square tops
-            ['ALPHER', 'MIR'], ['MIR', 'ALMA'], // Andromeda chain
+            // PEGASUS (Great Square) - SCH_PEG = Scheat (Patched)
+            ['MARK', 'SCH_PEG'], ['SCH_PEG', 'ALPHER'], 
 
-            // SAGITTARIUS (Teapot)
-            ['KAUS', 'KAUSM'], ['KAUSM', 'KAUSB'], ['KAUSM', 'ALN'], 
-            ['ALN', 'ASK'], ['ASK', 'NUN'], ['ASK', 'KAUS']
+            // ANDROMEDA
+            ['ALPHER', 'MIR'], ['MIR', 'ALMA'], 
+
+            // SAGITTARIUS (Teapot) - ALN_SAG = Alnasl (Patched)
+            ['KAUS', 'KAUSM'], ['KAUSM', 'KAUSB'], ['KAUSM', 'ALN_SAG'], 
+            ['ALN_SAG', 'ASK'], ['ASK', 'NUN'], ['ASK', 'KAUS']
         ];
 
         async function init(userLongitude) {
             scene = new THREE.Scene();
+            // Add volumetric fog for depth
             scene.fog = new THREE.FogExp2(0x000005, 0.0002);
 
             camera = new THREE.PerspectiveCamera(100, window.innerWidth / window.innerHeight, 1, 4000);
@@ -299,21 +298,31 @@
             starGroup = new THREE.Group();
             linesGroup = new THREE.Group();
 
-            // Background layers
+            // --- VARIABLE BACKGROUND FIELD ---
+            // Layer 1: Dust (Faint, distant)
             createBackgroundLayer(3000, 1.5, 0x6666aa, 0.4);
+            // Layer 2: Mid-field stars (Brighter)
             createBackgroundLayer(1000, 2.5, 0xaaaaff, 0.7);
+            // Layer 3: Bright Beacons (Very bright)
             createBackgroundLayer(200, 4.0, 0xffffff, 1.0);
 
             try {
-                const response = await fetch('stars.json?v=6'); 
+                // Ensure to load fresh data
+                const response = await fetch('stars.json?v=8'); 
                 const stars = await response.json();
                 
                 const d = (new Date().getTime() / 86400000) + 2440587.5 - 2451545.0;
                 const lst = (280.46 + 360.985 * d + userLongitude) % 360;
 
-                const starMap = {}; // Maps ID to Vector3 Position
+                const starMap = {}; 
 
                 stars.forEach(s => {
+                    // --- DATA PATCHING SECTOR ---
+                    // Fixes duplicate IDs in the JSON file
+                    if(s.name === "SCHEAT") s.id = "SCH_PEG";  // Renaming duplicate SCH
+                    if(s.name === "ALNASL") s.id = "ALN_SAG";  // Renaming duplicate ALN
+                    // -----------------------------
+
                     const raRad = (s.ra * 15 - lst) * (Math.PI/180);
                     const decRad = s.dec * (Math.PI/180);
                     const phi = Math.PI/2 - decRad;
@@ -335,6 +344,7 @@
                     mesh.userData = s;
                     mesh.userData.baseColor = starColor;
 
+                    // Label element
                     const el = document.createElement('div');
                     el.className = 'label'; el.innerText = s.name;
                     el.style.color = '#' + starColor.toString(16).padStart(6, '0');
@@ -344,13 +354,12 @@
                     mesh.userData.label = el;
                     starGroup.add(mesh);
                     
-                    // Store position for line drawing
                     if(s.id) starMap[s.id] = mesh.position;
                 });
 
                 scene.add(starGroup);
 
-                // --- GENERATE ACCURATE LINES ---
+                // --- DRAW CORRECT LINES ---
                 const lineGeo = new THREE.BufferGeometry();
                 const linePos = [];
 
@@ -358,7 +367,7 @@
                     const p1 = starMap[pair[0]];
                     const p2 = starMap[pair[1]];
 
-                    // Only draw if both stars exist in the loaded JSON
+                    // Check if both stars exist (safety check)
                     if(p1 && p2) {
                         linePos.push(p1.x, p1.y, p1.z);
                         linePos.push(p2.x, p2.y, p2.z);
@@ -369,7 +378,8 @@
                 const mat = new THREE.LineBasicMaterial({ 
                     color: 0x4466aa, 
                     transparent: true, 
-                    opacity: 0.35
+                    opacity: 0.35,
+                    linewidth: 1
                 });
                 
                 linesGroup.add(new THREE.LineSegments(lineGeo, mat));
@@ -394,6 +404,7 @@
             animate();
         }
 
+        // Helper for background stars
         function createBackgroundLayer(count, size, color, opacity) {
             const bgGeo = new THREE.BufferGeometry();
             const bgPos = [];
