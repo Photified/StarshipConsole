@@ -29,14 +29,20 @@
             z-index: -1;
         }
 
+        /* RETICLE */
         #reticle {
             position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%);
-            width: 50px; height: 50px; 
-            border: 1px solid rgba(153, 153, 255, 0.4); border-radius: 50%; 
+            width: 60px; height: 60px; 
+            border: 2px solid rgba(255, 153, 0, 0.5); border-radius: 50%; 
             pointer-events: none; z-index: 5;
+            box-shadow: 0 0 10px rgba(255, 153, 0, 0.3);
+            transition: border-color 0.2s;
         }
-        #reticle::before { content: ''; position: absolute; top: 50%; left: -15px; width: 80px; height: 1px; background: rgba(153, 153, 255, 0.2); }
-        #reticle::after { content: ''; position: absolute; left: 50%; top: -15px; width: 1px; height: 80px; background: rgba(153, 153, 255, 0.2); }
+        /* State for when hovering over a star */
+        #reticle.locked {
+            border-color: #00ff00;
+            box-shadow: 0 0 15px #00ff00;
+        }
 
         #lcars-container {
             position: absolute; top: 0; left: 0; width: 100%; height: 100%;
@@ -48,32 +54,41 @@
         .header-wrap { display: flex; pointer-events: auto; align-items: flex-start; }
         .elbow-main { width: 120px; height: 120px; background: var(--pink); border-bottom-left-radius: 45px; margin-right: 5px; flex-shrink: 0; }
         .top-bars { flex-grow: 1; display: flex; flex-direction: column; gap: 5px; }
-        .bar-top { background: var(--orange); height: 50px; border-bottom-left-radius: 20px; display: flex; align-items: center; padding-left: 25px; color: black; font-size: 20px; }
+        .bar-top { 
+            background: var(--orange); height: 50px; 
+            border-bottom-left-radius: 20px; 
+            display: flex; align-items: center; justify-content: space-between;
+            padding-left: 25px; padding-right: 25px;
+            color: black; font-size: 20px; 
+        }
         .bar-sub { background: var(--blue); height: 15px; width: 85%; border-bottom-left-radius: 10px; }
+
+        /* COORDINATES DISPLAY */
+        #nav-data { font-family: monospace; font-size: 16px; color: black; }
 
         /* SIDEBAR */
         .middle-wrap { display: flex; height: 100%; }
         .sidebar { width: 100px; display: flex; flex-direction: column; gap: 5px; padding-top: 10px; pointer-events: auto; }
-        .nav-pill { background: var(--blue); height: 35px; border-radius: 0 20px 20px 0; color: black; font-size: 10px; display: flex; align-items: center; padding-left: 10px; }
+        .nav-pill { background: var(--blue); height: 35px; border-radius: 0 20px 20px 0; color: black; font-size: 10px; display: flex; align-items: center; padding-left: 10px; margin-bottom: 2px;}
         
         /* D-PAD CONTROLS */
         #controls-wrap {
             position: fixed; bottom: 30px; right: 30px; 
-            width: 140px; height: 140px; z-index: 50; pointer-events: auto;
+            width: 160px; height: 160px; z-index: 50; pointer-events: auto;
             display: grid; grid-template-columns: 1fr 1fr 1fr; grid-template-rows: 1fr 1fr 1fr;
         }
         .ctrl-btn {
-            background: rgba(255, 153, 0, 0.2); border: 1px solid var(--orange);
+            background: rgba(255, 153, 0, 0.15); border: 2px solid var(--orange);
             color: var(--orange); display: flex; align-items: center; justify-content: center;
-            cursor: pointer; font-size: 20px; border-radius: 10px;
+            cursor: pointer; font-size: 24px; user-select: none;
         }
         .ctrl-btn:active { background: var(--orange); color: black; }
-        #btn-up { grid-column: 2; grid-row: 1; border-radius: 15px 15px 0 0; }
-        #btn-left { grid-column: 1; grid-row: 2; border-radius: 15px 0 0 15px; }
-        #btn-right { grid-column: 3; grid-row: 2; border-radius: 0 15px 15px 0; }
-        #btn-down { grid-column: 2; grid-row: 3; border-radius: 0 0 15px 15px; }
-
-        /* READOUT */
+        #btn-up { grid-column: 2; grid-row: 1; border-radius: 15px 15px 0 0; border-bottom: none; }
+        #btn-left { grid-column: 1; grid-row: 2; border-radius: 15px 0 0 15px; border-right: none; }
+        #btn-right { grid-column: 3; grid-row: 2; border-radius: 0 15px 15px 0; border-left: none; }
+        #btn-down { grid-column: 2; grid-row: 3; border-radius: 0 0 15px 15px; border-top: none; }
+        
+        /* READOUT MODAL */
         #readout { 
             display: none; position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); 
             width: 80%; max-width: 350px; background: rgba(0,0,0,0.95); border: 2px solid var(--gold); 
@@ -85,15 +100,13 @@
         .data-label { color: var(--blue); font-size: 11px; display: block; }
         .data-value { color: white; font-size: 14px; display: block; margin-top: 2px; }
 
-        /* FOOTER */
         .footer-wrap { background: var(--orange); border-top-left-radius: 50px; display: flex; align-items: center; padding-left: 130px; pointer-events: auto; height: 60px; align-self: end; }
         .btn-main { background: var(--gold); border: none; padding: 12px 25px; border-radius: 25px; font-weight: bold; cursor: pointer; color: black; font-size: 14px; }
 
-        /* LABELS */
         .label { 
             position: absolute; color: var(--blue); border-left: 2px solid var(--gold); 
             padding-left: 6px; font-size: 11px; pointer-events: none;
-            background: rgba(0,0,0,0.5); white-space: nowrap; display: none;
+            background: rgba(0,0,0,0.6); white-space: nowrap; display: none;
         }
     </style>
 </head>
@@ -106,7 +119,10 @@
         <div class="header-wrap">
             <div class="elbow-main"></div>
             <div class="top-bars">
-                <div class="bar-top" id="header-text">SYSTEM STANDBY</div>
+                <div class="bar-top">
+                    <span id="header-text">SYSTEM STANDBY</span>
+                    <span id="nav-data">HDG: 000 | ELV: 00</span>
+                </div>
                 <div class="bar-sub"></div>
             </div>
         </div>
@@ -120,7 +136,6 @@
         </div>
         <div class="footer-wrap">
             <button id="start-btn" class="btn-main">ENGAGE SENSORS</button>
-            <div id="status-text" style="margin-left:20px; color:black; font-size:12px;">NAV READY</div>
         </div>
     </div>
 
@@ -146,14 +161,16 @@
 
         let scene, camera, renderer, starGroup;
         let lon = 0, lat = 0;
+        let hoveredStar = null; // Track what star we are looking at
         
         // MOVEMENT STATE
         let moveUp = false, moveDown = false, moveLeft = false, moveRight = false;
-        const turnSpeed = 0.8; // Adjust this to make it faster/slower
+        const turnSpeed = 1.2; // Slightly faster for responsiveness
 
         async function init(userLongitude) {
             scene = new THREE.Scene();
             camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 1, 4000);
+            
             renderer = new THREE.WebGLRenderer({ alpha: true, antialias: true });
             renderer.setSize(window.innerWidth, window.innerHeight);
             renderer.setPixelRatio(window.devicePixelRatio);
@@ -161,7 +178,7 @@
 
             starGroup = new THREE.Group();
 
-            // 1. BACKGROUND STARS
+            // 1. GENERATE BACKGROUND STARS
             const bgGeo = new THREE.BufferGeometry();
             const bgPos = [];
             for (let i = 0; i < 2000; i++) {
@@ -173,10 +190,12 @@
             bgGeo.setAttribute('position', new THREE.Float32BufferAttribute(bgPos, 3));
             scene.add(new THREE.Points(bgGeo, new THREE.PointsMaterial({ color: 0x666699, size: 2 })));
 
-            // 2. LOAD STARS
+            // 2. LOAD EXTERNAL STARS.JSON
             try {
                 const response = await fetch('stars.json');
                 const stars = await response.json();
+                
+                // Calculate position based on time + longitude
                 const d = (new Date().getTime() / 86400000) + 2440587.5 - 2451545.0;
                 const lst = (280.46 + 360.985 * d + userLongitude) % 360;
 
@@ -184,36 +203,60 @@
                     const raRad = (s.ra * 15 - lst) * (Math.PI/180);
                     const decRad = s.dec * (Math.PI/180);
                     const phi = Math.PI/2 - decRad;
-                    const mesh = new THREE.Mesh(new THREE.SphereGeometry(6, 8, 8), new THREE.MeshBasicMaterial({ color: 0xffffff }));
-                    mesh.position.set(1200*Math.sin(phi)*Math.cos(raRad), 1200*Math.cos(phi), 1200*Math.sin(phi)*Math.sin(raRad));
+                    
+                    // Create Clickable Mesh
+                    const mesh = new THREE.Mesh(
+                        new THREE.SphereGeometry(8, 8, 8), // Increased size slightly for easier clicking
+                        new THREE.MeshBasicMaterial({ color: 0xffffff })
+                    );
+                    
+                    mesh.position.set(
+                        1200 * Math.sin(phi) * Math.cos(raRad),
+                        1200 * Math.cos(phi),
+                        1200 * Math.sin(phi) * Math.sin(raRad)
+                    );
                     mesh.userData = s;
+
+                    // Attach Label
                     const el = document.createElement('div');
-                    el.className = 'label'; el.innerText = s.name;
+                    el.className = 'label'; 
+                    el.innerText = s.name;
                     document.body.appendChild(el);
                     mesh.userData.label = el;
                     starGroup.add(mesh);
                 });
                 scene.add(starGroup);
-            } catch (err) { console.error(err); }
+            } catch (err) { console.error("Error loading stars:", err); }
 
             window.addEventListener('resize', () => {
                 camera.aspect = window.innerWidth / window.innerHeight;
                 camera.updateProjectionMatrix();
                 renderer.setSize(window.innerWidth, window.innerHeight);
             });
+            
+            // Add Pointer Move for "Hover" effect
+            document.addEventListener('pointermove', onPointerMove);
+            
             animate();
         }
 
         function animate() {
             requestAnimationFrame(animate);
 
-            // CONTROL LOGIC
             if(moveLeft) lon -= turnSpeed;
             if(moveRight) lon += turnSpeed;
             if(moveUp) lat += turnSpeed;
             if(moveDown) lat -= turnSpeed;
+            
             lat = Math.max(-85, Math.min(85, lat)); 
 
+            // Update Compass Header
+            // Normalize lon to 0-360 degrees
+            let hdg = Math.round(lon % 360);
+            if (hdg < 0) hdg += 360;
+            document.getElementById('nav-data').innerText = `HDG: ${hdg.toString().padStart(3, '0')} | ELV: ${Math.round(lat)}`;
+
+            // Camera Look Logic
             const phi = THREE.MathUtils.degToRad(90 - lat);
             const theta = THREE.MathUtils.degToRad(lon);
             const target = new THREE.Vector3(
@@ -221,13 +264,15 @@
                 500 * Math.cos(phi),
                 500 * Math.sin(phi) * Math.sin(theta)
             );
+
             camera.lookAt(target);
             renderer.render(scene, camera);
 
-            // LABELS
+            // Update 3D Labels
             starGroup.children.forEach(mesh => {
                 if(mesh.userData.label) {
                     const v = mesh.position.clone().project(camera);
+                    // Hide labels if too close to edge
                     if(v.z < 1 && Math.abs(v.x) < 0.9 && Math.abs(v.y) < 0.9) {
                         mesh.userData.label.style.display = 'block';
                         mesh.userData.label.style.left = `${(v.x * .5 + .5) * window.innerWidth + 15}px`;
@@ -235,6 +280,69 @@
                     } else { mesh.userData.label.style.display = 'none'; }
                 }
             });
+        }
+
+        // --- INTERACTION LOGIC ---
+
+        function onPointerMove(e) {
+            // Raycast from center of screen (Reticle) mostly, but also check mouse position for desktops
+            // On mobile, the "Center" is usually where people aim
+            const mouse = new THREE.Vector2(0, 0); // Center of screen for reticle aiming
+            const raycaster = new THREE.Raycaster();
+            raycaster.setFromCamera(mouse, camera);
+            
+            const hits = raycaster.intersectObjects(starGroup.children);
+            
+            if(hits.length > 0) {
+                // LOCK ON
+                const hit = hits[0].object;
+                if(hoveredStar !== hit) {
+                    if(hoveredStar) hoveredStar.material.color.setHex(0xffffff); // Reset old
+                    hoveredStar = hit;
+                    hoveredStar.material.color.setHex(0x00ff00); // Highlight new (Green)
+                    document.getElementById('reticle').classList.add('locked');
+                    document.body.style.cursor = 'pointer';
+                }
+            } else {
+                // NO TARGET
+                if(hoveredStar) {
+                    hoveredStar.material.color.setHex(0xffffff);
+                    hoveredStar = null;
+                    document.getElementById('reticle').classList.remove('locked');
+                    document.body.style.cursor = 'default';
+                }
+            }
+        }
+
+        // CLICK HANDLER
+        window.addEventListener('click', (e) => {
+            if (e.target.closest('.ctrl-btn')) return;
+
+            // Use the "Hovered Star" if we have one (Reticle Aim)
+            if(hoveredStar) {
+                const d = hoveredStar.userData;
+                showReadout(d);
+                return;
+            }
+
+            // Fallback: Check mouse click position (for desktop mouse users)
+            const mouse = new THREE.Vector2((e.clientX/window.innerWidth)*2-1, -(e.clientY/window.innerHeight)*2+1);
+            const raycaster = new THREE.Raycaster();
+            raycaster.setFromCamera(mouse, camera);
+            const hits = raycaster.intersectObjects(starGroup.children);
+            
+            if(hits.length > 0) {
+                showReadout(hits[0].object.userData);
+            }
+        });
+
+        function showReadout(d) {
+            document.getElementById('obj-name').innerText = d.name;
+            document.getElementById('obj-dist').innerText = d.dist ? `${d.dist} LY` : "--";
+            document.getElementById('obj-comp').innerText = d.type || "--";
+            document.getElementById('obj-size').innerText = d.size || "--";
+            document.getElementById('obj-fact').innerText = d.fact;
+            document.getElementById('readout').style.display = 'block';
         }
 
         // CONTROL HANDLERS
@@ -250,36 +358,14 @@
         setupBtn('btn-left', () => moveLeft=true, () => moveLeft=false);
         setupBtn('btn-right', () => moveRight=true, () => moveRight=false);
 
-        // START
         document.getElementById('start-btn').addEventListener('click', () => {
             document.getElementById('start-btn').style.display = 'none';
             document.getElementById('header-text').innerText = "SCANNING SECTOR 001";
-            document.getElementById('status-text').innerText = "MANUAL NAV ACTIVE";
-            document.getElementById('controls-wrap').style.display = 'grid'; // Show D-Pad
+            document.getElementById('controls-wrap').style.display = 'grid';
             
             if (navigator.geolocation) {
                 navigator.geolocation.getCurrentPosition(p => init(p.coords.longitude), () => init(0));
             } else { init(0); }
-        });
-
-        // CLICK STAR
-        window.addEventListener('click', (e) => {
-            // Ignore clicks on buttons
-            if (e.target.closest('.ctrl-btn')) return;
-
-            const mouse = new THREE.Vector2((e.clientX/window.innerWidth)*2-1, -(e.clientY/window.innerHeight)*2+1);
-            const raycaster = new THREE.Raycaster();
-            raycaster.setFromCamera(mouse, camera);
-            const hits = raycaster.intersectObjects(starGroup.children);
-            if(hits.length > 0) {
-                const d = hits[0].object.userData;
-                document.getElementById('obj-name').innerText = d.name;
-                document.getElementById('obj-dist').innerText = d.dist ? `${d.dist} LY` : "--";
-                document.getElementById('obj-comp').innerText = d.type || "--";
-                document.getElementById('obj-size').innerText = d.size || "--";
-                document.getElementById('obj-fact').innerText = d.fact;
-                document.getElementById('readout').style.display = 'block';
-            }
         });
     </script>
 </body>
