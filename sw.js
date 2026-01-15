@@ -1,4 +1,4 @@
-const cacheName = 'starship-console-v55';
+const cacheName = 'starship-console-v56';
 const assets = [
   './',
   './index.html',

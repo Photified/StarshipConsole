@@ -1318,5 +1318,105 @@
       "A beautiful double star in telescopes.",
       "Both stars are chemically peculiar."
     ]
+  },
+  {
+    "id": "SHELIAK", "name": "SHELIAK", "con": "Lyra", "dist": "960 LY", "vis": "Variable",
+    "type": "Blue-White Giant", "lum": "30,000x Sun", "temp": "2.5x Sun",
+    "mass": "13x Sun", "rad": "15x Wider than Sun", "age": "25 Million Years", "planets": "None Detected", "rot": "Unknown",
+    "facts": [
+      "A famous eclipsing binary system.",
+      "It has a disk of gas swirling around one of the stars.",
+      "One of the stars is distorted into an egg shape."
+    ]
+  },
+  {
+    "id": "SULAFAT", "name": "SULAFAT", "con": "Lyra", "dist": "620 LY", "vis": "Bright",
+    "type": "Blue Giant", "lum": "2,430x Sun", "temp": "2.6x Sun",
+    "mass": "6.5x Sun", "rad": "15x Wider than Sun", "age": "32 Million Years", "planets": "None Detected", "rot": "Unknown",
+    "facts": [
+      "The name means 'Turtle' in Arabic, referring to the Lyre's shell.",
+      "It forms the bottom of the Lyra parallelogram.",
+      "It is evolving rapidly into a bright giant."
+    ]
+  },
+  {
+    "id": "MEISSA", "name": "MEISSA", "con": "Orion", "dist": "1,100 LY", "vis": "Dim",
+    "type": "Blue Giant", "lum": "65,000x Sun", "temp": "6.0x Sun",
+    "mass": "28x Sun", "rad": "10x Wider than Sun", "age": "5 Million Years", "planets": "None Detected", "rot": "Unknown",
+    "facts": [
+      "The 'Head' of the Hunter.",
+      "It illuminates a faint ring of gas around it.",
+      "It is a binary star with a smaller companion."
+    ]
+  },
+  {
+    "id": "RASTABAN", "name": "RASTABAN", "con": "Draco", "dist": "380 LY", "vis": "Bright",
+    "type": "Yellow Giant", "lum": "950x Sun", "temp": "0.9x Sun",
+    "mass": "5.0x Sun", "rad": "40x Wider than Sun", "age": "65 Million Years", "planets": "None Detected", "rot": "Unknown",
+    "facts": [
+      "The name means 'Head of the Serpent'.",
+      "One of the eyes of the Dragon.",
+      "It forms a pair with Etamin."
+    ]
+  },
+  {
+    "id": "ZAVIJAVA", "name": "ZAVIJAVA", "con": "Virgo", "dist": "36 LY", "vis": "Dim",
+    "type": "Yellow-White Dwarf", "lum": "3.5x Sun", "temp": "1.2x Sun",
+    "mass": "1.4x Sun", "rad": "1.6x Wider than Sun", "age": "2.5 Billion Years", "planets": "None Detected", "rot": "Unknown",
+    "facts": [
+      "The name means 'Corner of the Barking Dog'.",
+      "It is richer in iron than our Sun.",
+      "It is located very close to the ecliptic."
+    ]
+  },
+  {
+    "id": "ZANIAH", "name": "ZANIAH", "con": "Virgo", "dist": "250 LY", "vis": "Dim",
+    "type": "Blue-White Giant", "lum": "155x Sun", "temp": "1.4x Sun",
+    "mass": "2.5x Sun", "rad": "2.7x Wider than Sun", "age": "500 Million Years", "planets": "None Detected", "rot": "Unknown",
+    "facts": [
+      "A triple star system.",
+      "The stars orbit each other extremely closely.",
+      "Visible as a single point of light to the eye."
+    ]
+  },
+  {
+    "id": "SYRMA", "name": "SYRMA", "con": "Virgo", "dist": "131 LY", "vis": "Dim",
+    "type": "Yellow-White Subgiant", "lum": "24x Sun", "temp": "1.2x Sun",
+    "mass": "1.9x Sun", "rad": "2.6x Wider than Sun", "age": "1.5 Billion Years", "planets": "None Detected", "rot": "Unknown",
+    "facts": [
+      "The name means 'Train of the Garment'.",
+      "It is a Delta Scuti variable star.",
+      "It rotates very quickly."
+    ]
+  },
+  {
+    "id": "YILDUN", "name": "YILDUN", "con": "Ursa Minor", "dist": "172 LY", "vis": "Dim",
+    "type": "White Dwarf", "lum": "47x Sun", "temp": "1.5x Sun",
+    "mass": "2.8x Sun", "rad": "2.2x Wider than Sun", "age": "400 Million Years", "planets": "None Detected", "rot": "Unknown",
+    "facts": [
+      "The name means 'Star' in Turkish.",
+      "It marks the handle of the Little Dipper.",
+      "It spins rapidly at over 170 km/s."
+    ]
+  },
+  {
+    "id": "CURSA", "name": "CURSA", "con": "Eridanus", "dist": "91 LY", "vis": "Bright",
+    "type": "White Giant", "lum": "45x Sun", "temp": "1.4x Sun",
+    "mass": "2.1x Sun", "rad": "2.5x Wider than Sun", "age": "800 Million Years", "planets": "None Detected", "rot": "Unknown",
+    "facts": [
+      "The 'Chair' or 'Footstool' of Orion.",
+      "It marks the start of the River Eridanus.",
+      "It is a fast rotator."
+    ]
+  },
+  {
+    "id": "MENKENT", "name": "MENKENT", "con": "Centaurus", "dist": "61 LY", "vis": "Bright",
+    "type": "Orange Giant", "lum": "48x Sun", "temp": "0.8x Sun",
+    "mass": "1.3x Sun", "rad": "11x Wider than Sun", "age": "4 Billion Years", "planets": "None Detected", "rot": "Unknown",
+    "facts": [
+      "The 'Shoulder of the Centaur'.",
+      "It is visible from northern latitudes unlike Alpha Centauri.",
+      "It is moving towards the solar system."
+    ]
   }
 ]
