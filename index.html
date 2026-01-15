@@ -24,19 +24,22 @@
             position: fixed; top: 0; left: 0; width: 100%; height: 100%;
             background: radial-gradient(circle at center, #0a0a1a 0%, #000005 100%);
             z-index: -1;
+            opacity: 0; /* Hidden until sensors engage */
+            transition: opacity 2s ease-in;
         }
 
-        /* --- BOOT SCREEN & LOADER --- */
-        #boot-overlay {
-            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            background: black; z-index: 5000;
+        /* --- BOOT SCREEN (INTERNAL) --- */
+        #boot-screen {
+            position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%);
+            z-index: 5; /* Below LCARS, Above Canvas */
             display: flex; align-items: center; justify-content: center;
             flex-direction: column;
-            transition: opacity 0.5s ease-out;
+            width: 100%; pointer-events: none; /* Let clicks pass through to button */
         }
 
         .boot-header {
             color: var(--red); font-size: 18px; margin-bottom: 10px; letter-spacing: 2px;
+            text-shadow: 0 0 5px var(--red);
         }
         
         .boot-instruction {
@@ -59,14 +62,14 @@
         }
 
         .lcars-seg {
-            flex: 1; background: #333; border-radius: 2px;
+            flex: 1; background: #222; border-radius: 2px;
             transition: background 0.1s;
         }
         
         /* Active colors for loading segments */
-        .lcars-seg.on:nth-child(odd) { background: var(--orange); }
-        .lcars-seg.on:nth-child(even) { background: var(--gold); }
-        .lcars-seg.on:last-child { background: var(--red); } 
+        .lcars-seg.on:nth-child(odd) { background: var(--orange); box-shadow: 0 0 10px var(--orange); }
+        .lcars-seg.on:nth-child(even) { background: var(--gold); box-shadow: 0 0 10px var(--gold); }
+        .lcars-seg.on:last-child { background: var(--red); box-shadow: 0 0 15px var(--red); } 
 
         /* MAIN BOOT BUTTON */
         .big-btn {
@@ -75,6 +78,7 @@
             color: black; font-size: 16px; letter-spacing: 1px;
             border: 2px solid var(--orange);
             box-shadow: 0 0 15px rgba(255, 153, 0, 0.3);
+            pointer-events: auto; /* Re-enable clicks */
         }
         .big-btn:active { background: white; }
 
@@ -86,6 +90,7 @@
             pointer-events: none; z-index: 5;
             box-shadow: 0 0 10px rgba(153, 153, 255, 0.3);
             transition: all 0.2s ease;
+            opacity: 0; /* Hidden until loaded */
         }
         #reticle.locked {
             border-color: #ff9900;
@@ -100,9 +105,8 @@
 
         #lcars-container {
             position: absolute; top: 0; left: 0; width: 100%; height: 100%;
-            display: grid; grid-template-rows: 140px 1fr 100px;
+            display: grid; grid-template-rows: 140px 1fr 80px; /* Fixed footer height */
             pointer-events: none; z-index: 10;
-            opacity: 0; transition: opacity 1s; /* Hidden until loaded */
         }
 
         .header-wrap { display: flex; pointer-events: auto; align-items: flex-start; }
@@ -140,6 +144,7 @@
             background: var(--gold); height: 40px; 
             border-radius: 0 20px 20px 0; display: flex; align-items: center; justify-content: center;
             margin-bottom: 5px; cursor: pointer; transition: all 0.2s;
+            pointer-events: auto;
         }
         .audio-btn svg { width: 24px; height: 24px; fill: black; }
         .audio-btn.muted { background: #444; }
@@ -156,6 +161,7 @@
             margin-bottom: 5px; border-radius: 0 25px 25px 0;
             display: flex; align-items: center; justify-content: center;
             position: relative;
+            pointer-events: auto;
         }
         .zoom-label {
             position: absolute; left: 12px; top: 50%; font-size: 10px; color: black; 
@@ -217,6 +223,13 @@
             box-shadow: 0 0 10px rgba(255,0,0,0.5);
         }
 
+        .footer-wrap { 
+            background: var(--orange); 
+            border-top-left-radius: 50px; 
+            display: flex; align-items: center; padding-left: 130px; 
+            pointer-events: auto; height: 60px; align-self: end; width: 100%;
+        }
+
         .label { 
             position: absolute; color: var(--blue); border-left: 2px solid var(--gold); 
             padding-left: 6px; font-size: 11px; pointer-events: none;
@@ -229,31 +242,6 @@
     <div id="space-canvas"></div>
     <div id="reticle"></div>
 
-    <div id="boot-overlay">
-        <div class="boot-header">OPTICAL SENSORS OFFLINE</div>
-        <div class="boot-instruction">INITIALIZE SYSTEM TO BEGIN</div>
-        
-        <button id="start-btn" class="big-btn">ENGAGE SENSORS</button>
-        
-        <div id="loading-interface">
-            <div class="load-text">CALIBRATING ASTROMETRICS...</div>
-            <div class="lcars-bar-container">
-                <div class="lcars-seg"></div>
-                <div class="lcars-seg"></div>
-                <div class="lcars-seg"></div>
-                <div class="lcars-seg"></div>
-                <div class="lcars-seg"></div>
-                <div class="lcars-seg"></div>
-                <div class="lcars-seg"></div>
-                <div class="lcars-seg"></div>
-                <div class="lcars-seg"></div>
-                <div class="lcars-seg"></div>
-                <div class="lcars-seg"></div>
-                <div class="lcars-seg"></div>
-            </div>
-        </div>
-    </div>
-
     <div id="lcars-container">
         <div class="header-wrap">
             <div class="elbow-main">
@@ -261,7 +249,7 @@
             </div>
             <div class="top-bars">
                 <div class="bar-top">
-                    <span id="header-text">SYSTEM ONLINE</span>
+                    <span id="header-text">SYSTEM STANDBY</span>
                     <span id="nav-data">HDG: 000</span>
                 </div>
                 <div class="bar-sub"></div>
@@ -285,7 +273,34 @@
                 <div style="flex-grow:1"></div>
                 <div class="reset-btn" onclick="location.reload()">RESET</div>
             </div>
+            
+            <div id="boot-screen">
+                <div class="boot-header">OPTICAL SENSORS OFFLINE</div>
+                <div class="boot-instruction">INITIALIZE SYSTEM TO BEGIN</div>
+                
+                <button id="start-btn" class="big-btn">ENGAGE SENSORS</button>
+                
+                <div id="loading-interface">
+                    <div class="load-text">CALIBRATING ASTROMETRICS...</div>
+                    <div class="lcars-bar-container">
+                        <div class="lcars-seg"></div>
+                        <div class="lcars-seg"></div>
+                        <div class="lcars-seg"></div>
+                        <div class="lcars-seg"></div>
+                        <div class="lcars-seg"></div>
+                        <div class="lcars-seg"></div>
+                        <div class="lcars-seg"></div>
+                        <div class="lcars-seg"></div>
+                        <div class="lcars-seg"></div>
+                        <div class="lcars-seg"></div>
+                        <div class="lcars-seg"></div>
+                        <div class="lcars-seg"></div>
+                    </div>
+                </div>
+            </div>
         </div>
+
+        <div class="footer-wrap"></div>
     </div>
 
     <div id="readout">
@@ -565,7 +580,6 @@
         }
 
         function onPointerDown(event) {
-            // IGNORE READOUT CLICKS TO FIX SCROLL BUG
             if (event.target.closest('#readout')) return;
 
             if (event.target.closest('.action-btn') || event.target.closest('.audio-btn') || event.target.closest('.reset-btn') || event.target.id === 'zoom-slider') return;
@@ -756,10 +770,11 @@
                     playSound('click'); // Final success beep
                     
                     // Fade out boot screen
-                    document.getElementById('boot-overlay').style.opacity = '0';
+                    document.getElementById('boot-screen').style.opacity = '0';
                     setTimeout(() => {
-                        document.getElementById('boot-overlay').style.display = 'none';
-                        document.getElementById('lcars-container').style.opacity = '1'; // Show main UI
+                        document.getElementById('boot-screen').style.display = 'none';
+                        document.getElementById('reticle').style.opacity = '1';
+                        document.getElementById('space-canvas').style.opacity = '1';
                     }, 500);
 
                     // Initialize Three.js
