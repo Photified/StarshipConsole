@@ -16,7 +16,7 @@
             font-family: Arial, sans-serif; font-weight: bold; 
             text-transform: uppercase; color: white; 
             user-select: none; -webkit-user-select: none;
-            touch-action: none; /* Prevents browser zooming/scrolling */
+            touch-action: none;
         }
 
         #space-canvas {
@@ -34,9 +34,10 @@
             box-shadow: 0 0 10px rgba(255, 153, 0, 0.3);
             transition: all 0.3s ease;
         }
+        /* Lock visual - changed to GOLD to stand out against colored stars */
         #reticle.locked {
-            border-color: #00ff00;
-            box-shadow: 0 0 25px #00ff00, inset 0 0 10px #00ff00;
+            border-color: #ffff00;
+            box-shadow: 0 0 25px #ffff00, inset 0 0 10px #ffff00;
             width: 80px; height: 80px;
         }
 
@@ -159,6 +160,22 @@
         let targetLon = 0, targetLat = 0;
         let hoveredStar = null; 
 
+        // --- CONSTELLATION COLOR MAP ---
+        // Maps the "con" code in stars.json to a hex color
+        const conColors = {
+            "URSA MAJOR": 0x00ff00,    // Green
+            "URSA MINOR": 0xcc00ff,    // Purple
+            "ORION": 0x00aaff,         // Cyan/Blue
+            "SCORPIUS": 0xff3300,      // Red/Orange
+            "CASSIOPEIA": 0xff0099,    // Pink
+            "CYGNUS": 0x00ffff,        // Light Cyan
+            "CRUX": 0xffff00,          // Yellow
+            "CANIS MAJOR": 0x0055ff,   // Deep Blue
+            "LEO": 0xffaa00,           // Gold
+            "GEMINI": 0xffaaee         // Light Pink
+        };
+        const defaultStarColor = 0xffffff;
+
         async function init(userLongitude) {
             scene = new THREE.Scene();
             camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 1, 4000);
@@ -170,7 +187,7 @@
 
             starGroup = new THREE.Group();
 
-            // 1. BACKGROUND STARS
+            // 1. BACKGROUND STARS (Dim)
             const bgGeo = new THREE.BufferGeometry();
             const bgPos = [];
             for (let i = 0; i < 2000; i++) {
@@ -180,7 +197,7 @@
                 bgPos.push(r * Math.sin(phi) * Math.cos(theta), r * Math.cos(phi), r * Math.sin(phi) * Math.sin(theta));
             }
             bgGeo.setAttribute('position', new THREE.Float32BufferAttribute(bgPos, 3));
-            scene.add(new THREE.Points(bgGeo, new THREE.PointsMaterial({ color: 0x666699, size: 2 })));
+            scene.add(new THREE.Points(bgGeo, new THREE.PointsMaterial({ color: 0x444466, size: 2 })));
 
             // 2. LOAD STARS
             try {
@@ -194,9 +211,12 @@
                     const decRad = s.dec * (Math.PI/180);
                     const phi = Math.PI/2 - decRad;
                     
+                    // Determine Color based on Constellation
+                    const starColor = conColors[s.con] || defaultStarColor;
+
                     const mesh = new THREE.Mesh(
-                        new THREE.SphereGeometry(12, 8, 8), // Large hit box
-                        new THREE.MeshBasicMaterial({ color: 0xffffff })
+                        new THREE.SphereGeometry(12, 8, 8), 
+                        new THREE.MeshBasicMaterial({ color: starColor })
                     );
                     
                     // Position Star
@@ -206,11 +226,19 @@
                         r * Math.cos(phi),
                         r * Math.sin(phi) * Math.sin(raRad)
                     );
+                    
+                    // Store data including original color so we can reset it after hover
                     mesh.userData = s;
+                    mesh.userData.baseColor = starColor;
 
                     // Label
                     const el = document.createElement('div');
-                    el.className = 'label'; el.innerText = s.name;
+                    el.className = 'label'; 
+                    el.innerText = s.name;
+                    // Labels inherit the star color for extra style
+                    el.style.color = '#' + starColor.toString(16).padStart(6, '0');
+                    el.style.borderLeftColor = '#' + starColor.toString(16).padStart(6, '0');
+                    
                     document.body.appendChild(el);
                     mesh.userData.label = el;
                     starGroup.add(mesh);
@@ -232,44 +260,33 @@
             animate();
         }
 
-        // CALCULATE WHERE TO LOOK TO FACE A STAR
         function getStarAngles(position) {
-            // Convert 3D position back to Lon/Lat angles
             const r = Math.sqrt(position.x*position.x + position.y*position.y + position.z*position.z);
             const phi = Math.acos(position.y / r);
-            const theta = Math.atan2(position.x, position.z); // Note: ThreeJS uses X/Z plane for Theta usually
+            const theta = Math.atan2(position.x, position.z); 
             
-            // Convert to degrees for our navigation system
             let starLat = 90 - THREE.MathUtils.radToDeg(phi);
             let starLon = THREE.MathUtils.radToDeg(theta); 
             
-            // Fix Theta orientation for atan2
             if(starLon < 0) starLon += 360;
-            
             return { lon: starLon, lat: starLat };
         }
 
         function animate() {
             requestAnimationFrame(animate);
 
-            // SNAPPING LOGIC (Smoothly rotate camera to target)
             if(isSnapping) {
-                // Smooth Lerp
                 lat += (targetLat - lat) * 0.1;
                 lon += (targetLon - lon) * 0.1;
-                
-                // Stop snapping when close
                 if(Math.abs(targetLat - lat) < 0.05 && Math.abs(targetLon - lon) < 0.05) {
                     isSnapping = false;
                 }
             }
 
-            // Update Header
             let hdg = Math.round(lon % 360);
             if (hdg < 0) hdg += 360;
             document.getElementById('nav-data').innerText = `HDG: ${hdg.toString().padStart(3, '0')}`;
 
-            // Apply Camera Rotation
             const phi = THREE.MathUtils.degToRad(90 - lat);
             const theta = THREE.MathUtils.degToRad(lon);
             const target = new THREE.Vector3(
@@ -280,11 +297,9 @@
             camera.lookAt(target);
             renderer.render(scene, camera);
 
-            // Update Labels
             starGroup.children.forEach(mesh => {
                 if(mesh.userData.label) {
                     const v = mesh.position.clone().project(camera);
-                    // Only show labels if fairly central
                     if(v.z < 1 && Math.abs(v.x) < 0.85 && Math.abs(v.y) < 0.85) {
                         mesh.userData.label.style.display = 'block';
                         mesh.userData.label.style.left = `${(v.x * .5 + .5) * window.innerWidth + 20}px`;
@@ -295,12 +310,10 @@
         }
 
         function onPointerDown(event) {
-            // Don't drag if clicking a button
             if (event.target.closest('.action-btn') || event.target.closest('.reset-btn')) return;
             if (event.isPrimary === false) return;
-            
             isUserInteracting = true;
-            isSnapping = false; // Cancel any active snap
+            isSnapping = false; 
             onPointerDownPointerX = event.clientX;
             onPointerDownPointerY = event.clientY;
             onPointerDownLon = lon;
@@ -317,7 +330,7 @@
                 return; 
             }
 
-            // CHECK HOVER (Always from center screen)
+            // CHECK HOVER
             const raycaster = new THREE.Raycaster();
             raycaster.setFromCamera(new THREE.Vector2(0, 0), camera);
             const hits = raycaster.intersectObjects(starGroup.children);
@@ -327,15 +340,15 @@
             if(hits.length > 0) {
                 const hit = hits[0].object;
                 if(hoveredStar !== hit) {
-                    if(hoveredStar) hoveredStar.material.color.setHex(0xffffff);
+                    if(hoveredStar) hoveredStar.material.color.setHex(hoveredStar.userData.baseColor); // Reset to base color
                     hoveredStar = hit;
-                    hoveredStar.material.color.setHex(0x00ff00);
+                    hoveredStar.material.color.setHex(0xffff00); // Highlight Gold
                     document.getElementById('reticle').classList.add('locked');
                     buttons.forEach(b => b.classList.add('active'));
                 }
             } else {
                 if(hoveredStar) {
-                    hoveredStar.material.color.setHex(0xffffff);
+                    hoveredStar.material.color.setHex(hoveredStar.userData.baseColor); // Reset to base color
                     hoveredStar = null;
                     document.getElementById('reticle').classList.remove('locked');
                     buttons.forEach(b => b.classList.remove('active'));
@@ -345,14 +358,8 @@
 
         function onPointerUp() { 
             isUserInteracting = false; 
-            
-            // SNAP LOGIC
-            // If we are looking generally at a star, snap to it perfectly
             if(hoveredStar) {
                 const angles = getStarAngles(hoveredStar.position);
-                
-                // Handle 360 wrap-around math for smooth spinning
-                // Find the closest equivalent longitude
                 let currentLon = lon % 360; 
                 if(currentLon < 0) currentLon += 360;
                 
@@ -366,7 +373,6 @@
             }
         }
 
-        // --- BUTTON LOGIC ---
         function cleanData(val, type) {
             if(!val) return "UNKNOWN";
             if(type === 'dist') {
@@ -375,7 +381,6 @@
                 return val + " LIGHT YEARS";
             }
             if(type === 'size') {
-                // "887 R" -> "800x SUN SIZE"
                 const num = parseFloat(val);
                 if(isNaN(num)) return "UNKNOWN SIZE";
                 if(num > 100) return Math.round(num) + "x WIDER THAN SUN";
@@ -394,22 +399,15 @@
         }
 
         function showData(btnType) {
-            // FUZZY SEARCH: If no star is locked, find the closest one
             let target = hoveredStar;
             if(!target) {
-                // Find closest star to center of view
                 let closestDist = Infinity;
                 let closestStar = null;
                 const raycaster = new THREE.Raycaster();
                 raycaster.setFromCamera(new THREE.Vector2(0, 0), camera);
-                
-                // Check distance to center for ALL stars
                 starGroup.children.forEach(star => {
-                    // Project star position to screen space
                     const v = star.position.clone().project(camera);
-                    // Distance from center (0,0)
                     const d = Math.sqrt(v.x*v.x + v.y*v.y);
-                    // Must be visible (z<1) and reasonably close to center
                     if(v.z < 1 && d < 0.3 && d < closestDist) {
                         closestDist = d;
                         closestStar = star;
@@ -428,11 +426,16 @@
             const d = target.userData;
             document.getElementById('obj-header').innerText = d.name;
 
+            // Header matches star color
+            const hexColor = '#' + target.userData.baseColor.toString(16).padStart(6, '0');
+            document.getElementById('obj-header').style.color = hexColor;
+            document.getElementById('obj-header').style.borderColor = hexColor;
+
             let content = "";
             if (btnType === 'SCAN') {
                 content = `
                     <div class='data-label'>RANGE</div><div class='data-value'>${cleanData(d.dist, 'dist')}</div>
-                    <div class='data-label'>SECTOR</div><div class='data-value'>${d.con || "UNKNOWN"}</div>
+                    <div class='data-label'>SECTOR</div><div class='data-value' style='color:${hexColor}'>${d.con || "UNKNOWN"}</div>
                 `;
             } else if (btnType === 'ASTRO') {
                 content = `
