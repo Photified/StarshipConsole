@@ -242,27 +242,75 @@
             box-shadow: 0 0 10px rgba(255,0,0,0.5);
         }
 
-        /* --- HELP MODAL --- */
+        /* --- HELP MODAL (LCARS STYLE) --- */
         #help-overlay {
             display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            background: rgba(0,0,0,0.85); z-index: 200;
-            backdrop-filter: blur(5px);
+            background: rgba(0, 0, 0, 0.6); 
+            z-index: 200;
+            backdrop-filter: blur(8px);
             align-items: center; justify-content: center;
             pointer-events: auto;
         }
+
         .help-box {
-            width: 300px; border-left: 20px solid var(--gold);
-            background: rgba(0,0,0,0.5); padding: 20px;
-            border-top-right-radius: 20px; border-bottom-right-radius: 20px;
+            width: 320px; 
+            background: rgba(10, 10, 20, 0.95); 
+            border: 2px solid var(--blue);
+            border-radius: 15px;
+            padding: 20px;
+            box-shadow: 0 0 30px rgba(153, 153, 255, 0.2);
+            position: relative;
+            overflow: hidden;
         }
-        .help-title { color: var(--gold); font-size: 20px; margin-bottom: 15px; border-bottom: 2px solid var(--orange); display: inline-block;}
-        .help-item { margin-bottom: 15px; }
-        .help-lbl { color: var(--blue); font-size: 12px; margin-bottom: 2px; }
-        .help-desc { color: white; font-size: 14px; font-weight: normal; }
+        
+        /* The decorative bar at the top */
+        .help-box::before {
+            content: ''; position: absolute; top: 0; left: 0; width: 100%; height: 10px;
+            background: var(--gold);
+        }
+
+        .help-title { 
+            color: var(--gold); font-size: 22px; 
+            margin-top: 10px; margin-bottom: 20px; 
+            text-align: right; letter-spacing: 2px;
+            border-bottom: 1px solid var(--blue);
+            padding-bottom: 5px;
+        }
+
+        /* LCARS Data Rows */
+        .protocol-row {
+            display: flex; align-items: stretch; margin-bottom: 8px; height: 36px;
+        }
+        
+        .protocol-pill {
+            width: 100px; 
+            display: flex; align-items: center; justify-content: flex-end;
+            padding-right: 10px;
+            color: black; font-size: 10px; font-weight: bold;
+            border-radius: 18px 0 0 18px;
+            margin-right: 5px;
+        }
+        
+        .protocol-text {
+            flex-grow: 1;
+            display: flex; align-items: center; padding-left: 10px;
+            background: rgba(255, 255, 255, 0.1);
+            color: var(--blue); font-size: 11px;
+            border-left: 4px solid black; /* Gap look */
+            border-radius: 0 18px 18px 0;
+        }
+
         .help-ack { 
-            background: var(--red); color: black; padding: 10px; 
+            background: var(--red); color: black; 
+            padding: 12px; margin-top: 25px;
             text-align: center; cursor: pointer; font-weight: bold; 
-            margin-top: 20px; border-radius: 15px;
+            border-radius: 20px; font-size: 14px; letter-spacing: 1px;
+            transition: all 0.2s;
+            border: 2px solid transparent;
+        }
+        
+        .help-ack:active {
+            background: white; border-color: var(--red);
         }
 
         .footer-wrap { 
@@ -360,29 +408,35 @@
         </div>
     </div>
 
-    <div id="help-overlay">
+   <div id="help-overlay">
         <div class="help-box">
-            <div class="help-title">INPUT PROTOCOLS</div>
-            <div class="help-item">
-                <div class="help-lbl">INITIALIZATION</div>
-                <div class="help-desc">Click ENGAGE SENSORS to begin.</div>
+            <div class="help-title">SYSTEM INPUT PROTOCOLS</div>
+            
+            <div class="protocol-row">
+                <div class="protocol-pill" style="background:var(--gold)">INITIALIZE</div>
+                <div class="protocol-text">CLICK "ENGAGE SENSORS" TO BEGIN</div>
             </div>
-            <div class="help-item">
-                <div class="help-lbl">NAVIGATION</div>
-                <div class="help-desc">Drag screen to rotate sensors.</div>
+
+            <div class="protocol-row">
+                <div class="protocol-pill" style="background:var(--orange)">NAVIGATION</div>
+                <div class="protocol-text">DRAG SCREEN TO ROTATE SENSORS</div>
             </div>
-            <div class="help-item">
-                <div class="help-lbl">IDENTIFICATION</div>
-                <div class="help-desc">Place star in crosshairs to target.</div>
+            
+            <div class="protocol-row">
+                <div class="protocol-pill" style="background:var(--pink)">IDENTIFY</div>
+                <div class="protocol-text">PLACE OBJECT IN CROSSHAIRS</div>
             </div>
-            <div class="help-item">
-                <div class="help-lbl">ANALYSIS</div>
-                <div class="help-desc">Select tabs (Left) for data.</div>
+            
+            <div class="protocol-row">
+                <div class="protocol-pill" style="background:var(--blue)">ANALYSIS</div>
+                <div class="protocol-text">SELECT SIDEBAR TABS FOR DATA</div>
             </div>
-            <div class="help-item">
-                <div class="help-lbl">OPTICS</div>
-                <div class="help-desc">Use slider to adjust magnification.</div>
+            
+            <div class="protocol-row">
+                <div class="protocol-pill" style="background:var(--orange)">OPTICS</div>
+                <div class="protocol-text">USE SLIDER TO ADJUST ZOOM</div>
             </div>
+            
             <div class="help-ack" id="btn-help-ack">ACKNOWLEDGE</div>
         </div>
     </div>
