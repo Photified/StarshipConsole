@@ -9,6 +9,7 @@
         :root { 
             --orange: #ff9900; --pink: #cc99cc; --blue: #9999ff; 
             --gold: #ffcc66; --red: #cc0000; --dark-blue: #08081a;
+            --lcars-bg: rgba(0, 0, 0, 0.85);
         }
         
         body { 
@@ -21,7 +22,8 @@
 
         #space-canvas {
             position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            background: radial-gradient(circle at center, #111122 0%, #000 100%);
+            /* Deep Space Gradient Background */
+            background: radial-gradient(circle at center, #0a0a1a 0%, #000005 100%);
             z-index: -1;
         }
 
@@ -29,16 +31,21 @@
         #reticle {
             position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%);
             width: 60px; height: 60px; 
-            border: 2px solid rgba(255, 153, 0, 0.5); border-radius: 50%; 
+            border: 2px solid rgba(153, 153, 255, 0.5); border-radius: 50%; 
             pointer-events: none; z-index: 5;
-            box-shadow: 0 0 10px rgba(255, 153, 0, 0.3);
+            box-shadow: 0 0 10px rgba(153, 153, 255, 0.3);
             transition: all 0.2s ease;
         }
         #reticle.locked {
-            border-color: #ffff00;
-            box-shadow: 0 0 25px #ffff00, inset 0 0 10px #ffff00;
+            border-color: #ff9900;
+            box-shadow: 0 0 25px #ff9900, inset 0 0 10px #ff9900;
             width: 80px; height: 80px;
         }
+        #reticle::after, #reticle::before {
+            content: ''; position: absolute; background: rgba(153, 153, 255, 0.5);
+        }
+        #reticle::after { top: 50%; left: -10px; right: -10px; height: 1px; }
+        #reticle::before { left: 50%; top: -10px; bottom: -10px; width: 1px; }
 
         /* LCARS LAYOUT */
         #lcars-container {
@@ -72,7 +79,7 @@
             margin-bottom: 5px; cursor: pointer; transition: background 0.2s;
             border: 1px solid transparent; opacity: 0.6;
         }
-        .action-btn.active { opacity: 1; box-shadow: 0 0 10px var(--blue); }
+        .action-btn.active { opacity: 1; box-shadow: 0 0 10px var(--blue); background: var(--gold); }
         .action-btn:active { background: white; }
         
         .reset-btn {
@@ -111,11 +118,12 @@
             position: fixed; 
             bottom: 20px; left: 110px; 
             width: calc(100% - 125px);
-            background: black; 
+            background: var(--lcars-bg); 
             border-top: 30px solid var(--gold); 
             border-bottom-left-radius: 30px;
             z-index: 100; padding: 20px; 
             pointer-events: auto;
+            backdrop-filter: blur(5px);
             box-shadow: 5px 5px 20px rgba(0,0,0,0.8);
             flex-direction: row; align-items: center; gap: 20px;
             box-sizing: border-box;
@@ -156,7 +164,9 @@
         .label { 
             position: absolute; color: var(--blue); border-left: 2px solid var(--gold); 
             padding-left: 6px; font-size: 11px; pointer-events: none;
-            background: rgba(0,0,0,0.6); white-space: nowrap; display: none;
+            text-shadow: 0 0 4px black;
+            white-space: nowrap; display: none;
+            opacity: 0.8;
         }
     </style>
 </head>
@@ -209,7 +219,7 @@
     <script type="module">
         import * as THREE from 'three';
 
-        let scene, camera, renderer, starGroup;
+        let scene, camera, renderer, starGroup, linesGroup;
         let isUserInteracting = false;
         
         let lon = 0, lat = 0;
@@ -226,8 +236,59 @@
         };
         const defaultStarColor = 0xffffff;
 
+        // ACCURATE CONSTELLATION MAPPING (ID-to-ID)
+        // This maps the specific IDs found in your stars.json file
+        const constellationPairs = [
+            // URSA MAJOR (Big Dipper)
+            ['ALK', 'MIZ'], ['MIZ', 'ALI'], ['ALI', 'MEG'], ['MEG', 'PHEC'], 
+            ['PHEC', 'MER'], ['MER', 'DUB'], ['DUB', 'MEG'],
+            
+            // URSA MINOR (Little Dipper)
+            ['POLA', 'KOC'], // Polaris to Kochab (simplified, missing faint stars in between)
+            ['KOC', 'PHER'], 
+
+            // ORION
+            ['BET', 'BEL'], // Shoulders
+            ['MINT', 'ALNI'], ['ALNI', 'ALN'], // Belt
+            ['SAI', 'RIG'], // Knees
+            ['BEL', 'MINT'], ['BET', 'ALNI'], ['SAI', 'ALNI'], ['RIG', 'MINT'], // Body connections
+
+            // SCORPIUS
+            ['ANT', 'GRA'], ['GRA', 'DSCH'], // Head
+            ['ANT', 'WEI'], ['WEI', 'SAR'], ['SAR', 'SHA'], ['SHA', 'LES'], // Tail/Stinger
+
+            // CYGNUS (Northern Cross)
+            ['DEN', 'SAD'], ['SAD', 'ALB'], // Main Spine
+            ['SAD', 'GIE'], // Wing
+
+            // LEO
+            ['REG', 'ALGIE'], ['ALGIE', 'ZOS'],
+
+            // GEMINI
+            ['CAS', 'POL'], ['POL', 'ALH'],
+
+            // CANIS MAJOR
+            ['SIR', 'MIRZ'], ['SIR', 'ADH'], ['ADH', 'WES'], ['WES', 'ALUD'],
+
+            // CRUX (Southern Cross)
+            ['ACR', 'GAC'], ['MIM', 'GAC'], // Main cross shape
+
+            // CASSIOPEIA (W Shape - Gamma missing in file, bridging Schedar to Ruchbah)
+            ['CAPH', 'SCH'], ['SCH', 'RUCH'], ['RUCH', 'SEGIN'],
+
+            // PEGASUS / ANDROMEDA
+            ['MARK', 'SCH'], ['SCH', 'ALPHER'], // Great Square tops
+            ['ALPHER', 'MIR'], ['MIR', 'ALMA'], // Andromeda chain
+
+            // SAGITTARIUS (Teapot)
+            ['KAUS', 'KAUSM'], ['KAUSM', 'KAUSB'], ['KAUSM', 'ALN'], 
+            ['ALN', 'ASK'], ['ASK', 'NUN'], ['ASK', 'KAUS']
+        ];
+
         async function init(userLongitude) {
             scene = new THREE.Scene();
+            scene.fog = new THREE.FogExp2(0x000005, 0.0002);
+
             camera = new THREE.PerspectiveCamera(100, window.innerWidth / window.innerHeight, 1, 4000);
             
             renderer = new THREE.WebGLRenderer({ alpha: true, antialias: true });
@@ -236,24 +297,21 @@
             document.body.appendChild(renderer.domElement);
 
             starGroup = new THREE.Group();
+            linesGroup = new THREE.Group();
 
-            const bgGeo = new THREE.BufferGeometry();
-            const bgPos = [];
-            for (let i = 0; i < 2000; i++) {
-                const phi = Math.acos(2 * Math.random() - 1);
-                const theta = 2 * Math.PI * Math.random();
-                const r = 2500;
-                bgPos.push(r * Math.sin(phi) * Math.cos(theta), r * Math.cos(phi), r * Math.sin(phi) * Math.sin(theta));
-            }
-            bgGeo.setAttribute('position', new THREE.Float32BufferAttribute(bgPos, 3));
-            scene.add(new THREE.Points(bgGeo, new THREE.PointsMaterial({ color: 0x444466, size: 2 })));
+            // Background layers
+            createBackgroundLayer(3000, 1.5, 0x6666aa, 0.4);
+            createBackgroundLayer(1000, 2.5, 0xaaaaff, 0.7);
+            createBackgroundLayer(200, 4.0, 0xffffff, 1.0);
 
-            // REVERTED TO LOADING EXTERNAL FILE (Use ?v=4 to force update)
             try {
-                const response = await fetch('stars.json?v=4'); 
+                const response = await fetch('stars.json?v=6'); 
                 const stars = await response.json();
+                
                 const d = (new Date().getTime() / 86400000) + 2440587.5 - 2451545.0;
                 const lst = (280.46 + 360.985 * d + userLongitude) % 360;
+
+                const starMap = {}; // Maps ID to Vector3 Position
 
                 stars.forEach(s => {
                     const raRad = (s.ra * 15 - lst) * (Math.PI/180);
@@ -285,8 +343,38 @@
                     document.body.appendChild(el);
                     mesh.userData.label = el;
                     starGroup.add(mesh);
+                    
+                    // Store position for line drawing
+                    if(s.id) starMap[s.id] = mesh.position;
                 });
+
                 scene.add(starGroup);
+
+                // --- GENERATE ACCURATE LINES ---
+                const lineGeo = new THREE.BufferGeometry();
+                const linePos = [];
+
+                constellationPairs.forEach(pair => {
+                    const p1 = starMap[pair[0]];
+                    const p2 = starMap[pair[1]];
+
+                    // Only draw if both stars exist in the loaded JSON
+                    if(p1 && p2) {
+                        linePos.push(p1.x, p1.y, p1.z);
+                        linePos.push(p2.x, p2.y, p2.z);
+                    }
+                });
+
+                lineGeo.setAttribute('position', new THREE.Float32BufferAttribute(linePos, 3));
+                const mat = new THREE.LineBasicMaterial({ 
+                    color: 0x4466aa, 
+                    transparent: true, 
+                    opacity: 0.35
+                });
+                
+                linesGroup.add(new THREE.LineSegments(lineGeo, mat));
+                scene.add(linesGroup);
+
             } catch (err) { console.error(err); }
 
             window.addEventListener('resize', () => {
@@ -304,6 +392,26 @@
             });
 
             animate();
+        }
+
+        function createBackgroundLayer(count, size, color, opacity) {
+            const bgGeo = new THREE.BufferGeometry();
+            const bgPos = [];
+            for (let i = 0; i < count; i++) {
+                const phi = Math.acos(2 * Math.random() - 1);
+                const theta = 2 * Math.PI * Math.random();
+                const r = 2000 + Math.random() * 1000; 
+                bgPos.push(r * Math.sin(phi) * Math.cos(theta), r * Math.cos(phi), r * Math.sin(phi) * Math.sin(theta));
+            }
+            bgGeo.setAttribute('position', new THREE.Float32BufferAttribute(bgPos, 3));
+            const mat = new THREE.PointsMaterial({ 
+                color: color, 
+                size: size, 
+                transparent: true, 
+                opacity: opacity,
+                sizeAttenuation: false
+            });
+            scene.add(new THREE.Points(bgGeo, mat));
         }
 
         function animate() {
@@ -324,17 +432,19 @@
             camera.lookAt(target);
             renderer.render(scene, camera);
             
-            starGroup.children.forEach(mesh => {
-                if(mesh.userData.label) {
-                    const v = mesh.position.clone().project(camera);
-                    const limit = 0.9;
-                    if(v.z < 1 && Math.abs(v.x) < limit && Math.abs(v.y) < limit) {
-                        mesh.userData.label.style.display = 'block';
-                        mesh.userData.label.style.left = `${(v.x * .5 + .5) * window.innerWidth + 20}px`;
-                        mesh.userData.label.style.top = `${(-(v.y * .5) + .5) * window.innerHeight}px`;
-                    } else { mesh.userData.label.style.display = 'none'; }
-                }
-            });
+            if(starGroup) {
+                starGroup.children.forEach(mesh => {
+                    if(mesh.userData.label) {
+                        const v = mesh.position.clone().project(camera);
+                        const limit = 0.8; 
+                        if(v.z < 1 && Math.abs(v.x) < limit && Math.abs(v.y) < limit) {
+                            mesh.userData.label.style.display = 'block';
+                            mesh.userData.label.style.left = `${(v.x * .5 + .5) * window.innerWidth + 20}px`;
+                            mesh.userData.label.style.top = `${(-(v.y * .5) + .5) * window.innerHeight}px`;
+                        } else { mesh.userData.label.style.display = 'none'; }
+                    }
+                });
+            }
         }
 
         function onPointerDown(event) {
@@ -354,6 +464,8 @@
                 lat = Math.max(-85, Math.min(85, lat)); 
                 return; 
             }
+            if(!starGroup) return;
+
             const raycaster = new THREE.Raycaster();
             raycaster.setFromCamera(new THREE.Vector2(0, 0), camera);
             const hits = raycaster.intersectObjects(starGroup.children);
@@ -383,8 +495,6 @@
             const visual = document.getElementById('star-visual');
             let color = 'white';
             let shadow = 'white';
-            
-            // Safe check for type
             const type = d.type || "G";
             
             if (type.includes('O') || type.includes('B')) { color = '#aaddff'; shadow = '#0088ff'; }
@@ -430,13 +540,15 @@
                 let closestStar = null;
                 const raycaster = new THREE.Raycaster();
                 raycaster.setFromCamera(new THREE.Vector2(0, 0), camera);
-                starGroup.children.forEach(star => {
-                    const v = star.position.clone().project(camera);
-                    const d = Math.sqrt(v.x*v.x + v.y*v.y);
-                    if(v.z < 1 && d < 0.3 && d < closestDist) {
-                        closestDist = d; closestStar = star;
-                    }
-                });
+                if(starGroup && starGroup.children) {
+                    starGroup.children.forEach(star => {
+                        const v = star.position.clone().project(camera);
+                        const d = Math.sqrt(v.x*v.x + v.y*v.y);
+                        if(v.z < 1 && d < 0.3 && d < closestDist) {
+                            closestDist = d; closestStar = star;
+                        }
+                    });
+                }
                 target = closestStar;
             }
 
@@ -451,7 +563,6 @@
 
             const d = target.userData;
             document.getElementById('obj-header').innerText = d.name;
-            
             updateStarVisual(d);
 
             let content = "";
