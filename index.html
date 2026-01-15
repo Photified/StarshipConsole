@@ -163,15 +163,15 @@
             background: var(--gold); height: 40px; 
             border-radius: 0 20px 20px 0; color: black;
             display: flex; align-items: center; padding-left: 10px; cursor: pointer;
-            margin-bottom: 5px; font-size: 11px;
-            opacity: 0.8;
+            margin-bottom: 5px; font-size: 11px; font-weight: bold;
+            opacity: 0.8; pointer-events: auto;
         }
 
         .reset-btn {
             background: var(--red); height: 40px; 
             border-radius: 0 20px 20px 0; color: black;
             display: flex; align-items: center; padding-left: 10px; cursor: pointer;
-            margin-bottom: 15px;
+            margin-bottom: 15px; pointer-events: auto;
         }
 
         .zoom-container {
@@ -364,12 +364,16 @@
         <div class="help-box">
             <div class="help-title">INPUT PROTOCOLS</div>
             <div class="help-item">
+                <div class="help-lbl">INITIALIZATION</div>
+                <div class="help-desc">Click ENGAGE SENSORS to begin.</div>
+            </div>
+            <div class="help-item">
                 <div class="help-lbl">NAVIGATION</div>
                 <div class="help-desc">Drag screen to rotate sensors.</div>
             </div>
             <div class="help-item">
                 <div class="help-lbl">IDENTIFICATION</div>
-                <div class="help-desc">Tap star markers to target.</div>
+                <div class="help-desc">Place star in crosshairs to target.</div>
             </div>
             <div class="help-item">
                 <div class="help-lbl">ANALYSIS</div>
@@ -779,17 +783,6 @@
                 camera.fov = parseInt(e.target.value);
                 camera.updateProjectionMatrix();
             });
-            
-            // --- HELP BUTTON LOGIC ---
-            document.getElementById('btn-help').addEventListener('click', () => {
-                playSound('click');
-                document.getElementById('help-overlay').style.display = 'flex';
-            });
-            
-            document.getElementById('btn-help-ack').addEventListener('click', () => {
-                playSound('dismiss');
-                document.getElementById('help-overlay').style.display = 'none';
-            });
 
             animate();
         }
@@ -1033,16 +1026,26 @@
         document.getElementById('btn-phys').addEventListener('click', () => showData('PHYS'));
         document.getElementById('btn-intel').addEventListener('click', () => showData('INTEL'));
         
-        // AUDIO BUTTON LISTENER
+        // GLOBAL EVENT LISTENERS (Moved outside Init)
         document.getElementById('btn-audio').addEventListener('click', () => {
             isMuted = !isMuted;
             document.getElementById('btn-audio').classList.toggle('muted', isMuted);
-            playSound('click'); // Play sound to confirm click unless muted
+            playSound('click'); 
         });
 
         document.getElementById('btn-close').addEventListener('click', () => {
             playSound('dismiss');
             document.getElementById('readout').style.display = 'none';
+        });
+
+        document.getElementById('btn-help').addEventListener('click', () => {
+            playSound('click');
+            document.getElementById('help-overlay').style.display = 'flex';
+        });
+
+        document.getElementById('btn-help-ack').addEventListener('click', () => {
+            playSound('dismiss');
+            document.getElementById('help-overlay').style.display = 'none';
         });
 
         // BOOT SEQUENCE HANDLER
