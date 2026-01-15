@@ -24,42 +24,52 @@
             position: fixed; top: 0; left: 0; width: 100%; height: 100%;
             background: radial-gradient(circle at center, #0a0a1a 0%, #000005 100%);
             z-index: -1;
-            opacity: 0; /* Hidden until loaded */
+            opacity: 0; 
             transition: opacity 1.5s ease-in-out;
         }
 
         /* --- BOOT SCREEN (INTERNAL) --- */
         #boot-screen {
-            position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%);
+            position: fixed; 
+            top: 50%; 
+            left: 50%; 
+            /* ALIGNMENT FIX: Account for sidebar width (100px) + padding */
+            transform: translate(-50%, -50%);
+            margin-left: 50px; /* Shifts center point right to avoid sidebar */
+            
             z-index: 5; 
             display: flex; align-items: center; justify-content: center;
             flex-direction: column;
-            width: 100%; pointer-events: none; 
+            width: auto; /* Let it shrink to fit content */
+            pointer-events: none; 
             transition: opacity 0.5s ease-out;
         }
 
         .boot-header {
-            color: var(--red); font-size: 18px; margin-bottom: 10px; letter-spacing: 2px;
+            color: var(--red); font-size: 16px; margin-bottom: 8px; letter-spacing: 1px;
             text-shadow: 0 0 5px var(--red);
+            text-align: center;
         }
         
         .boot-instruction {
-            color: var(--gold); font-size: 14px; margin-bottom: 30px;
+            color: var(--gold); font-size: 12px; margin-bottom: 20px;
             animation: flash 2s infinite;
+            text-align: center;
         }
 
         @keyframes flash { 0% { opacity: 1; } 50% { opacity: 0.3; } 100% { opacity: 1; } }
 
         #loading-interface {
-            display: none; width: 300px; flex-direction: column; align-items: flex-start;
+            display: none; width: 220px; /* Made smaller to fit mobile */
+            flex-direction: column; align-items: flex-start;
         }
 
         .load-text {
-            color: var(--blue); font-size: 14px; margin-bottom: 5px; margin-left: 5px;
+            color: var(--blue); font-size: 12px; margin-bottom: 5px; margin-left: 2px;
         }
 
         .lcars-bar-container {
-            display: flex; gap: 4px; width: 100%; height: 20px;
+            display: flex; gap: 3px; width: 100%; height: 15px; /* Thinner bar */
         }
 
         .lcars-seg {
@@ -67,14 +77,15 @@
             transition: background 0.1s;
         }
         
-        .lcars-seg.on:nth-child(odd) { background: var(--orange); box-shadow: 0 0 10px var(--orange); }
-        .lcars-seg.on:nth-child(even) { background: var(--gold); box-shadow: 0 0 10px var(--gold); }
-        .lcars-seg.on:last-child { background: var(--red); box-shadow: 0 0 15px var(--red); } 
+        .lcars-seg.on:nth-child(odd) { background: var(--orange); box-shadow: 0 0 8px var(--orange); }
+        .lcars-seg.on:nth-child(even) { background: var(--gold); box-shadow: 0 0 8px var(--gold); }
+        .lcars-seg.on:last-child { background: var(--red); box-shadow: 0 0 12px var(--red); } 
 
         .big-btn {
-            background: var(--gold); border: none; padding: 15px 40px; 
-            border-radius: 30px; font-weight: bold; cursor: pointer; 
-            color: black; font-size: 16px; letter-spacing: 1px;
+            background: var(--gold); border: none; 
+            padding: 12px 30px; /* Slightly smaller padding */
+            border-radius: 25px; font-weight: bold; cursor: pointer; 
+            color: black; font-size: 14px; letter-spacing: 1px;
             border: 2px solid var(--orange);
             box-shadow: 0 0 15px rgba(255, 153, 0, 0.3);
             pointer-events: auto; 
@@ -360,10 +371,12 @@
 
         let scene, camera, renderer, starGroup, linesGroup;
         let isUserInteracting = false;
+        
         let lon = 0, lat = 0;
         let onPointerDownLon = 0, onPointerDownLat = 0;
         let onPointerDownPointerX = 0, onPointerDownPointerY = 0;
         const sensitivity = 0.2; 
+        
         let hoveredStar = null; 
 
         // COLORS & ATLAS
@@ -739,7 +752,7 @@
         // BOOT SEQUENCE HANDLER
         document.getElementById('start-btn').addEventListener('click', () => {
             if (audioCtx.state === 'suspended') audioCtx.resume();
-            playSound('click'); 
+            playSound('click'); // Button chirp
 
             // 1. Start heavy lifting immediately in background
             document.getElementById('header-text').innerText = "SCANNING SECTOR 001";
@@ -751,12 +764,15 @@
             document.getElementById('start-btn').style.display = 'none';
             document.querySelector('.boot-instruction').style.display = 'none';
             document.querySelector('.boot-header').style.display = 'none';
-            document.getElementById('loading-interface').style.display = 'flex';
             
-            // 3. Play sound loop
+            // 3. Show loader
+            const loader = document.getElementById('loading-interface');
+            loader.style.display = 'flex';
+            
+            // 4. Play processing sound looping
             const loadInterval = setInterval(() => playSound('lock'), 200);
 
-            // 4. Animate segments
+            // 5. Animate bar segments
             const segments = document.querySelectorAll('.lcars-seg');
             let currentSeg = 0;
             
@@ -768,8 +784,9 @@
                     // FINISHED
                     clearInterval(segInterval);
                     clearInterval(loadInterval);
-                    playSound('click'); 
+                    playSound('click'); // Final success beep
                     
+                    // Fade out boot screen
                     document.getElementById('boot-screen').style.opacity = '0';
                     document.getElementById('space-canvas').style.opacity = '1';
                     document.getElementById('reticle').style.opacity = '1';
@@ -778,7 +795,7 @@
                         document.getElementById('boot-screen').style.display = 'none';
                     }, 500);
                 }
-            }, 150); // Speed
+            }, 150); // Speed of loading bar
         });
     </script>
 </body>
