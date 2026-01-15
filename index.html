@@ -24,7 +24,8 @@
             text-transform: uppercase; 
             color: white; 
             user-select: none; 
-            -webkit-user-select: none;
+            -webkit-user-select: none; /* Prevents text selection on drag */
+            touch-action: none; /* Crucial for smooth mobile swiping */
         }
 
         /* DEEP SPACE BACKGROUND */
@@ -67,11 +68,7 @@
         }
 
         /* HEADER AREA */
-        .header-wrap { 
-            display: flex; 
-            pointer-events: auto; 
-            align-items: flex-start; 
-        }
+        .header-wrap { display: flex; pointer-events: auto; align-items: flex-start; }
         .elbow-main { 
             width: 120px; height: 120px; 
             background: var(--pink); 
@@ -79,73 +76,44 @@
             margin-right: 5px; 
             flex-shrink: 0; 
         }
-        .top-bars { 
-            flex-grow: 1; 
-            display: flex; 
-            flex-direction: column; 
-            gap: 5px; 
-        }
+        .top-bars { flex-grow: 1; display: flex; flex-direction: column; gap: 5px; }
         .bar-top { 
-            background: var(--orange); 
-            height: 50px; 
+            background: var(--orange); height: 50px; 
             border-bottom-left-radius: 20px; 
-            display: flex; 
-            align-items: center; 
-            padding-left: 25px; 
-            color: black; 
-            font-size: 20px; 
+            display: flex; align-items: center; 
+            padding-left: 25px; color: black; font-size: 20px; 
         }
-        .bar-sub { 
-            background: var(--blue); 
-            height: 15px; 
-            width: 85%; 
-            border-bottom-left-radius: 10px; 
-        }
+        .bar-sub { background: var(--blue); height: 15px; width: 85%; border-bottom-left-radius: 10px; }
 
         /* SIDEBAR AREA */
-        .middle-wrap { 
-            display: flex; 
-            height: 100%; 
-        }
+        .middle-wrap { display: flex; height: 100%; }
         .sidebar { 
-            width: 100px; 
-            display: flex; 
-            flex-direction: column; 
-            gap: 5px; 
-            padding-top: 10px; 
-            pointer-events: auto; 
+            width: 100px; display: flex; 
+            flex-direction: column; gap: 5px; 
+            padding-top: 10px; pointer-events: auto; 
         }
         .nav-pill { 
-            background: var(--blue); 
-            height: 35px; 
+            background: var(--blue); height: 35px; 
             border-radius: 0 20px 20px 0; 
-            color: black; 
-            font-size: 10px; 
-            display: flex; 
-            align-items: center; 
-            padding-left: 10px; 
+            color: black; font-size: 10px; 
+            display: flex; align-items: center; padding-left: 10px; 
         }
         
         /* DATA READOUT MODAL */
         #readout { 
-            display: none; 
-            position: fixed; 
+            display: none; position: fixed; 
             top: 50%; left: 50%; 
             transform: translate(-50%, -50%); 
             width: 80%; max-width: 350px; 
             background: rgba(0,0,0,0.95); 
             border: 2px solid var(--gold); 
-            z-index: 100; 
-            padding: 20px; 
-            border-radius: 15px; 
-            pointer-events: auto;
+            z-index: 100; padding: 20px; 
+            border-radius: 15px; pointer-events: auto;
             box-shadow: 0 0 30px rgba(0,0,0,1);
         }
         .readout-title { 
-            color: var(--gold); 
-            border-bottom: 2px solid var(--gold); 
-            margin-bottom: 12px; 
-            font-size: 22px; 
+            color: var(--gold); border-bottom: 2px solid var(--gold); 
+            margin-bottom: 12px; font-size: 22px; 
         }
         .data-row { margin-bottom: 8px; }
         .data-label { color: var(--blue); font-size: 11px; display: block; }
@@ -155,22 +123,15 @@
         .footer-wrap { 
             background: var(--orange); 
             border-top-left-radius: 50px; 
-            display: flex; 
-            align-items: center; 
-            padding-left: 130px; 
-            pointer-events: auto; 
-            height: 60px; 
-            align-self: end; 
+            display: flex; align-items: center; 
+            padding-left: 130px; pointer-events: auto; 
+            height: 60px; align-self: end; 
         }
         .btn-main { 
-            background: var(--gold); 
-            border: none; 
-            padding: 12px 25px; 
-            border-radius: 25px; 
-            font-weight: bold; 
-            cursor: pointer; 
-            color: black; 
-            font-size: 14px; 
+            background: var(--gold); border: none; 
+            padding: 12px 25px; border-radius: 25px; 
+            font-weight: bold; cursor: pointer; 
+            color: black; font-size: 14px; 
         }
 
         /* 3D LABELS */
@@ -178,12 +139,10 @@
             position: absolute; 
             color: var(--blue); 
             border-left: 2px solid var(--gold); 
-            padding-left: 6px; 
-            font-size: 11px; 
+            padding-left: 6px; font-size: 11px; 
             pointer-events: none;
             background: rgba(0,0,0,0.5); 
-            white-space: nowrap; 
-            display: none;
+            white-space: nowrap; display: none;
         }
     </style>
 </head>
@@ -253,27 +212,28 @@
         let onPointerDownLon = 0, onPointerDownLat = 0;
         let onPointerDownPointerX = 0, onPointerDownPointerY = 0;
 
+        // SPEED SETTING (Higher = Faster Swipe)
+        const sensitivity = 0.4;
+
         async function init(userLongitude) {
             // 1. Scene Setup
             scene = new THREE.Scene();
-            // FOV 75 for a nice wide bridge-view feel
             camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 1, 4000);
             
             renderer = new THREE.WebGLRenderer({ alpha: true, antialias: true });
             renderer.setSize(window.innerWidth, window.innerHeight);
-            renderer.setPixelRatio(window.devicePixelRatio);
+            renderer.setPixelRatio(window.devicePixelRatio); // Sharpness on mobile
             document.body.appendChild(renderer.domElement);
 
             starGroup = new THREE.Group();
 
-            // 2. GENERATE MASSIVE STAR FIELD (5,000 Stars)
-            // This creates the "Full Sky" look
+            // 2. GENERATE MASSIVE STAR FIELD (Background Stars)
             const bgGeometry = new THREE.BufferGeometry();
             const bgPositions = [];
-            for (let i = 0; i < 5000; i++) {
+            for (let i = 0; i < 2000; i++) {
                 const phi = Math.acos(2 * Math.random() - 1);
                 const theta = 2 * Math.PI * Math.random();
-                const radius = 2000; // Far background
+                const radius = 2500; // Far background
                 bgPositions.push(
                     radius * Math.sin(phi) * Math.cos(theta),
                     radius * Math.cos(phi),
@@ -281,8 +241,7 @@
                 );
             }
             bgGeometry.setAttribute('position', new THREE.Float32BufferAttribute(bgPositions, 3));
-            // Dimmer, smaller stars for the background
-            const bgMaterial = new THREE.PointsMaterial({ color: 0x666699, size: 1.5 });
+            const bgMaterial = new THREE.PointsMaterial({ color: 0x666699, size: 2 });
             scene.add(new THREE.Points(bgGeometry, bgMaterial));
 
             // 3. LOAD INTERACTIVE STAR DATA
@@ -290,7 +249,7 @@
                 const response = await fetch('stars.json');
                 const stars = await response.json();
                 
-                // Calculate Local Sidereal Time (LST) to place stars correctly based on Longitude
+                // Calculate LST for real-world positioning
                 const d = (new Date().getTime() / 86400000) + 2440587.5 - 2451545.0;
                 const lst = (280.46 + 360.985 * d + userLongitude) % 360;
 
@@ -301,11 +260,11 @@
                     const phi = Math.PI/2 - decRad;
                     
                     const mesh = new THREE.Mesh(
-                        new THREE.SphereGeometry(4, 8, 8), // Larger, clickable stars
+                        new THREE.SphereGeometry(6, 8, 8), // Larger size for easier clicking
                         new THREE.MeshBasicMaterial({ color: 0xffffff })
                     );
                     
-                    // Place them closer than the background stars so they render on top
+                    // Position interactive stars
                     mesh.position.set(
                         1200 * Math.sin(phi) * Math.cos(raRad),
                         1200 * Math.cos(phi),
@@ -337,8 +296,10 @@
             animate();
         }
 
-        // --- NAVIGATION LOGIC ---
+        // --- IMPROVED NAVIGATION LOGIC ---
         function onPointerDown(event) {
+            // Ignore multi-touch (zooming, etc)
+            if (event.isPrimary === false) return;
             isUserInteracting = true;
             onPointerDownPointerX = event.clientX;
             onPointerDownPointerY = event.clientY;
@@ -348,10 +309,15 @@
 
         function onPointerMove(event) {
             if (isUserInteracting === true) {
-                // Drag speed factor: 0.15 feels "heavy" and precise
-                lon = (onPointerDownPointerX - event.clientX) * 0.15 + onPointerDownLon;
-                lat = (event.clientY - onPointerDownPointerY) * 0.15 + onPointerDownLat;
-                // Limit vertical look to avoid flipping upside down
+                // Calculate exact movement delta
+                const deltaX = event.clientX - onPointerDownPointerX;
+                const deltaY = event.clientY - onPointerDownPointerY;
+                
+                // Apply sensitivity multiplier (0.4 is fast)
+                lon = (onPointerDownLon - deltaX * sensitivity);
+                lat = (onPointerDownLat + deltaY * sensitivity);
+
+                // Limit vertical look to prevent flipping
                 lat = Math.max(-85, Math.min(85, lat)); 
             }
         }
@@ -386,8 +352,7 @@
                 if(mesh.userData.label) {
                     const vector = mesh.position.clone().project(camera);
                     
-                    // Check if star is in front of camera (z < 1) 
-                    // AND inside the "safe zone" of the screen (0.9 instead of 1.0 to avoid edge clutter)
+                    // Only show if star is in front of camera and not at the very edge
                     if(vector.z < 1 && Math.abs(vector.x) < 0.9 && Math.abs(vector.y) < 0.9) {
                         mesh.userData.label.style.display = 'block';
                         mesh.userData.label.style.left = `${(vector.x * 0.5 + 0.5) * window.innerWidth + 15}px`;
@@ -416,11 +381,13 @@
             }
         });
 
-        // --- INTERACTION: TAP TO IDENTIFY ---
+        // --- CLICK TO IDENTIFY ---
         window.addEventListener('click', (e) => {
-            if (isUserInteracting) return; // Don't click if we are dragging
+            // Don't trigger click if we just dragged the screen (prevents accidental clicks)
+            if (Math.abs(e.clientX - onPointerDownPointerX) > 5 || 
+                Math.abs(e.clientY - onPointerDownPointerY) > 5) return;
             
-            // Raycast logic: Draw a line from camera through mouse click
+            // Raycast logic
             const mouse = new THREE.Vector2(
                 (e.clientX / window.innerWidth) * 2 - 1, 
                 -(e.clientY / window.innerHeight) * 2 + 1
