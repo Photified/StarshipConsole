@@ -16,140 +16,90 @@
         }
         
         body { 
-            margin: 0; 
-            overflow: hidden; 
-            background: #000; 
-            font-family: Arial, sans-serif; 
-            font-weight: bold; 
-            text-transform: uppercase; 
-            color: white; 
-            user-select: none; 
-            -webkit-user-select: none; /* Prevents text selection on drag */
-            touch-action: none; /* Crucial for smooth mobile swiping */
+            margin: 0; overflow: hidden; background: #000; 
+            font-family: Arial, sans-serif; font-weight: bold; 
+            text-transform: uppercase; color: white; 
+            user-select: none; -webkit-user-select: none;
+            touch-action: none;
         }
 
-        /* DEEP SPACE BACKGROUND */
         #space-canvas {
-            position: fixed; 
-            top: 0; left: 0; 
-            width: 100%; height: 100%;
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
             background: radial-gradient(circle at center, #111122 0%, #000 100%);
             z-index: -1;
         }
 
-        /* TACTICAL RETICLE (Crosshair) */
         #reticle {
-            position: fixed; 
-            top: 50%; left: 50%; 
-            transform: translate(-50%, -50%);
+            position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%);
             width: 50px; height: 50px; 
-            border: 1px solid rgba(153, 153, 255, 0.4);
-            border-radius: 50%; 
-            pointer-events: none; 
-            z-index: 5;
+            border: 1px solid rgba(153, 153, 255, 0.4); border-radius: 50%; 
+            pointer-events: none; z-index: 5;
         }
-        #reticle::before { 
-            content: ''; position: absolute; top: 50%; left: -15px; 
-            width: 80px; height: 1px; background: rgba(153, 153, 255, 0.2); 
-        }
-        #reticle::after { 
-            content: ''; position: absolute; left: 50%; top: -15px; 
-            width: 1px; height: 80px; background: rgba(153, 153, 255, 0.2); 
-        }
+        #reticle::before { content: ''; position: absolute; top: 50%; left: -15px; width: 80px; height: 1px; background: rgba(153, 153, 255, 0.2); }
+        #reticle::after { content: ''; position: absolute; left: 50%; top: -15px; width: 1px; height: 80px; background: rgba(153, 153, 255, 0.2); }
 
-        /* LCARS INTERFACE CONTAINER */
         #lcars-container {
-            position: absolute; top: 0; left: 0; 
-            width: 100%; height: 100%;
-            display: grid; 
-            grid-template-rows: 140px 1fr 100px;
-            pointer-events: none; 
-            z-index: 10;
+            position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+            display: grid; grid-template-rows: 140px 1fr 100px;
+            pointer-events: none; z-index: 10;
         }
 
-        /* HEADER AREA */
+        /* HEADER */
         .header-wrap { display: flex; pointer-events: auto; align-items: flex-start; }
-        .elbow-main { 
-            width: 120px; height: 120px; 
-            background: var(--pink); 
-            border-bottom-left-radius: 45px; 
-            margin-right: 5px; 
-            flex-shrink: 0; 
-        }
+        .elbow-main { width: 120px; height: 120px; background: var(--pink); border-bottom-left-radius: 45px; margin-right: 5px; flex-shrink: 0; }
         .top-bars { flex-grow: 1; display: flex; flex-direction: column; gap: 5px; }
-        .bar-top { 
-            background: var(--orange); height: 50px; 
-            border-bottom-left-radius: 20px; 
-            display: flex; align-items: center; 
-            padding-left: 25px; color: black; font-size: 20px; 
-        }
+        .bar-top { background: var(--orange); height: 50px; border-bottom-left-radius: 20px; display: flex; align-items: center; padding-left: 25px; color: black; font-size: 20px; }
         .bar-sub { background: var(--blue); height: 15px; width: 85%; border-bottom-left-radius: 10px; }
 
-        /* SIDEBAR AREA */
+        /* SIDEBAR */
         .middle-wrap { display: flex; height: 100%; }
-        .sidebar { 
-            width: 100px; display: flex; 
-            flex-direction: column; gap: 5px; 
-            padding-top: 10px; pointer-events: auto; 
-        }
-        .nav-pill { 
-            background: var(--blue); height: 35px; 
-            border-radius: 0 20px 20px 0; 
-            color: black; font-size: 10px; 
-            display: flex; align-items: center; padding-left: 10px; 
-        }
+        .sidebar { width: 100px; display: flex; flex-direction: column; gap: 5px; padding-top: 10px; pointer-events: auto; }
+        .nav-pill { background: var(--blue); height: 35px; border-radius: 0 20px 20px 0; color: black; font-size: 10px; display: flex; align-items: center; padding-left: 10px; }
         
-        /* DATA READOUT MODAL */
+        /* D-PAD CONTROLS */
+        #controls-wrap {
+            position: fixed; bottom: 30px; right: 30px; 
+            width: 140px; height: 140px; z-index: 50; pointer-events: auto;
+            display: grid; grid-template-columns: 1fr 1fr 1fr; grid-template-rows: 1fr 1fr 1fr;
+        }
+        .ctrl-btn {
+            background: rgba(255, 153, 0, 0.2); border: 1px solid var(--orange);
+            color: var(--orange); display: flex; align-items: center; justify-content: center;
+            cursor: pointer; font-size: 20px; border-radius: 10px;
+        }
+        .ctrl-btn:active { background: var(--orange); color: black; }
+        #btn-up { grid-column: 2; grid-row: 1; border-radius: 15px 15px 0 0; }
+        #btn-left { grid-column: 1; grid-row: 2; border-radius: 15px 0 0 15px; }
+        #btn-right { grid-column: 3; grid-row: 2; border-radius: 0 15px 15px 0; }
+        #btn-down { grid-column: 2; grid-row: 3; border-radius: 0 0 15px 15px; }
+
+        /* READOUT */
         #readout { 
-            display: none; position: fixed; 
-            top: 50%; left: 50%; 
-            transform: translate(-50%, -50%); 
-            width: 80%; max-width: 350px; 
-            background: rgba(0,0,0,0.95); 
-            border: 2px solid var(--gold); 
-            z-index: 100; padding: 20px; 
-            border-radius: 15px; pointer-events: auto;
+            display: none; position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); 
+            width: 80%; max-width: 350px; background: rgba(0,0,0,0.95); border: 2px solid var(--gold); 
+            z-index: 100; padding: 20px; border-radius: 15px; pointer-events: auto;
             box-shadow: 0 0 30px rgba(0,0,0,1);
         }
-        .readout-title { 
-            color: var(--gold); border-bottom: 2px solid var(--gold); 
-            margin-bottom: 12px; font-size: 22px; 
-        }
+        .readout-title { color: var(--gold); border-bottom: 2px solid var(--gold); margin-bottom: 12px; font-size: 22px; }
         .data-row { margin-bottom: 8px; }
         .data-label { color: var(--blue); font-size: 11px; display: block; }
         .data-value { color: white; font-size: 14px; display: block; margin-top: 2px; }
 
-        /* FOOTER AREA */
-        .footer-wrap { 
-            background: var(--orange); 
-            border-top-left-radius: 50px; 
-            display: flex; align-items: center; 
-            padding-left: 130px; pointer-events: auto; 
-            height: 60px; align-self: end; 
-        }
-        .btn-main { 
-            background: var(--gold); border: none; 
-            padding: 12px 25px; border-radius: 25px; 
-            font-weight: bold; cursor: pointer; 
-            color: black; font-size: 14px; 
-        }
+        /* FOOTER */
+        .footer-wrap { background: var(--orange); border-top-left-radius: 50px; display: flex; align-items: center; padding-left: 130px; pointer-events: auto; height: 60px; align-self: end; }
+        .btn-main { background: var(--gold); border: none; padding: 12px 25px; border-radius: 25px; font-weight: bold; cursor: pointer; color: black; font-size: 14px; }
 
-        /* 3D LABELS */
+        /* LABELS */
         .label { 
-            position: absolute; 
-            color: var(--blue); 
-            border-left: 2px solid var(--gold); 
-            padding-left: 6px; font-size: 11px; 
-            pointer-events: none;
-            background: rgba(0,0,0,0.5); 
-            white-space: nowrap; display: none;
+            position: absolute; color: var(--blue); border-left: 2px solid var(--gold); 
+            padding-left: 6px; font-size: 11px; pointer-events: none;
+            background: rgba(0,0,0,0.5); white-space: nowrap; display: none;
         }
     </style>
 </head>
 <body>
 
     <div id="space-canvas"></div>
-    
     <div id="reticle"></div>
 
     <div id="lcars-container">
@@ -174,240 +124,160 @@
         </div>
     </div>
 
-    <div id="readout">
-        <div class="readout-title" id="obj-name">SCANNING...</div>
-        
-        <div class="data-row">
-            <span class="data-label">DISTANCE</span>
-            <span class="data-value" id="obj-dist">--</span>
-        </div>
-        <div class="data-row">
-            <span class="data-label">COMPOSITION (SPECTRAL)</span>
-            <span class="data-value" id="obj-comp">--</span>
-        </div>
-        <div class="data-row">
-            <span class="data-label">ESTIMATED RADIUS</span>
-            <span class="data-value" id="obj-size">--</span>
-        </div>
-        <div class="data-row">
-            <span class="data-label">TACTICAL DATA</span>
-            <span class="data-value" id="obj-fact" style="font-style: italic; color: #ccc;">--</span>
-        </div>
-
-        <button class="btn-main" style="width:100%; margin-top:15px;" onclick="document.getElementById('readout').style.display='none'">CLOSE READOUT</button>
+    <div id="controls-wrap" style="display:none;">
+        <div class="ctrl-btn" id="btn-up">▲</div>
+        <div class="ctrl-btn" id="btn-left">◀</div>
+        <div class="ctrl-btn" id="btn-right">▶</div>
+        <div class="ctrl-btn" id="btn-down">▼</div>
     </div>
 
-    <script type="importmap"> 
-        { "imports": { "three": "https://unpkg.com/three@0.160.0/build/three.module.js" } } 
-    </script>
+    <div id="readout">
+        <div class="readout-title" id="obj-name">SCANNING...</div>
+        <div class="data-row"><span class="data-label">DISTANCE</span><span class="data-value" id="obj-dist">--</span></div>
+        <div class="data-row"><span class="data-label">COMPOSITION</span><span class="data-value" id="obj-comp">--</span></div>
+        <div class="data-row"><span class="data-label">RADIUS</span><span class="data-value" id="obj-size">--</span></div>
+        <div class="data-row"><span class="data-label">DATA</span><span class="data-value" id="obj-fact" style="font-style: italic; color: #ccc;">--</span></div>
+        <button class="btn-main" style="width:100%; margin-top:15px;" onclick="document.getElementById('readout').style.display='none'">CLOSE</button>
+    </div>
 
+    <script type="importmap"> { "imports": { "three": "https://unpkg.com/three@0.160.0/build/three.module.js" } } </script>
     <script type="module">
         import * as THREE from 'three';
 
         let scene, camera, renderer, starGroup;
-        
-        // Navigation State
-        let isUserInteracting = false;
         let lon = 0, lat = 0;
-        let onPointerDownLon = 0, onPointerDownLat = 0;
-        let onPointerDownPointerX = 0, onPointerDownPointerY = 0;
-
-        // SPEED SETTING (Higher = Faster Swipe)
-        const sensitivity = 0.4;
+        
+        // MOVEMENT STATE
+        let moveUp = false, moveDown = false, moveLeft = false, moveRight = false;
+        const turnSpeed = 0.8; // Adjust this to make it faster/slower
 
         async function init(userLongitude) {
-            // 1. Scene Setup
             scene = new THREE.Scene();
             camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 1, 4000);
-            
             renderer = new THREE.WebGLRenderer({ alpha: true, antialias: true });
             renderer.setSize(window.innerWidth, window.innerHeight);
-            renderer.setPixelRatio(window.devicePixelRatio); // Sharpness on mobile
+            renderer.setPixelRatio(window.devicePixelRatio);
             document.body.appendChild(renderer.domElement);
 
             starGroup = new THREE.Group();
 
-            // 2. GENERATE MASSIVE STAR FIELD (Background Stars)
-            const bgGeometry = new THREE.BufferGeometry();
-            const bgPositions = [];
+            // 1. BACKGROUND STARS
+            const bgGeo = new THREE.BufferGeometry();
+            const bgPos = [];
             for (let i = 0; i < 2000; i++) {
                 const phi = Math.acos(2 * Math.random() - 1);
                 const theta = 2 * Math.PI * Math.random();
-                const radius = 2500; // Far background
-                bgPositions.push(
-                    radius * Math.sin(phi) * Math.cos(theta),
-                    radius * Math.cos(phi),
-                    radius * Math.sin(phi) * Math.sin(theta)
-                );
+                const r = 2500;
+                bgPos.push(r * Math.sin(phi) * Math.cos(theta), r * Math.cos(phi), r * Math.sin(phi) * Math.sin(theta));
             }
-            bgGeometry.setAttribute('position', new THREE.Float32BufferAttribute(bgPositions, 3));
-            const bgMaterial = new THREE.PointsMaterial({ color: 0x666699, size: 2 });
-            scene.add(new THREE.Points(bgGeometry, bgMaterial));
+            bgGeo.setAttribute('position', new THREE.Float32BufferAttribute(bgPos, 3));
+            scene.add(new THREE.Points(bgGeo, new THREE.PointsMaterial({ color: 0x666699, size: 2 })));
 
-            // 3. LOAD INTERACTIVE STAR DATA
+            // 2. LOAD STARS
             try {
                 const response = await fetch('stars.json');
                 const stars = await response.json();
-                
-                // Calculate LST for real-world positioning
                 const d = (new Date().getTime() / 86400000) + 2440587.5 - 2451545.0;
                 const lst = (280.46 + 360.985 * d + userLongitude) % 360;
 
                 stars.forEach(s => {
-                    // Convert RA/Dec to Cartesian (x,y,z)
                     const raRad = (s.ra * 15 - lst) * (Math.PI/180);
                     const decRad = s.dec * (Math.PI/180);
                     const phi = Math.PI/2 - decRad;
-                    
-                    const mesh = new THREE.Mesh(
-                        new THREE.SphereGeometry(6, 8, 8), // Larger size for easier clicking
-                        new THREE.MeshBasicMaterial({ color: 0xffffff })
-                    );
-                    
-                    // Position interactive stars
-                    mesh.position.set(
-                        1200 * Math.sin(phi) * Math.cos(raRad),
-                        1200 * Math.cos(phi),
-                        1200 * Math.sin(phi) * Math.sin(raRad)
-                    );
-                    
+                    const mesh = new THREE.Mesh(new THREE.SphereGeometry(6, 8, 8), new THREE.MeshBasicMaterial({ color: 0xffffff }));
+                    mesh.position.set(1200*Math.sin(phi)*Math.cos(raRad), 1200*Math.cos(phi), 1200*Math.sin(phi)*Math.sin(raRad));
                     mesh.userData = s;
-                    
-                    // Create HTML label
-                    const label = document.createElement('div');
-                    label.className = 'label';
-                    label.innerText = s.name;
-                    document.body.appendChild(label);
-                    mesh.userData.label = label;
-                    
+                    const el = document.createElement('div');
+                    el.className = 'label'; el.innerText = s.name;
+                    document.body.appendChild(el);
+                    mesh.userData.label = el;
                     starGroup.add(mesh);
                 });
                 scene.add(starGroup);
-            } catch (err) {
-                console.error("Star database error:", err);
-            }
+            } catch (err) { console.error(err); }
 
-            // 4. INPUT LISTENERS (Touch & Mouse)
-            document.addEventListener('pointerdown', onPointerDown);
-            document.addEventListener('pointermove', onPointerMove);
-            document.addEventListener('pointerup', onPointerUp);
-            window.addEventListener('resize', onWindowResize);
-
+            window.addEventListener('resize', () => {
+                camera.aspect = window.innerWidth / window.innerHeight;
+                camera.updateProjectionMatrix();
+                renderer.setSize(window.innerWidth, window.innerHeight);
+            });
             animate();
         }
 
-        // --- IMPROVED NAVIGATION LOGIC ---
-        function onPointerDown(event) {
-            // Ignore multi-touch (zooming, etc)
-            if (event.isPrimary === false) return;
-            isUserInteracting = true;
-            onPointerDownPointerX = event.clientX;
-            onPointerDownPointerY = event.clientY;
-            onPointerDownLon = lon;
-            onPointerDownLat = lat;
-        }
-
-        function onPointerMove(event) {
-            if (isUserInteracting === true) {
-                // Calculate exact movement delta
-                const deltaX = event.clientX - onPointerDownPointerX;
-                const deltaY = event.clientY - onPointerDownPointerY;
-                
-                // Apply sensitivity multiplier (0.4 is fast)
-                lon = (onPointerDownLon - deltaX * sensitivity);
-                lat = (onPointerDownLat + deltaY * sensitivity);
-
-                // Limit vertical look to prevent flipping
-                lat = Math.max(-85, Math.min(85, lat)); 
-            }
-        }
-
-        function onPointerUp() { isUserInteracting = false; }
-
-        function onWindowResize() {
-            camera.aspect = window.innerWidth / window.innerHeight;
-            camera.updateProjectionMatrix();
-            renderer.setSize(window.innerWidth, window.innerHeight);
-        }
-
-        // --- RENDER LOOP ---
         function animate() {
             requestAnimationFrame(animate);
 
-            // Convert Lon/Lat (Spherical) to 3D Vector (Cartesian)
+            // CONTROL LOGIC
+            if(moveLeft) lon -= turnSpeed;
+            if(moveRight) lon += turnSpeed;
+            if(moveUp) lat += turnSpeed;
+            if(moveDown) lat -= turnSpeed;
+            lat = Math.max(-85, Math.min(85, lat)); 
+
             const phi = THREE.MathUtils.degToRad(90 - lat);
             const theta = THREE.MathUtils.degToRad(lon);
-
             const target = new THREE.Vector3(
                 500 * Math.sin(phi) * Math.cos(theta),
                 500 * Math.cos(phi),
                 500 * Math.sin(phi) * Math.sin(theta)
             );
-
             camera.lookAt(target);
             renderer.render(scene, camera);
 
-            // --- LABEL LOGIC ---
+            // LABELS
             starGroup.children.forEach(mesh => {
                 if(mesh.userData.label) {
-                    const vector = mesh.position.clone().project(camera);
-                    
-                    // Only show if star is in front of camera and not at the very edge
-                    if(vector.z < 1 && Math.abs(vector.x) < 0.9 && Math.abs(vector.y) < 0.9) {
+                    const v = mesh.position.clone().project(camera);
+                    if(v.z < 1 && Math.abs(v.x) < 0.9 && Math.abs(v.y) < 0.9) {
                         mesh.userData.label.style.display = 'block';
-                        mesh.userData.label.style.left = `${(vector.x * 0.5 + 0.5) * window.innerWidth + 15}px`;
-                        mesh.userData.label.style.top = `${(-(vector.y * 0.5) + 0.5) * window.innerHeight}px`;
-                    } else {
-                        mesh.userData.label.style.display = 'none';
-                    }
+                        mesh.userData.label.style.left = `${(v.x * .5 + .5) * window.innerWidth + 15}px`;
+                        mesh.userData.label.style.top = `${(-(v.y * .5) + .5) * window.innerHeight}px`;
+                    } else { mesh.userData.label.style.display = 'none'; }
                 }
             });
         }
 
-        // --- STARTUP SEQUENCE ---
+        // CONTROL HANDLERS
+        const setupBtn = (id, startFn, endFn) => {
+            const btn = document.getElementById(id);
+            btn.addEventListener('pointerdown', (e) => { e.preventDefault(); startFn(); });
+            btn.addEventListener('pointerup', (e) => { e.preventDefault(); endFn(); });
+            btn.addEventListener('pointerleave', (e) => { e.preventDefault(); endFn(); });
+        };
+
+        setupBtn('btn-up', () => moveUp=true, () => moveUp=false);
+        setupBtn('btn-down', () => moveDown=true, () => moveDown=false);
+        setupBtn('btn-left', () => moveLeft=true, () => moveLeft=false);
+        setupBtn('btn-right', () => moveRight=true, () => moveRight=false);
+
+        // START
         document.getElementById('start-btn').addEventListener('click', () => {
             document.getElementById('start-btn').style.display = 'none';
             document.getElementById('header-text').innerText = "SCANNING SECTOR 001";
-            document.getElementById('status-text').innerText = "MANUAL OVERRIDE";
+            document.getElementById('status-text').innerText = "MANUAL NAV ACTIVE";
+            document.getElementById('controls-wrap').style.display = 'grid'; // Show D-Pad
             
-            // Try to get GPS for accurate initial sky position
             if (navigator.geolocation) {
-                navigator.geolocation.getCurrentPosition(
-                    (pos) => init(pos.coords.longitude), 
-                    () => init(0) // Fail gracefully to 0 longitude
-                );
-            } else {
-                init(0);
-            }
+                navigator.geolocation.getCurrentPosition(p => init(p.coords.longitude), () => init(0));
+            } else { init(0); }
         });
 
-        // --- CLICK TO IDENTIFY ---
+        // CLICK STAR
         window.addEventListener('click', (e) => {
-            // Don't trigger click if we just dragged the screen (prevents accidental clicks)
-            if (Math.abs(e.clientX - onPointerDownPointerX) > 5 || 
-                Math.abs(e.clientY - onPointerDownPointerY) > 5) return;
-            
-            // Raycast logic
-            const mouse = new THREE.Vector2(
-                (e.clientX / window.innerWidth) * 2 - 1, 
-                -(e.clientY / window.innerHeight) * 2 + 1
-            );
+            // Ignore clicks on buttons
+            if (e.target.closest('.ctrl-btn')) return;
+
+            const mouse = new THREE.Vector2((e.clientX/window.innerWidth)*2-1, -(e.clientY/window.innerHeight)*2+1);
             const raycaster = new THREE.Raycaster();
             raycaster.setFromCamera(mouse, camera);
-            
-            // Check collision with stars
             const hits = raycaster.intersectObjects(starGroup.children);
             if(hits.length > 0) {
                 const d = hits[0].object.userData;
-                
-                // Populate the Readout Modal
                 document.getElementById('obj-name').innerText = d.name;
-                document.getElementById('obj-dist').innerText = d.dist ? `${d.dist} LIGHT YEARS` : "UNKNOWN";
-                document.getElementById('obj-comp').innerText = d.type || "STANDARD STELLAR FUSION";
-                document.getElementById('obj-size').innerText = d.size || "UNCLASSIFIED";
+                document.getElementById('obj-dist').innerText = d.dist ? `${d.dist} LY` : "--";
+                document.getElementById('obj-comp').innerText = d.type || "--";
+                document.getElementById('obj-size').innerText = d.size || "--";
                 document.getElementById('obj-fact').innerText = d.fact;
-                
-                // Show Modal
                 document.getElementById('readout').style.display = 'block';
             }
         });
