@@ -1,7 +1,7 @@
 [
   {
     "id": "SIR", "name": "SIRIUS", "con": "Canis Major", "dist": "8.6 LY", "vis": "Extremely Bright",
-    "type": "Blue Dwarf", "lum": "25x Sun", "temp": "Hotter than Sun",
+    "type": "Blue Dwarf", "lum": "25x Sun", "temp": "1.7x Sun",
     "facts": [
       "It is the brightest star in the entire night sky.",
       "It has a tiny companion star called 'The Pup' that is as heavy as the Sun but only the size of Earth.",
@@ -10,7 +10,7 @@
   },
   {
     "id": "CAN", "name": "CANOPUS", "con": "Carina", "dist": "310 LY", "vis": "Extremely Bright",
-    "type": "Bright White Giant", "lum": "10,700x Sun", "temp": "Hotter than Sun",
+    "type": "Bright White Giant", "lum": "10,700x Sun", "temp": "1.3x Sun",
     "facts": [
       "It serves as a primary navigation guide for NASA spacecraft because it is so bright and located far from the equator.",
       "It is 65 times wider than the Sun.",
@@ -19,7 +19,7 @@
   },
   {
     "id": "RIGK", "name": "RIGEL KENT", "con": "Centaurus", "dist": "4.37 LY", "vis": "Very Bright",
-    "type": "Yellow Sun-like", "lum": "1.5x Sun", "temp": "Similar to Sun",
+    "type": "Yellow Sun-like", "lum": "1.5x Sun", "temp": "1.0x Sun",
     "facts": [
       "This acts as the 'Sun' to the planet Proxima b, the closest known planet to our solar system.",
       "It is actually a triple star system, with two bright stars and one faint red dwarf.",
@@ -28,7 +28,7 @@
   },
   {
     "id": "ARC", "name": "ARCTURUS", "con": "Boötes", "dist": "37 LY", "vis": "Very Bright",
-    "type": "Orange Giant", "lum": "170x Sun", "temp": "Cooler than Sun",
+    "type": "Orange Giant", "lum": "170x Sun", "temp": "0.7x Sun",
     "facts": [
       "It is moving across the sky at 122 km/s, faster than almost any other bright star.",
       "It is an ancient star, likely born in a different galaxy that collided with the Milky Way long ago.",
@@ -37,7 +37,7 @@
   },
   {
     "id": "VEG", "name": "VEGA", "con": "Lyra", "dist": "25 LY", "vis": "Very Bright",
-    "type": "White Star", "lum": "40x Sun", "temp": "Hotter than Sun",
+    "type": "White Star", "lum": "40x Sun", "temp": "1.7x Sun",
     "facts": [
       "It spins so fast that it is shaped like an egg, not a sphere.",
       "It was the North Star 12,000 years ago and will be again in the future.",
@@ -46,7 +46,7 @@
   },
   {
     "id": "CAP", "name": "CAPELLA", "con": "Auriga", "dist": "43 LY", "vis": "Very Bright",
-    "type": "Yellow Giant Pair", "lum": "79x Sun", "temp": "Similar to Sun",
+    "type": "Yellow Giant Pair", "lum": "79x Sun", "temp": "0.8x Sun",
     "facts": [
       "It looks like one star, but it is actually four stars locked in gravity.",
       "The two main stars are yellow giants that orbit each other every 104 days.",
@@ -55,7 +55,7 @@
   },
   {
     "id": "RIG", "name": "RIGEL", "con": "Orion", "dist": "860 LY", "vis": "Very Bright",
-    "type": "Blue Supergiant", "lum": "120,000x Sun", "temp": "Scorching Hot",
+    "type": "Blue Supergiant", "lum": "120,000x Sun", "temp": "2.1x Sun",
     "facts": [
       "It is burning its fuel so fast it will explode as a supernova relatively soon.",
       "It is illuminating the nearby Witch Head Nebula with its intense light.",
@@ -64,7 +64,7 @@
   },
   {
     "id": "PRO", "name": "PROCYON", "con": "Canis Minor", "dist": "11.5 LY", "vis": "Very Bright",
-    "type": "White Sub-Giant", "lum": "7x Sun", "temp": "Hotter than Sun",
+    "type": "White Sub-Giant", "lum": "7x Sun", "temp": "1.1x Sun",
     "facts": [
       "Its name means 'Before the Dog' because it rises just before Sirius.",
       "It has a tiny, invisible companion star that is slowly dying.",
@@ -73,7 +73,7 @@
   },
   {
     "id": "BET", "name": "BETELGEUSE", "con": "Orion", "dist": "640 LY", "vis": "Variable",
-    "type": "Red Supergiant", "lum": "100,000x Sun", "temp": "Cool Red",
+    "type": "Red Supergiant", "lum": "100,000x Sun", "temp": "0.6x Sun",
     "facts": [
       "It is so huge that if placed in our solar system, it would swallow Mars and Jupiter.",
       "It periodically dims and brightens as it 'breathes' and sheds dust.",
@@ -82,7 +82,7 @@
   },
   {
     "id": "ACH", "name": "ACHERNAR", "con": "Eridanus", "dist": "139 LY", "vis": "Bright",
-    "type": "Blue Star", "lum": "3,150x Sun", "temp": "Scorching Hot",
+    "type": "Blue Star", "lum": "3,150x Sun", "temp": "2.6x Sun",
     "facts": [
       "It spins incredibly fast, flattening itself into a pumpkin shape.",
       "Its equator is thousands of degrees cooler than its poles due to the spin.",
@@ -91,7 +91,7 @@
   },
   {
     "id": "HAD", "name": "HADAR", "con": "Centaurus", "dist": "390 LY", "vis": "Bright",
-    "type": "Blue Giant", "lum": "41,700x Sun", "temp": "Scorching Hot",
+    "type": "Blue Giant", "lum": "41,700x Sun", "temp": "4.3x Sun",
     "facts": [
       "It is a pointer star to the Southern Cross.",
       "It consists of two massive blue stars orbiting each other.",
@@ -100,7 +100,7 @@
   },
   {
     "id": "ALT", "name": "ALTAIR", "con": "Aquila", "dist": "16.7 LY", "vis": "Bright",
-    "type": "White Star", "lum": "10x Sun", "temp": "Hotter than Sun",
+    "type": "White Star", "lum": "10x Sun", "temp": "1.3x Sun",
     "facts": [
       "It rotates fully in just 9 hours (our Sun takes 25 days).",
       "It is one of the corners of the famous Summer Triangle.",
@@ -109,7 +109,7 @@
   },
   {
     "id": "ACR", "name": "ACRUX", "con": "Crux", "dist": "320 LY", "vis": "Bright",
-    "type": "Blue Sub-Giant", "lum": "25,000x Sun", "temp": "Scorching Hot",
+    "type": "Blue Sub-Giant", "lum": "25,000x Sun", "temp": "4.7x Sun",
     "facts": [
       "The brightest and bottom-most star of the Southern Cross.",
       "It is the standard for checking navigation in the southern sky.",
@@ -118,7 +118,7 @@
   },
   {
     "id": "ALD", "name": "ALDEBARAN", "con": "Taurus", "dist": "65 LY", "vis": "Bright",
-    "type": "Orange Giant", "lum": "518x Sun", "temp": "Cooler than Sun",
+    "type": "Orange Giant", "lum": "518x Sun", "temp": "0.7x Sun",
     "facts": [
       "Known as the 'Eye of the Bull' in the Taurus constellation.",
       "NASA's Pioneer 10 spacecraft is heading towards it (arrival in 2 million years).",
@@ -127,7 +127,7 @@
   },
   {
     "id": "SPI", "name": "SPICA", "con": "Virgo", "dist": "250 LY", "vis": "Bright",
-    "type": "Blue Giant", "lum": "12,100x Sun", "temp": "Scorching Hot",
+    "type": "Blue Giant", "lum": "12,100x Sun", "temp": "3.9x Sun",
     "facts": [
       "Two stars orbiting so close they distort each other into egg shapes.",
       "They orbit each other every 4 days.",
@@ -136,7 +136,7 @@
   },
   {
     "id": "ANT", "name": "ANTARES", "con": "Scorpius", "dist": "550 LY", "vis": "Bright",
-    "type": "Red Supergiant", "lum": "57,500x Sun", "temp": "Cool Red",
+    "type": "Red Supergiant", "lum": "57,500x Sun", "temp": "0.6x Sun",
     "facts": [
       "Its name means 'Rival of Mars' because of its similar red color.",
       "It is shedding matter so fast it is surrounded by a cloud of its own dust.",
@@ -145,7 +145,7 @@
   },
   {
     "id": "POL", "name": "POLLUX", "con": "Gemini", "dist": "34 LY", "vis": "Bright",
-    "type": "Orange Giant", "lum": "43x Sun", "temp": "Cooler than Sun",
+    "type": "Orange Giant", "lum": "43x Sun", "temp": "0.8x Sun",
     "facts": [
       "It is the brighter of the Gemini twins, outshining Castor.",
       "A planet named Thestias (2x Jupiter mass) orbits this star.",
@@ -154,7 +154,7 @@
   },
   {
     "id": "FOM", "name": "FOMALHAUT", "con": "Piscis Austrinus", "dist": "25 LY", "vis": "Bright",
-    "type": "White Star", "lum": "16x Sun", "temp": "Hotter than Sun",
+    "type": "White Star", "lum": "16x Sun", "temp": "1.5x Sun",
     "facts": [
       "Known as the 'Lonely Star' because it sits in an empty part of the sky.",
       "It looks like the 'Eye of Sauron' due to a massive debris ring around it.",
@@ -163,7 +163,7 @@
   },
   {
     "id": "DEN", "name": "DENEB", "con": "Cygnus", "dist": "2600 LY", "vis": "Bright",
-    "type": "White Supergiant", "lum": "196,000x Sun", "temp": "Hotter than Sun",
+    "type": "White Supergiant", "lum": "196,000x Sun", "temp": "1.5x Sun",
     "facts": [
       "One of the farthest stars visible to the naked eye.",
       "It acts as the tail of the Swan constellation.",
@@ -172,7 +172,7 @@
   },
   {
     "id": "MIM", "name": "MIMOSA", "con": "Crux", "dist": "280 LY", "vis": "Bright",
-    "type": "Blue Giant", "lum": "34,000x Sun", "temp": "Scorching Hot",
+    "type": "Blue Giant", "lum": "34,000x Sun", "temp": "4.7x Sun",
     "facts": [
       "The second brightest star in the Southern Cross.",
       "It pulses rapidly, changing size and brightness every few hours.",
@@ -181,7 +181,7 @@
   },
   {
     "id": "REG", "name": "REGULUS", "con": "Leo", "dist": "79 LY", "vis": "Bright",
-    "type": "Blue-White Star", "lum": "288x Sun", "temp": "Hotter than Sun",
+    "type": "Blue-White Star", "lum": "288x Sun", "temp": "2.1x Sun",
     "facts": [
       "It spins so fast that if it spun 10% faster, it would fly apart.",
       "It is actually a system of four stars bound together.",
@@ -190,7 +190,7 @@
   },
   {
     "id": "ADH", "name": "ADHERA", "con": "Canis Major", "dist": "430 LY", "vis": "Bright",
-    "type": "Blue Bright Giant", "lum": "38,700x Sun", "temp": "Scorching Hot",
+    "type": "Blue Bright Giant", "lum": "38,700x Sun", "temp": "3.9x Sun",
     "facts": [
       "One of the brightest sources of ultraviolet light in the sky.",
       "Historically part of a group called 'The Virgins'.",
@@ -199,7 +199,7 @@
   },
   {
     "id": "SHA", "name": "SHAULA", "con": "Scorpius", "dist": "570 LY", "vis": "Bright",
-    "type": "Blue Sub-Giant", "lum": "36,300x Sun", "temp": "Scorching Hot",
+    "type": "Blue Sub-Giant", "lum": "36,300x Sun", "temp": "4.3x Sun",
     "facts": [
       "This star marks the dangerous stinger of the Scorpion.",
       "It is a triple star system.",
@@ -208,7 +208,7 @@
   },
   {
     "id": "CAS", "name": "CASTOR", "con": "Gemini", "dist": "51 LY", "vis": "Bright",
-    "type": "White System", "lum": "30x Sun", "temp": "Hotter than Sun",
+    "type": "White System", "lum": "30x Sun", "temp": "1.8x Sun",
     "facts": [
       "It looks like one star, but is actually six stars dancing together.",
       "It consists of three pairs of binary stars.",
@@ -217,7 +217,7 @@
   },
   {
     "id": "GAC", "name": "GACRUX", "con": "Crux", "dist": "88 LY", "vis": "Bright",
-    "type": "Red Giant", "lum": "1,500x Sun", "temp": "Cool Red",
+    "type": "Red Giant", "lum": "1,500x Sun", "temp": "0.6x Sun",
     "facts": [
       "The top star of the Southern Cross.",
       "It is the closest red giant to Earth.",
@@ -226,7 +226,7 @@
   },
   {
     "id": "BEL", "name": "BELLATRIX", "con": "Orion", "dist": "245 LY", "vis": "Bright",
-    "type": "Blue Giant", "lum": "9,200x Sun", "temp": "Scorching Hot",
+    "type": "Blue Giant", "lum": "9,200x Sun", "temp": "3.8x Sun",
     "facts": [
       "Known as the 'Amazon Star'.",
       "It serves as Orion's left shoulder.",
@@ -235,7 +235,7 @@
   },
   {
     "id": "ELN", "name": "ELNATH", "con": "Taurus", "dist": "130 LY", "vis": "Bright",
-    "type": "Blue-White Giant", "lum": "700x Sun", "temp": "Hotter than Sun",
+    "type": "Blue-White Giant", "lum": "700x Sun", "temp": "2.3x Sun",
     "facts": [
       "It marks the tip of the Bull's horn.",
       "Historically, it was shared by both Taurus and Auriga constellations.",
@@ -244,7 +244,7 @@
   },
   {
     "id": "MIA", "name": "MIAPLACIDUS", "con": "Carina", "dist": "111 LY", "vis": "Bright",
-    "type": "White Giant", "lum": "288x Sun", "temp": "Hotter than Sun",
+    "type": "White Giant", "lum": "288x Sun", "temp": "1.5x Sun",
     "facts": [
       "It forms part of the 'Diamond Cross' asterism.",
       "It has no known companion stars.",
@@ -253,7 +253,7 @@
   },
   {
     "id": "ALN", "name": "ALNILAM", "con": "Orion", "dist": "2000 LY", "vis": "Bright",
-    "type": "Blue Supergiant", "lum": "537,000x Sun", "temp": "Scorching Hot",
+    "type": "Blue Supergiant", "lum": "537,000x Sun", "temp": "4.7x Sun",
     "facts": [
       "The center star of Orion's Belt.",
       "It is losing mass 20 million times faster than our Sun.",
@@ -262,7 +262,7 @@
   },
   {
     "id": "ALNI", "name": "ALNITAK", "con": "Orion", "dist": "1260 LY", "vis": "Bright",
-    "type": "Blue Supergiant", "lum": "250,000x Sun", "temp": "Scorching Hot",
+    "type": "Blue Supergiant", "lum": "250,000x Sun", "temp": "5.1x Sun",
     "facts": [
       "The eastern star of Orion's Belt.",
       "It sits right next to the famous Horsehead Nebula.",
@@ -271,7 +271,7 @@
   },
   {
     "id": "ALI", "name": "ALIOTH", "con": "Ursa Major", "dist": "83 LY", "vis": "Bright",
-    "type": "White Star", "lum": "102x Sun", "temp": "Hotter than Sun",
+    "type": "White Star", "lum": "102x Sun", "temp": "1.6x Sun",
     "facts": [
       "The brightest star in the Big Dipper.",
       "It has a strange magnetic field that separates metals in its atmosphere.",
@@ -280,7 +280,7 @@
   },
   {
     "id": "DUB", "name": "DUBHE", "con": "Ursa Major", "dist": "123 LY", "vis": "Bright",
-    "type": "Orange Giant", "lum": "316x Sun", "temp": "Cooler than Sun",
+    "type": "Orange Giant", "lum": "316x Sun", "temp": "0.8x Sun",
     "facts": [
       "One of the 'Pointer Stars' that helps find the North Star.",
       "It is not part of the Dipper's family group, but just passing through.",
@@ -289,7 +289,7 @@
   },
   {
     "id": "MIR", "name": "MIRFAK", "con": "Perseus", "dist": "510 LY", "vis": "Bright",
-    "type": "Yellow Supergiant", "lum": "5,000x Sun", "temp": "Similar to Sun",
+    "type": "Yellow Supergiant", "lum": "5,000x Sun", "temp": "1.1x Sun",
     "facts": [
       "It is moving through space with a large cluster of young stars.",
       "It is 60 times wider than the Sun.",
@@ -298,7 +298,7 @@
   },
   {
     "id": "WES", "name": "WEZEN", "con": "Canis Major", "dist": "1600 LY", "vis": "Bright",
-    "type": "Yellow Supergiant", "lum": "50,000x Sun", "temp": "Similar to Sun",
+    "type": "Yellow Supergiant", "lum": "50,000x Sun", "temp": "1.1x Sun",
     "facts": [
       "If it were as close as Sirius, it would shine as bright as the half-moon.",
       "It is a massive star nearing the end of its life.",
@@ -307,7 +307,7 @@
   },
   {
     "id": "SAR", "name": "SARGAS", "con": "Scorpius", "dist": "330 LY", "vis": "Bright",
-    "type": "Yellow-White Giant", "lum": "1,800x Sun", "temp": "Hotter than Sun",
+    "type": "Yellow-White Giant", "lum": "1,800x Sun", "temp": "1.3x Sun",
     "facts": [
       "It is rapidly swelling in size as it ages.",
       "Within a few million years, it will become a pulsating variable star.",
@@ -316,7 +316,7 @@
   },
   {
     "id": "KAUS", "name": "KAUS AUS", "con": "Sagittarius", "dist": "140 LY", "vis": "Bright",
-    "type": "Blue-White Giant", "lum": "375x Sun", "temp": "Hotter than Sun",
+    "type": "Blue-White Giant", "lum": "375x Sun", "temp": "1.7x Sun",
     "facts": [
       "It represents the bottom of the Archer's bow.",
       "It spins so fast it flings a shell of gas off its equator.",
@@ -325,7 +325,7 @@
   },
   {
     "id": "AVI", "name": "AVIOR", "con": "Carina", "dist": "600 LY", "vis": "Bright",
-    "type": "Orange Giant", "lum": "2,400x Sun", "temp": "Cooler than Sun",
+    "type": "Orange Giant", "lum": "2,400x Sun", "temp": "0.6x Sun",
     "facts": [
       "It is invisible to observers in Europe and North America.",
       "It is a rare eclipsing binary system.",
@@ -334,7 +334,7 @@
   },
   {
     "id": "ALK", "name": "ALKAID", "con": "Ursa Major", "dist": "104 LY", "vis": "Bright",
-    "type": "Blue Star", "lum": "580x Sun", "temp": "Scorching Hot",
+    "type": "Blue Star", "lum": "580x Sun", "temp": "2.9x Sun",
     "facts": [
       "The star at the very tip of the Big Dipper's handle.",
       "It is moving in the opposite direction to the rest of the Dipper.",
@@ -343,7 +343,7 @@
   },
   {
     "id": "MEN", "name": "MENKALINAN", "con": "Auriga", "dist": "81 LY", "vis": "Bright",
-    "type": "White Sub-Giant", "lum": "48x Sun", "temp": "Hotter than Sun",
+    "type": "White Sub-Giant", "lum": "48x Sun", "temp": "1.6x Sun",
     "facts": [
       "Two stars that constantly eclipse each other.",
       "The stars are egg-shaped because they are so close together.",
@@ -352,7 +352,7 @@
   },
   {
     "id": "ATR", "name": "ATRIA", "con": "Triangulum Aus", "dist": "390 LY", "vis": "Bright",
-    "type": "Orange Giant", "lum": "5,500x Sun", "temp": "Cooler than Sun",
+    "type": "Orange Giant", "lum": "5,500x Sun", "temp": "0.7x Sun",
     "facts": [
       "It is an 'Hybrid Star' with both hot and cool regions.",
       "A navigational anchor for the southern sky.",
@@ -361,7 +361,7 @@
   },
   {
     "id": "ALH", "name": "ALHENA", "con": "Gemini", "dist": "109 LY", "vis": "Bright",
-    "type": "White Star", "lum": "123x Sun", "temp": "Hotter than Sun",
+    "type": "White Star", "lum": "123x Sun", "temp": "1.6x Sun",
     "facts": [
       "It marks the foot of the Pollux twin.",
       "It has just stopped burning hydrogen in its core.",
@@ -370,7 +370,7 @@
   },
   {
     "id": "PEA", "name": "PEACOCK", "con": "Pavo", "dist": "180 LY", "vis": "Bright",
-    "type": "Blue Star", "lum": "2,100x Sun", "temp": "Scorching Hot",
+    "type": "Blue Star", "lum": "2,100x Sun", "temp": "3.2x Sun",
     "facts": [
       "It rotates incredibly fast, likely preparing to explode.",
       "It helps locate the celestial south pole.",
@@ -379,7 +379,7 @@
   },
   {
     "id": "ALS", "name": "ALSEPHINA", "con": "Vela", "dist": "310 LY", "vis": "Bright",
-    "type": "White Giant", "lum": "90x Sun", "temp": "Hotter than Sun",
+    "type": "White Giant", "lum": "90x Sun", "temp": "1.6x Sun",
     "facts": [
       "Part of the 'False Cross' which confuses sailors.",
       "It is actually a triple star system.",
@@ -388,7 +388,7 @@
   },
   {
     "id": "MIRZ", "name": "MIRZAM", "con": "Canis Major", "dist": "500 LY", "vis": "Bright",
-    "type": "Blue Giant", "lum": "26,600x Sun", "temp": "Scorching Hot",
+    "type": "Blue Giant", "lum": "26,600x Sun", "temp": "4.4x Sun",
     "facts": [
       "Its name means 'The Herald' because it rises before Sirius.",
       "The entire star pulses like a beating heart every 6 hours.",
@@ -397,7 +397,7 @@
   },
   {
     "id": "ALP", "name": "ALPHARD", "con": "Hydra", "dist": "180 LY", "vis": "Bright",
-    "type": "Orange Giant", "lum": "780x Sun", "temp": "Cooler than Sun",
+    "type": "Orange Giant", "lum": "780x Sun", "temp": "0.7x Sun",
     "facts": [
       "Known as the 'Solitary One' due to the empty sky around it.",
       "It is enriched with Barium from a dead companion star.",
@@ -406,7 +406,7 @@
   },
   {
     "id": "POLA", "name": "POLARIS", "con": "Ursa Minor", "dist": "430 LY", "vis": "Bright",
-    "type": "Yellow Supergiant", "lum": "1,260x Sun", "temp": "Similar to Sun",
+    "type": "Yellow Supergiant", "lum": "1,260x Sun", "temp": "1.0x Sun",
     "facts": [
       "It is the North Star, staying fixed while the sky rotates.",
       "It is actually a triple star system.",
@@ -415,7 +415,7 @@
   },
   {
     "id": "HAM", "name": "HAMAL", "con": "Aries", "dist": "65 LY", "vis": "Bright",
-    "type": "Orange Giant", "lum": "91x Sun", "temp": "Cooler than Sun",
+    "type": "Orange Giant", "lum": "91x Sun", "temp": "0.8x Sun",
     "facts": [
       "A giant planet nearly 2x the mass of Jupiter orbits it.",
       "Ancient astronomers used it to mark the Spring Equinox.",
@@ -424,7 +424,7 @@
   },
   {
     "id": "ALG", "name": "ALGOL", "con": "Perseus", "dist": "90 LY", "vis": "Variable",
-    "type": "Blue-White Star", "lum": "182x Sun", "temp": "Hotter than Sun",
+    "type": "Blue-White Star", "lum": "182x Sun", "temp": "2.2x Sun",
     "facts": [
       "Known as the 'Demon Star' because it winks every 3 days.",
       "A dimmer star passes in front of the brighter one.",
@@ -433,7 +433,7 @@
   },
   {
     "id": "DIP", "name": "DIPHDA", "con": "Cetus", "dist": "96 LY", "vis": "Bright",
-    "type": "Orange Giant", "lum": "138x Sun", "temp": "Cooler than Sun",
+    "type": "Orange Giant", "lum": "138x Sun", "temp": "0.8x Sun",
     "facts": [
       "It sits alone in a dim part of the sky.",
       "It emits powerful X-ray flares, unusual for an old star.",
@@ -442,7 +442,7 @@
   },
   {
     "id": "NUN", "name": "NUNKI", "con": "Sagittarius", "dist": "220 LY", "vis": "Bright",
-    "type": "Blue Star", "lum": "3,300x Sun", "temp": "Scorching Hot",
+    "type": "Blue Star", "lum": "3,300x Sun", "temp": "3.3x Sun",
     "facts": [
       "The oldest named star, found on ancient tablets.",
       "The Moon and planets often pass directly in front of it.",
@@ -451,7 +451,7 @@
   },
   {
     "id": "ALPHE", "name": "ALPHECCA", "con": "Corona Bor", "dist": "75 LY", "vis": "Bright",
-    "type": "White Star", "lum": "74x Sun", "temp": "Hotter than Sun",
+    "type": "White Star", "lum": "74x Sun", "temp": "1.7x Sun",
     "facts": [
       "The 'Jewel' of the Northern Crown.",
       "It is an eclipsing binary system.",
@@ -460,7 +460,7 @@
   },
   {
     "id": "SCH", "name": "SCHEDAR", "con": "Cassiopeia", "dist": "230 LY", "vis": "Bright",
-    "type": "Orange Giant", "lum": "676x Sun", "temp": "Cooler than Sun",
+    "type": "Orange Giant", "lum": "676x Sun", "temp": "0.8x Sun",
     "facts": [
       "The bottom-right star of the 'W' shape.",
       "It is a very stable star with few starspots.",
@@ -469,7 +469,7 @@
   },
   {
     "id": "ASP", "name": "ASPIDISKE", "con": "Carina", "dist": "690 LY", "vis": "Bright",
-    "type": "White Supergiant", "lum": "4,900x Sun", "temp": "Hotter than Sun",
+    "type": "White Supergiant", "lum": "4,900x Sun", "temp": "1.3x Sun",
     "facts": [
       "A rare type of white supergiant.",
       "It will likely become a variable star soon.",
@@ -478,7 +478,7 @@
   },
   {
     "id": "SUH", "name": "SUHAIL", "con": "Vela", "dist": "570 LY", "vis": "Bright",
-    "type": "Orange Supergiant", "lum": "11,000x Sun", "temp": "Cooler than Sun",
+    "type": "Orange Supergiant", "lum": "11,000x Sun", "temp": "0.7x Sun",
     "facts": [
       "It creates shockwaves in its own atmosphere.",
       "It will eventually explode as a supernova.",
@@ -487,7 +487,7 @@
   },
   {
     "id": "CAPH", "name": "CAPH", "con": "Cassiopeia", "dist": "55 LY", "vis": "Bright",
-    "type": "Yellow-White Giant", "lum": "28x Sun", "temp": "Hotter than Sun",
+    "type": "Yellow-White Giant", "lum": "28x Sun", "temp": "1.2x Sun",
     "facts": [
       "It rotates once a day, flattening it into a pumpkin shape.",
       "It is evolving from a white star into a red giant.",
@@ -496,7 +496,7 @@
   },
   {
     "id": "RUCH", "name": "RUCHBAH", "con": "Cassiopeia", "dist": "99 LY", "vis": "Dim",
-    "type": "White Star", "lum": "63x Sun", "temp": "Hotter than Sun",
+    "type": "White Star", "lum": "63x Sun", "temp": "1.4x Sun",
     "facts": [
       "It eclipses its partner star periodically.",
       "A disk of debris orbits the system.",
@@ -505,7 +505,7 @@
   },
   {
     "id": "SEGIN", "name": "SEGIN", "con": "Cassiopeia", "dist": "440 LY", "vis": "Dim",
-    "type": "Blue Giant", "lum": "720x Sun", "temp": "Scorching Hot",
+    "type": "Blue Giant", "lum": "720x Sun", "temp": "2.6x Sun",
     "facts": [
       "A massive blue giant at the end of the 'W'.",
       "It is 6 times wider than the Sun.",
@@ -514,7 +514,7 @@
   },
   {
     "id": "MER", "name": "MERAK", "con": "Ursa Major", "dist": "79 LY", "vis": "Bright",
-    "type": "White Star", "lum": "63x Sun", "temp": "Hotter than Sun",
+    "type": "White Star", "lum": "63x Sun", "temp": "1.6x Sun",
     "facts": [
       "One of the Pointers to the North Star.",
       "It is surrounded by a disk of warm dust.",
@@ -523,7 +523,7 @@
   },
   {
     "id": "PHEC", "name": "PHECDA", "con": "Ursa Major", "dist": "83 LY", "vis": "Bright",
-    "type": "White Star", "lum": "75x Sun", "temp": "Hotter than Sun",
+    "type": "White Star", "lum": "75x Sun", "temp": "1.6x Sun",
     "facts": [
       "Surrounded by a gaseous envelope.",
       "It is spinning rapidly and blowing its atmosphere away.",
@@ -532,7 +532,7 @@
   },
   {
     "id": "MEG", "name": "MEGREZ", "con": "Ursa Major", "dist": "80 LY", "vis": "Dim",
-    "type": "White Star", "lum": "23x Sun", "temp": "Hotter than Sun",
+    "type": "White Star", "lum": "23x Sun", "temp": "1.5x Sun",
     "facts": [
       "The dimmest star in the Big Dipper.",
       "It connects the handle to the bowl.",
@@ -541,7 +541,7 @@
   },
   {
     "id": "MIZ", "name": "MIZAR", "con": "Ursa Major", "dist": "86 LY", "vis": "Bright",
-    "type": "White System", "lum": "33x Sun", "temp": "Hotter than Sun",
+    "type": "White System", "lum": "33x Sun", "temp": "1.6x Sun",
     "facts": [
       "The first binary star ever discovered by telescope.",
       "It is actually a quadruple star system.",
@@ -550,7 +550,7 @@
   },
   {
     "id": "ALCO", "name": "ALCOR", "con": "Ursa Major", "dist": "81 LY", "vis": "Dim",
-    "type": "White Dwarf", "lum": "12x Sun", "temp": "Hotter than Sun",
+    "type": "White Dwarf", "lum": "12x Sun", "temp": "1.4x Sun",
     "facts": [
       "The 'Rider' sitting on the horse (Mizar).",
       "Used as an eyesight test by ancient armies.",
@@ -559,7 +559,7 @@
   },
   {
     "id": "KOC", "name": "KOCHAB", "con": "Ursa Minor", "dist": "130 LY", "vis": "Bright",
-    "type": "Orange Giant", "lum": "390x Sun", "temp": "Cooler than Sun",
+    "type": "Orange Giant", "lum": "390x Sun", "temp": "0.7x Sun",
     "facts": [
       "It served as the North Star in 1500 BC.",
       "A gas giant planet 6x heavier than Jupiter orbits it.",
@@ -568,7 +568,7 @@
   },
   {
     "id": "PHER", "name": "PHERKAD", "con": "Ursa Minor", "dist": "487 LY", "vis": "Dim",
-    "type": "White Supergiant", "lum": "1,100x Sun", "temp": "Hotter than Sun",
+    "type": "White Supergiant", "lum": "1,100x Sun", "temp": "1.5x Sun",
     "facts": [
       "A shell star throwing off gas.",
       "It varies slightly in brightness.",
@@ -577,7 +577,7 @@
   },
   {
     "id": "MINT", "name": "MINTAKA", "con": "Orion", "dist": "1200 LY", "vis": "Bright",
-    "type": "Blue Giant", "lum": "190,000x Sun", "temp": "Scorching Hot",
+    "type": "Blue Giant", "lum": "190,000x Sun", "temp": "5.1x Sun",
     "facts": [
       "The western star of Orion's Belt.",
       "One star eclipses the other every 5.7 days.",
@@ -586,7 +586,7 @@
   },
   {
     "id": "SAI", "name": "SAIPH", "con": "Orion", "dist": "720 LY", "vis": "Bright",
-    "type": "Blue Supergiant", "lum": "57,500x Sun", "temp": "Scorching Hot",
+    "type": "Blue Supergiant", "lum": "57,500x Sun", "temp": "4.6x Sun",
     "facts": [
       "Orion's right knee.",
       "It is as hot as Rigel but appears dimmer.",
@@ -595,7 +595,7 @@
   },
   {
     "id": "GRA", "name": "GRAFFIAS", "con": "Scorpius", "dist": "400 LY", "vis": "Dim",
-    "type": "Blue Star", "lum": "2,900x Sun", "temp": "Scorching Hot",
+    "type": "Blue Star", "lum": "2,900x Sun", "temp": "4.8x Sun",
     "facts": [
       "A system of at least six stars.",
       "The Moon often passes in front of it.",
@@ -604,7 +604,7 @@
   },
   {
     "id": "DSCH", "name": "DSCHUBBA", "con": "Scorpius", "dist": "490 LY", "vis": "Bright",
-    "type": "Blue Sub-Giant", "lum": "14,000x Sun", "temp": "Scorching Hot",
+    "type": "Blue Sub-Giant", "lum": "14,000x Sun", "temp": "3.8x Sun",
     "facts": [
       "It unexpectedly flared in brightness in the year 2000.",
       "It throws off disks of plasma.",
@@ -613,7 +613,7 @@
   },
   {
     "id": "WEI", "name": "WEI", "con": "Scorpius", "dist": "65 LY", "vis": "Bright",
-    "type": "Orange Giant", "lum": "72x Sun", "temp": "Cooler than Sun",
+    "type": "Orange Giant", "lum": "72x Sun", "temp": "0.8x Sun",
     "facts": [
       "It helps form the curve of the Scorpion's tail.",
       "It is an important source of X-rays.",
@@ -622,7 +622,7 @@
   },
   {
     "id": "LES", "name": "LESATH", "con": "Scorpius", "dist": "580 LY", "vis": "Dim",
-    "type": "Blue Sub-Giant", "lum": "12,300x Sun", "temp": "Scorching Hot",
+    "type": "Blue Sub-Giant", "lum": "12,300x Sun", "temp": "3.8x Sun",
     "facts": [
       "Located right next to the stinger star, Shaula.",
       "Together they are called the 'Cat's Eyes'.",
@@ -631,7 +631,7 @@
   },
   {
     "id": "ALGIE", "name": "ALGIEBA", "con": "Leo", "dist": "130 LY", "vis": "Bright",
-    "type": "Orange Giant", "lum": "320x Sun", "temp": "Cooler than Sun",
+    "type": "Orange Giant", "lum": "320x Sun", "temp": "0.8x Sun",
     "facts": [
       "A binary system visible in telescopes.",
       "A massive planet orbits the main star.",
@@ -640,7 +640,7 @@
   },
   {
     "id": "ZOS", "name": "ZOSMA", "con": "Leo", "dist": "58 LY", "vis": "Dim",
-    "type": "White Star", "lum": "23x Sun", "temp": "Hotter than Sun",
+    "type": "White Star", "lum": "23x Sun", "temp": "1.4x Sun",
     "facts": [
       "Located on the hip of the Lion.",
       "It is rotating very fast at 180 km/s.",
@@ -649,7 +649,7 @@
   },
   {
     "id": "ALB", "name": "ALBIREO", "con": "Cygnus", "dist": "430 LY", "vis": "Dim",
-    "type": "Gold/Blue Pair", "lum": "1,200x Sun", "temp": "Mixed",
+    "type": "Gold/Blue Pair", "lum": "1,200x Sun", "temp": "0.7x Sun",
     "facts": [
       "The most beautiful double star in the sky.",
       "One star is bright gold, the other deep blue.",
@@ -658,7 +658,7 @@
   },
   {
     "id": "SAD", "name": "SADR", "con": "Cygnus", "dist": "1800 LY", "vis": "Bright",
-    "type": "Yellow Supergiant", "lum": "33,000x Sun", "temp": "Similar to Sun",
+    "type": "Yellow Supergiant", "lum": "33,000x Sun", "temp": "1.0x Sun",
     "facts": [
       "The heart of the Northern Cross.",
       "Surrounded by a complex nebula.",
@@ -667,7 +667,7 @@
   },
   {
     "id": "GIE", "name": "GIENAH", "con": "Cygnus", "dist": "72 LY", "vis": "Dim",
-    "type": "Orange Giant", "lum": "61x Sun", "temp": "Cooler than Sun",
+    "type": "Orange Giant", "lum": "61x Sun", "temp": "0.8x Sun",
     "facts": [
       "Marks the wing of the Swan.",
       "It is fusing helium in its core.",
@@ -676,7 +676,7 @@
   },
   {
     "id": "MARK", "name": "MARKAB", "con": "Pegasus", "dist": "133 LY", "vis": "Dim",
-    "type": "White Star", "lum": "205x Sun", "temp": "Hotter than Sun",
+    "type": "White Star", "lum": "205x Sun", "temp": "1.7x Sun",
     "facts": [
       "The 'Saddle' of the winged horse.",
       "It has a disk of debris around it.",
@@ -685,7 +685,7 @@
   },
   {
     "id": "SCH_PEG", "name": "SCHEAT", "con": "Pegasus", "dist": "200 LY", "vis": "Dim",
-    "type": "Red Giant", "lum": "1,500x Sun", "temp": "Cool Red",
+    "type": "Red Giant", "lum": "1,500x Sun", "temp": "0.6x Sun",
     "facts": [
       "It varies irregularly in brightness.",
       "A strong wind blows its outer layers into space.",
@@ -694,7 +694,7 @@
   },
   {
     "id": "ALPHER", "name": "ALPHERATZ", "con": "Andromeda", "dist": "97 LY", "vis": "Bright",
-    "type": "Blue-White Star", "lum": "240x Sun", "temp": "Hotter than Sun",
+    "type": "Blue-White Star", "lum": "240x Sun", "temp": "2.4x Sun",
     "facts": [
       "Its atmosphere has clouds of mercury and manganese.",
       "The air is very still with no mixing.",
@@ -703,7 +703,7 @@
   },
   {
     "id": "MIR", "name": "MIRACH", "con": "Andromeda", "dist": "200 LY", "vis": "Bright",
-    "type": "Red Giant", "lum": "1,900x Sun", "temp": "Cool Red",
+    "type": "Red Giant", "lum": "1,900x Sun", "temp": "0.7x Sun",
     "facts": [
       "Used as a guide to find the Andromeda Galaxy.",
       "A 'Ghost Galaxy' appears right next to it in telescopes.",
@@ -712,7 +712,7 @@
   },
   {
     "id": "ALMA", "name": "ALMACH", "con": "Andromeda", "dist": "350 LY", "vis": "Bright",
-    "type": "Orange/Blue", "lum": "2,000x Sun", "temp": "Mixed",
+    "type": "Orange/Blue", "lum": "2,000x Sun", "temp": "0.7x Sun",
     "facts": [
       "A stunning quadruple star system.",
       "Telescopes show a gold giant and a blue companion.",
@@ -721,7 +721,7 @@
   },
   {
     "id": "MENK", "name": "MENKAR", "con": "Cetus", "dist": "250 LY", "vis": "Dim",
-    "type": "Red Giant", "lum": "1,455x Sun", "temp": "Cool Red",
+    "type": "Red Giant", "lum": "1,455x Sun", "temp": "0.7x Sun",
     "facts": [
       "The name means 'Nostril' in Arabic.",
       "It is fusing helium into carbon.",
@@ -730,7 +730,7 @@
   },
   {
     "id": "KAUSM", "name": "KAUS MEDIA", "con": "Sagittarius", "dist": "306 LY", "vis": "Dim",
-    "type": "Orange Giant", "lum": "1,180x Sun", "temp": "Cooler than Sun",
+    "type": "Orange Giant", "lum": "1,180x Sun", "temp": "0.7x Sun",
     "facts": [
       "The middle of the Archer's bow.",
       "It has three dim companion stars.",
@@ -739,7 +739,7 @@
   },
   {
     "id": "KAUSB", "name": "KAUS BOREALIS", "con": "Sagittarius", "dist": "78 LY", "vis": "Dim",
-    "type": "Orange Giant", "lum": "52x Sun", "temp": "Cooler than Sun",
+    "type": "Orange Giant", "lum": "52x Sun", "temp": "0.8x Sun",
     "facts": [
       "The top of the Archer's bow.",
       "It points towards the center of the galaxy.",
@@ -748,7 +748,7 @@
   },
   {
     "id": "ALN_SAG", "name": "ALNASL", "con": "Sagittarius", "dist": "96 LY", "vis": "Dim",
-    "type": "Yellow-Orange", "lum": "68x Sun", "temp": "Cooler than Sun",
+    "type": "Yellow-Orange", "lum": "68x Sun", "temp": "0.8x Sun",
     "facts": [
       "The arrowhead of the Archer.",
       "It produces a strong solar wind.",
@@ -757,7 +757,7 @@
   },
   {
     "id": "ASK", "name": "ASCELLA", "con": "Sagittarius", "dist": "88 LY", "vis": "Dim",
-    "type": "White Star", "lum": "134x Sun", "temp": "Hotter than Sun",
+    "type": "White Star", "lum": "134x Sun", "temp": "1.6x Sun",
     "facts": [
       "Part of the 'Teapot' asterism.",
       "A binary system orbiting every 21 years.",
@@ -766,7 +766,7 @@
   },
   {
     "id": "POLI", "name": "POLIS", "con": "Sagittarius", "dist": "3,000 LY", "vis": "Dim",
-    "type": "Blue Supergiant", "lum": "180,000x Sun", "temp": "Scorching Hot",
+    "type": "Blue Supergiant", "lum": "180,000x Sun", "temp": "3.3x Sun",
     "facts": [
       "Ideally avoided due to extreme radiation.",
       "The primary is eclipsed by a companion every 180 days.",
@@ -775,7 +775,7 @@
   },
   {
     "id": "RUK", "name": "RUKBAT", "con": "Sagittarius", "dist": "170 LY", "vis": "Dim",
-    "type": "Blue Dwarf", "lum": "117x Sun", "temp": "Hotter than Sun",
+    "type": "Blue Dwarf", "lum": "117x Sun", "temp": "2.1x Sun",
     "facts": [
       "Designated Alpha, but far from brightest.",
       "Surrounded by a debris disk.",
@@ -784,7 +784,7 @@
   },
   {
     "id": "ANA", "name": "ANCAA", "con": "Phoenix", "dist": "80 LY", "vis": "Dim",
-    "type": "Orange Giant", "lum": "62x Sun", "temp": "Cooler than Sun",
+    "type": "Orange Giant", "lum": "62x Sun", "temp": "0.8x Sun",
     "facts": [
       "A binary system with a short orbit.",
       "The companion orbits every 10 years.",
@@ -793,7 +793,7 @@
   },
   {
     "id": "ALUD", "name": "ALUDRA", "con": "Canis Major", "dist": "3,000 LY", "vis": "Dim",
-    "type": "Blue Supergiant", "lum": "100,000x Sun", "temp": "Scorching Hot",
+    "type": "Blue Supergiant", "lum": "100,000x Sun", "temp": "2.3x Sun",
     "facts": [
       "A massive star nearing the end of its life.",
       "It will explode as a supernova.",
@@ -802,7 +802,7 @@
   },
   {
     "id": "MUL", "name": "MULIPHEIN", "con": "Canis Major", "dist": "400 LY", "vis": "Dim",
-    "type": "Blue-White Giant", "lum": "685x Sun", "temp": "Hotter than Sun",
+    "type": "Blue-White Giant", "lum": "685x Sun", "temp": "2.3x Sun",
     "facts": [
       "Located in the collar of the Great Dog.",
       "It is a chemically peculiar star.",
@@ -811,7 +811,7 @@
   },
   {
     "id": "FUR", "name": "FURUD", "con": "Canis Major", "dist": "336 LY", "vis": "Dim",
-    "type": "Blue Dwarf", "lum": "3,600x Sun", "temp": "Scorching Hot",
+    "type": "Blue Dwarf", "lum": "3,600x Sun", "temp": "3.2x Sun",
     "facts": [
       "A binary star system.",
       "The companion is invisible to telescopes.",
@@ -820,7 +820,7 @@
   },
   {
     "id": "RAS", "name": "RASALHAGUE", "con": "Ophiuchus", "dist": "48 LY", "vis": "Bright",
-    "type": "White Star", "lum": "25x Sun", "temp": "Hotter than Sun",
+    "type": "White Star", "lum": "25x Sun", "temp": "1.4x Sun",
     "facts": [
       "Spins at 88% of break-up speed.",
       "The poles are hotter than the equator.",
@@ -829,7 +829,7 @@
   },
   {
     "id": "CEB", "name": "CEBALRAI", "con": "Ophiuchus", "dist": "81 LY", "vis": "Dim",
-    "type": "Orange Giant", "lum": "63x Sun", "temp": "Cooler than Sun",
+    "type": "Orange Giant", "lum": "63x Sun", "temp": "0.8x Sun",
     "facts": [
       "The 'Shepherd's Dog'.",
       "It varies in brightness.",
@@ -838,7 +838,7 @@
   },
   {
     "id": "SAB", "name": "SABIK", "con": "Ophiuchus", "dist": "88 LY", "vis": "Dim",
-    "type": "White Star Pair", "lum": "35x Sun", "temp": "Hotter than Sun",
+    "type": "White Star Pair", "lum": "35x Sun", "temp": "1.5x Sun",
     "facts": [
       "Two white stars orbiting each other.",
       "Their orbit is very oval-shaped.",
@@ -847,7 +847,7 @@
   },
   {
     "id": "YED", "name": "YED PRIOR", "con": "Ophiuchus", "dist": "170 LY", "vis": "Dim",
-    "type": "Red Giant", "lum": "630x Sun", "temp": "Cool Red",
+    "type": "Red Giant", "lum": "630x Sun", "temp": "0.7x Sun",
     "facts": [
       "Rich in Nitrogen.",
       "Located near the celestial equator.",
@@ -856,7 +856,7 @@
   },
   {
     "id": "MAR", "name": "MARFIK", "con": "Ophiuchus", "dist": "120 LY", "vis": "Dim",
-    "type": "White Star", "lum": "45x Sun", "temp": "Hotter than Sun",
+    "type": "White Star", "lum": "45x Sun", "temp": "1.6x Sun",
     "facts": [
       "Name means 'The Elbow'.",
       "An eclipsing binary star.",
@@ -865,7 +865,7 @@
   },
   {
     "id": "ETAMIN", "name": "ETAMIN", "con": "Draco", "dist": "150 LY", "vis": "Bright",
-    "type": "Orange Giant", "lum": "471x Sun", "temp": "Cooler than Sun",
+    "type": "Orange Giant", "lum": "471x Sun", "temp": "0.7x Sun",
     "facts": [
       "The 'Zenith Star' of London.",
       "Passes directly overhead in London.",
@@ -874,7 +874,7 @@
   },
   {
     "id": "ALD", "name": "ALDERAMIN", "con": "Cepheus", "dist": "49 LY", "vis": "Dim",
-    "type": "White Star", "lum": "18x Sun", "temp": "Hotter than Sun",
+    "type": "White Star", "lum": "18x Sun", "temp": "1.3x Sun",
     "facts": [
       "Will be the North Star in 7500 AD.",
       "Rotates very quickly.",
@@ -883,7 +883,7 @@
   },
   {
     "id": "ALF", "name": "ALFIRK", "con": "Cepheus", "dist": "690 LY", "vis": "Dim",
-    "type": "Blue Giant", "lum": "14,600x Sun", "temp": "Scorching Hot",
+    "type": "Blue Giant", "lum": "14,600x Sun", "temp": "4.6x Sun",
     "facts": [
       "Prototype of pulsating variable stars.",
       "Iron causes the star to pulse.",
@@ -892,7 +892,7 @@
   },
   {
     "id": "ERR", "name": "ERRAI", "con": "Cepheus", "dist": "45 LY", "vis": "Dim",
-    "type": "Orange Giant", "lum": "11x Sun", "temp": "Cooler than Sun",
+    "type": "Orange Giant", "lum": "11x Sun", "temp": "0.8x Sun",
     "facts": [
       "A binary system.",
       "Home to planet 'Tadmor'.",
@@ -901,7 +901,7 @@
   },
   {
     "id": "TAR", "name": "TARAZED", "con": "Aquila", "dist": "395 LY", "vis": "Dim",
-    "type": "Orange Bright Giant", "lum": "2,500x Sun", "temp": "Cooler than Sun",
+    "type": "Orange Bright Giant", "lum": "2,500x Sun", "temp": "0.7x Sun",
     "facts": [
       "Burning helium in its core.",
       "Rich in Carbon-13.",
@@ -910,7 +910,7 @@
   },
   {
     "id": "ALSH", "name": "ALSHAIN", "con": "Aquila", "dist": "45 LY", "vis": "Dim",
-    "type": "Yellow Sub-Giant", "lum": "6x Sun", "temp": "Similar to Sun",
+    "type": "Yellow Sub-Giant", "lum": "6x Sun", "temp": "0.9x Sun",
     "facts": [
       "Similar to what our Sun will become.",
       "Has a faint red dwarf companion.",
@@ -919,7 +919,7 @@
   },
   {
     "id": "DENE", "name": "DENEB OKAB", "con": "Aquila", "dist": "50 LY", "vis": "Dim",
-    "type": "White Star", "lum": "39x Sun", "temp": "Hotter than Sun",
+    "type": "White Star", "lum": "39x Sun", "temp": "1.4x Sun",
     "facts": [
       "The 'Tail of the Eagle'.",
       "Rotates at 200 km/s.",
@@ -928,7 +928,7 @@
   },
   {
     "id": "ROT", "name": "ROTANEV", "con": "Delphinus", "dist": "97 LY", "vis": "Dim",
-    "type": "Yellow-White", "lum": "24x Sun", "temp": "Hotter than Sun",
+    "type": "Yellow-White", "lum": "24x Sun", "temp": "1.1x Sun",
     "facts": [
       "Name is 'Venator' spelled backwards.",
       "A binary of two subgiants.",
@@ -937,7 +937,7 @@
   },
   {
     "id": "SUA", "name": "SUALOCIN", "con": "Delphinus", "dist": "240 LY", "vis": "Dim",
-    "type": "Blue Star", "lum": "195x Sun", "temp": "Scorching Hot",
+    "type": "Blue Star", "lum": "195x Sun", "temp": "1.9x Sun",
     "facts": [
       "Name is 'Nicolaus' spelled backwards.",
       "A system of seven stars.",
@@ -946,7 +946,7 @@
   },
   {
     "id": "ZUB", "name": "ZUBENELGENUBI", "con": "Libra", "dist": "75 LY", "vis": "Dim",
-    "type": "White Star", "lum": "38x Sun", "temp": "Hotter than Sun",
+    "type": "White Star", "lum": "38x Sun", "temp": "1.5x Sun",
     "facts": [
       "A wide binary easily split with binoculars.",
       "Stars are 5,000 AU apart.",
@@ -955,7 +955,7 @@
   },
   {
     "id": "ZUBN", "name": "ZUBENESCHAMALI", "con": "Libra", "dist": "185 LY", "vis": "Dim",
-    "type": "Blue Dwarf", "lum": "130x Sun", "temp": "Scorching Hot",
+    "type": "Blue Dwarf", "lum": "130x Sun", "temp": "2.1x Sun",
     "facts": [
       "Historically reported as green.",
       "Green stars are an optical illusion.",
@@ -964,7 +964,7 @@
   },
   {
     "id": "UNUK", "name": "UNUKALHAI", "con": "Serpens", "dist": "74 LY", "vis": "Dim",
-    "type": "Orange Giant", "lum": "70x Sun", "temp": "Cooler than Sun",
+    "type": "Orange Giant", "lum": "70x Sun", "temp": "0.8x Sun",
     "facts": [
       "The heart of the Serpent.",
       "Emits strong X-rays.",
@@ -973,7 +973,7 @@
   },
   {
     "id": "VIN", "name": "VINDEMIATRIX", "con": "Virgo", "dist": "109 LY", "vis": "Dim",
-    "type": "Yellow Giant", "lum": "77x Sun", "temp": "Similar to Sun",
+    "type": "Yellow Giant", "lum": "77x Sun", "temp": "0.9x Sun",
     "facts": [
       "The 'Grape Gatherer'.",
       "Signaled wine harvest time in antiquity.",
@@ -982,7 +982,7 @@
   },
   {
     "id": "POR", "name": "PORRIMA", "con": "Virgo", "dist": "38 LY", "vis": "Dim",
-    "type": "White Pair", "lum": "4x Sun", "temp": "Hotter than Sun",
+    "type": "White Pair", "lum": "4x Sun", "temp": "1.2x Sun",
     "facts": [
       "Spectacular binary for telescopes.",
       "Two nearly identical twin stars.",
@@ -991,7 +991,7 @@
   },
   {
     "id": "COR", "name": "COR CAROLI", "con": "Canes Venatici", "dist": "110 LY", "vis": "Dim",
-    "type": "White Star", "lum": "83x Sun", "temp": "Hotter than Sun",
+    "type": "White Star", "lum": "83x Sun", "temp": "2.0x Sun",
     "facts": [
       "Has an incredibly strong magnetic field.",
       "5,000 times stronger than Earth's.",
@@ -1000,7 +1000,7 @@
   },
   {
     "id": "IZA", "name": "IZAR", "con": "Boötes", "dist": "203 LY", "vis": "Dim",
-    "type": "Orange/Blue", "lum": "400x Sun", "temp": "Mixed",
+    "type": "Orange/Blue", "lum": "400x Sun", "temp": "0.8x Sun",
     "facts": [
       "Named 'The Most Beautiful'.",
       "Bright orange giant with blue partner.",
@@ -1009,7 +1009,7 @@
   },
   {
     "id": "MUPH", "name": "MUPHRID", "con": "Boötes", "dist": "37 LY", "vis": "Dim",
-    "type": "Yellow Sub-Giant", "lum": "9x Sun", "temp": "Similar to Sun",
+    "type": "Yellow Sub-Giant", "lum": "9x Sun", "temp": "1.1x Sun",
     "facts": [
       "Rich in heavy elements.",
       "Stellar neighbor to Arcturus.",
@@ -1018,7 +1018,7 @@
   },
   {
     "id": "ALKA", "name": "ALKALUROPS", "con": "Boötes", "dist": "120 LY", "vis": "Dim",
-    "type": "White Sub-Giant", "lum": "40x Sun", "temp": "Hotter than Sun",
+    "type": "White Sub-Giant", "lum": "40x Sun", "temp": "1.3x Sun",
     "facts": [
       "A triple star system.",
       "Secondary stars flare in brightness.",
@@ -1027,7 +1027,7 @@
   },
   {
     "id": "NEK", "name": "NEKKAR", "con": "Boötes", "dist": "225 LY", "vis": "Dim",
-    "type": "Yellow Giant", "lum": "190x Sun", "temp": "Similar to Sun",
+    "type": "Yellow Giant", "lum": "190x Sun", "temp": "0.9x Sun",
     "facts": [
       "A flare star.",
       "Emits bursts of X-rays.",
@@ -1036,7 +1036,7 @@
   },
   {
     "id": "SEGINUS", "name": "SEGINUS", "con": "Boötes", "dist": "85 LY", "vis": "Dim",
-    "type": "White Giant", "lum": "34x Sun", "temp": "Hotter than Sun",
+    "type": "White Giant", "lum": "34x Sun", "temp": "1.3x Sun",
     "facts": [
       "A Delta Scuti variable.",
       "Swells and shrinks physically.",

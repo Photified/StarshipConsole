@@ -230,7 +230,7 @@
         
         let hoveredStar = null; 
 
-        // LCARS COLORS for specific constellations
+        // RESTORED CONSTELLATION COLORS
         const conColors = {
             "URSA MAJOR": 0x00ff00,    // Green
             "URSA MINOR": 0xcc00ff,    // Purple
@@ -245,7 +245,6 @@
         };
         const defaultStarColor = 0xffffff;
 
-        // ACCURATE CONSTELLATION ATLAS (ID Pairs)
         const constellationPairs = [
             ['ALK', 'MIZ'], ['MIZ', 'ALI'], ['ALI', 'MEG'], ['MEG', 'PHEC'], 
             ['PHEC', 'MER'], ['MER', 'DUB'], ['DUB', 'MEG'],
@@ -265,7 +264,7 @@
             ['ALN_SAG', 'ASK'], ['ASK', 'NUN'], ['ASK', 'KAUS']
         ];
 
-        // MOCK COORDINATES
+        // MOCK COORDINATES FOR LAYMAN LAYOUT
         const coordMap = {
             "SIR": [6.75, -16.72], "CAN": [6.40, -52.70], "RIGK": [14.66, -60.83], "ARC": [14.26, 19.18],
             "VEG": [18.62, 38.78], "CAP": [5.27, 45.99], "RIG": [5.24, -8.20], "PRO": [7.65, 5.22],
@@ -318,7 +317,7 @@
 
             try {
                 // Ensure to load fresh data
-                const response = await fetch('stars.json?v=13'); 
+                const response = await fetch('stars.json?v=14'); 
                 const stars = await response.json();
                 
                 const d = (new Date().getTime() / 86400000) + 2440587.5 - 2451545.0;
@@ -572,7 +571,12 @@
             } else if (btnType === 'INTEL') {
                 let facts = d.facts || ["No intel available."];
                 if(typeof facts === 'string') facts = [facts];
-                content = facts.map(f => `<div style='margin-bottom:8px; color:#ffcc66; font-size:13px; line-height:1.4'>• ${f}</div>`).join('');
+                content = facts.map((f, i) => `
+                    <div class='data-row'>
+                        <div class='data-label'>FACT ${i+1}</div>
+                        <div class='data-value' style='color:#ffcc66; font-size:12px; line-height:1.3; white-space:normal'>${f}</div>
+                    </div>
+                `).join('');
             }
 
             document.getElementById('obj-body').innerHTML = content;
