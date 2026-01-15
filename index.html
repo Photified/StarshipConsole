@@ -80,7 +80,7 @@
             display: flex; align-items: center; padding-left: 10px; cursor: pointer;
         }
 
-        /* ZOOM SLIDER (LCARS STYLE) */
+        /* ZOOM SLIDER */
         .zoom-container {
             height: 150px; background: var(--gold);
             margin-bottom: 5px; border-radius: 0 25px 25px 0;
@@ -98,16 +98,16 @@
         input[type=range]::-webkit-slider-thumb {
             -webkit-appearance: none; height: 30px; width: 20px;
             background: black; border: 2px solid var(--orange); border-radius: 5px;
-            margin-top: -10px; /* offset */
+            margin-top: -10px;
         }
         input[type=range]::-webkit-slider-runnable-track {
             width: 100%; height: 10px; background: rgba(0,0,0,0.3); border-radius: 5px;
         }
 
-        /* READOUT */
+        /* READOUT MODAL */
         #readout { 
             display: none; position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); 
-            width: 80%; max-width: 350px; background: rgba(0,0,0,0.9); border: 2px solid var(--gold); 
+            width: 80%; max-width: 350px; background: rgba(0,0,0,0.95); border: 2px solid var(--gold); 
             z-index: 100; padding: 20px; border-radius: 15px; pointer-events: auto;
             box-shadow: 0 0 30px rgba(0,0,0,1);
         }
@@ -115,7 +115,13 @@
         .data-label { color: var(--blue); font-size: 11px; display: block; margin-top: 10px; }
         .data-value { color: white; font-size: 16px; display: block; margin-top: 2px; }
 
-        /* FOOTER */
+        /* STAR VISUAL IN POPUP */
+        #star-visual {
+            width: 60px; height: 60px; border-radius: 50%; margin: 0 auto 15px auto;
+            background: radial-gradient(circle at 30% 30%, white, transparent);
+            box-shadow: 0 0 20px white; border: 1px solid rgba(255,255,255,0.2);
+        }
+
         .footer-wrap { background: var(--orange); border-top-left-radius: 50px; display: flex; align-items: center; padding-left: 130px; pointer-events: auto; height: 60px; align-self: end; }
         .btn-main { background: var(--gold); border: none; padding: 12px 25px; border-radius: 25px; font-weight: bold; cursor: pointer; color: black; font-size: 14px; }
 
@@ -148,12 +154,10 @@
                 <div class="action-btn" id="btn-scan" style="background:var(--pink)">SCAN</div>
                 <div class="action-btn" id="btn-astro" style="background:var(--orange)">ASTRO</div>
                 <div class="action-btn" id="btn-intel" style="background:var(--blue)">INTEL</div>
-                
                 <div class="zoom-container">
                     <span class="zoom-label">MAGNIFICATION</span>
                     <input type="range" id="zoom-slider" min="40" max="120" value="100">
                 </div>
-
                 <div style="flex-grow:1"></div>
                 <div class="reset-btn" onclick="location.reload()">RESET</div>
             </div>
@@ -165,6 +169,7 @@
     </div>
 
     <div id="readout">
+        <div id="star-visual"></div>
         <div class="readout-header" id="obj-header">NO TARGET</div>
         <div id="obj-body"></div>
         <button class="btn-main" style="width:100%; margin-top:15px;" onclick="document.getElementById('readout').style.display='none'">CLOSE</button>
@@ -186,24 +191,15 @@
         let targetLon = 0, targetLat = 0;
         let hoveredStar = null; 
 
-        // Constellation Color Map
         const conColors = {
-            "URSA MAJOR": 0x00ff00,    
-            "URSA MINOR": 0xcc00ff,    
-            "ORION": 0x00aaff,         
-            "SCORPIUS": 0xff3300,      
-            "CASSIOPEIA": 0xff0099,    
-            "CYGNUS": 0x00ffff,        
-            "CRUX": 0xffff00,          
-            "CANIS MAJOR": 0x0055ff,   
-            "LEO": 0xffaa00,           
-            "GEMINI": 0xffaaee         
+            "URSA MAJOR": 0x00ff00, "URSA MINOR": 0xcc00ff, "ORION": 0x00aaff, "SCORPIUS": 0xff3300,
+            "CASSIOPEIA": 0xff0099, "CYGNUS": 0x00ffff, "CRUX": 0xffff00, "CANIS MAJOR": 0x0055ff,
+            "LEO": 0xffaa00, "GEMINI": 0xffaaee
         };
         const defaultStarColor = 0xffffff;
 
         async function init(userLongitude) {
             scene = new THREE.Scene();
-            // Start with FOV 100 for "Wide Angle" view
             camera = new THREE.PerspectiveCamera(100, window.innerWidth / window.innerHeight, 1, 4000);
             
             renderer = new THREE.WebGLRenderer({ alpha: true, antialias: true });
@@ -213,7 +209,6 @@
 
             starGroup = new THREE.Group();
 
-            // Background Stars
             const bgGeo = new THREE.BufferGeometry();
             const bgPos = [];
             for (let i = 0; i < 2000; i++) {
@@ -225,7 +220,6 @@
             bgGeo.setAttribute('position', new THREE.Float32BufferAttribute(bgPos, 3));
             scene.add(new THREE.Points(bgGeo, new THREE.PointsMaterial({ color: 0x444466, size: 2 })));
 
-            // Load Stars
             try {
                 const response = await fetch('stars.json');
                 const stars = await response.json();
@@ -255,8 +249,7 @@
                     mesh.userData.baseColor = starColor;
 
                     const el = document.createElement('div');
-                    el.className = 'label'; 
-                    el.innerText = s.name;
+                    el.className = 'label'; el.innerText = s.name;
                     el.style.color = '#' + starColor.toString(16).padStart(6, '0');
                     el.style.borderLeftColor = '#' + starColor.toString(16).padStart(6, '0');
                     
@@ -265,7 +258,7 @@
                     starGroup.add(mesh);
                 });
                 scene.add(starGroup);
-            } catch (err) { console.error("Error loading stars:", err); }
+            } catch (err) { console.error(err); }
 
             window.addEventListener('resize', () => {
                 camera.aspect = window.innerWidth / window.innerHeight;
@@ -276,12 +269,7 @@
             document.addEventListener('pointerdown', onPointerDown);
             document.addEventListener('pointermove', onPointerMove);
             document.addEventListener('pointerup', onPointerUp);
-
-            // ZOOM CONTROL
             document.getElementById('zoom-slider').addEventListener('input', (e) => {
-                // Invert logic: Slider up (low value) = Zoom In (Low FOV)
-                // Slider down (high value) = Zoom Out (High FOV)
-                // Actually standard logic: High value = High FOV (Zoom Out/Wide)
                 camera.fov = parseInt(e.target.value);
                 camera.updateProjectionMatrix();
             });
@@ -289,35 +277,28 @@
             animate();
         }
 
-        // MATH FIX: Safe angle calculation
         function getStarAngles(position) {
             const r = Math.sqrt(position.x*position.x + position.y*position.y + position.z*position.z);
             const safeY = Math.max(-1, Math.min(1, position.y / r));
             const phi = Math.acos(safeY);
             const theta = Math.atan2(position.x, position.z); 
-            
             let starLat = 90 - THREE.MathUtils.radToDeg(phi);
             let starLon = THREE.MathUtils.radToDeg(theta); 
-            
             if(starLon < 0) starLon += 360;
             return { lon: starLon, lat: starLat };
         }
 
         function animate() {
             requestAnimationFrame(animate);
-
             if (isNaN(lon) || isNaN(lat)) { lon = 0; lat = 0; isSnapping = false; }
-
             if(isSnapping) {
                 lat += (targetLat - lat) * 0.1;
                 lon += (targetLon - lon) * 0.1;
                 if(Math.abs(targetLat - lat) < 0.05 && Math.abs(targetLon - lon) < 0.05) isSnapping = false;
             }
-
             let hdg = Math.round(lon % 360);
             if (hdg < 0) hdg += 360;
             document.getElementById('nav-data').innerText = `HDG: ${hdg.toString().padStart(3, '0')}`;
-
             const phi = THREE.MathUtils.degToRad(90 - lat);
             const theta = THREE.MathUtils.degToRad(lon);
             const target = new THREE.Vector3(
@@ -327,11 +308,9 @@
             );
             camera.lookAt(target);
             renderer.render(scene, camera);
-
             starGroup.children.forEach(mesh => {
                 if(mesh.userData.label) {
                     const v = mesh.position.clone().project(camera);
-                    // Adjust visibility logic based on FOV to prevent disappearing too soon
                     const limit = 0.9;
                     if(v.z < 1 && Math.abs(v.x) < limit && Math.abs(v.y) < limit) {
                         mesh.userData.label.style.display = 'block';
@@ -343,18 +322,11 @@
         }
 
         function onPointerDown(event) {
-            // Ignore UI interactions
-            if (event.target.closest('.action-btn') || 
-                event.target.closest('.reset-btn') || 
-                event.target.id === 'zoom-slider') return;
-            
+            if (event.target.closest('.action-btn') || event.target.closest('.reset-btn') || event.target.id === 'zoom-slider') return;
             if (event.isPrimary === false) return;
-            isUserInteracting = true;
-            isSnapping = false; 
-            onPointerDownPointerX = event.clientX;
-            onPointerDownPointerY = event.clientY;
-            onPointerDownLon = lon;
-            onPointerDownLat = lat;
+            isUserInteracting = true; isSnapping = false; 
+            onPointerDownPointerX = event.clientX; onPointerDownPointerY = event.clientY;
+            onPointerDownLon = lon; onPointerDownLat = lat;
         }
 
         function onPointerMove(event) {
@@ -366,13 +338,10 @@
                 lat = Math.max(-85, Math.min(85, lat)); 
                 return; 
             }
-
             const raycaster = new THREE.Raycaster();
             raycaster.setFromCamera(new THREE.Vector2(0, 0), camera);
             const hits = raycaster.intersectObjects(starGroup.children);
-            
             const buttons = document.querySelectorAll('.action-btn');
-
             if(hits.length > 0) {
                 const hit = hits[0].object;
                 if(hoveredStar !== hit) {
@@ -405,6 +374,24 @@
                 targetLat = angles.lat;
                 isSnapping = true;
             }
+        }
+
+        // VISUAL GENERATOR
+        function updateStarVisual(d) {
+            const visual = document.getElementById('star-visual');
+            let color = 'white';
+            let shadow = 'white';
+            
+            // Map spectral types to colors
+            if (d.type.includes('O') || d.type.includes('B')) { color = '#aaddff'; shadow = '#0088ff'; }
+            else if (d.type.includes('A')) { color = '#ffffff'; shadow = '#ccccff'; }
+            else if (d.type.includes('F')) { color = '#fff8e0'; shadow = '#ffddaa'; }
+            else if (d.type.includes('G')) { color = '#ffee00'; shadow = '#ffaa00'; }
+            else if (d.type.includes('K')) { color = '#ffaa55'; shadow = '#ff6600'; }
+            else if (d.type.includes('M')) { color = '#ff5555'; shadow = '#cc0000'; }
+
+            visual.style.background = `radial-gradient(circle at 30% 30%, ${color}, transparent)`;
+            visual.style.boxShadow = `0 0 20px ${shadow}`;
         }
 
         function cleanData(val, type) {
@@ -443,8 +430,7 @@
                     const v = star.position.clone().project(camera);
                     const d = Math.sqrt(v.x*v.x + v.y*v.y);
                     if(v.z < 1 && d < 0.3 && d < closestDist) {
-                        closestDist = d;
-                        closestStar = star;
+                        closestDist = d; closestStar = star;
                     }
                 });
                 target = closestStar;
@@ -453,6 +439,7 @@
             if (!target) {
                 document.getElementById('obj-header').innerText = "NO TARGET";
                 document.getElementById('obj-body').innerHTML = "<div class='data-label'>STATUS</div><div class='data-value'>ALIGN SENSORS TO STAR</div>";
+                document.getElementById('star-visual').style.background = 'gray';
                 document.getElementById('readout').style.display = 'block';
                 return;
             }
@@ -462,6 +449,8 @@
             const hexColor = '#' + target.userData.baseColor.toString(16).padStart(6, '0');
             document.getElementById('obj-header').style.color = hexColor;
             document.getElementById('obj-header').style.borderColor = hexColor;
+            
+            updateStarVisual(d);
 
             let content = "";
             if (btnType === 'SCAN') {
@@ -473,9 +462,11 @@
                 content = `
                     <div class='data-label'>CLASS</div><div class='data-value'>${cleanData(d.type, 'type')}</div>
                     <div class='data-label'>SIZE</div><div class='data-value'>${cleanData(d.size, 'size')}</div>
+                    <div class='data-label'>TEMP</div><div class='data-value'>${d.temp || "UNKNOWN"}</div>
                 `;
             } else if (btnType === 'INTEL') {
                 content = `
+                    <div class='data-label'>LUMINOSITY</div><div class='data-value'>${d.lum || "UNKNOWN"}</div>
                     <div class='data-label'>DATABASE</div><div class='data-value' style='color:#ffcc66; font-style:italic'>"${d.fact}"</div>
                 `;
             }
