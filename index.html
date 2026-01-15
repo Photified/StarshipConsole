@@ -25,7 +25,6 @@
             background: radial-gradient(circle at center, #0a0a1a 0%, #000005 100%);
             z-index: -1;
             opacity: 0; 
-            /* FIXED: Faster transition to eliminate "lag" feel */
             transition: opacity 0.5s ease-out;
         }
 
@@ -36,7 +35,6 @@
             left: 50%; 
             transform: translate(-50%, -50%);
             margin-left: 50px; 
-            
             z-index: 5; 
             display: flex; align-items: center; justify-content: center;
             flex-direction: column;
@@ -101,7 +99,6 @@
             box-shadow: 0 0 10px rgba(153, 153, 255, 0.3);
             transition: all 0.2s ease;
             opacity: 0;
-            /* FIXED: Faster transition */
             transition: opacity 0.5s;
         }
         #reticle.locked {
@@ -143,10 +140,10 @@
         .sidebar { width: 100px; display: flex; flex-direction: column; gap: 5px; padding-top: 10px; pointer-events: auto; }
         
         .action-btn { 
-            background: var(--blue); height: 50px; 
-            border-radius: 0 25px 25px 0; color: black; 
-            font-size: 12px; display: flex; align-items: center; padding-left: 10px; 
-            margin-bottom: 5px; cursor: pointer; transition: background 0.2s;
+            background: var(--blue); height: 40px; 
+            border-radius: 0 20px 20px 0; color: black; 
+            font-size: 11px; display: flex; align-items: center; padding-left: 10px; 
+            margin-bottom: 4px; cursor: pointer; transition: background 0.2s;
             border: 1px solid transparent; opacity: 0.6;
         }
         .action-btn.active { opacity: 1; box-shadow: 0 0 10px var(--blue); background: var(--gold); }
@@ -166,6 +163,7 @@
             background: var(--red); height: 40px; margin-top: auto;
             border-radius: 0 20px 20px 0; color: black;
             display: flex; align-items: center; padding-left: 10px; cursor: pointer;
+            margin-bottom: 15px;
         }
 
         .zoom-container {
@@ -273,7 +271,9 @@
             <div class="sidebar">
                 <div class="action-btn" id="btn-nav" style="background:var(--pink)">NAV</div>
                 <div class="action-btn" id="btn-vis" style="background:var(--orange)">ANALYSIS</div>
-                <div class="action-btn" id="btn-intel" style="background:var(--blue)">INTEL</div>
+                <div class="action-btn" id="btn-orb" style="background:var(--blue)">ORBITAL</div>
+                <div class="action-btn" id="btn-phys" style="background:var(--pink)">PHYSICS</div>
+                <div class="action-btn" id="btn-intel" style="background:var(--orange)">INTEL</div>
                 
                 <div class="audio-btn" id="btn-audio">
                     <svg viewBox="0 0 24 24"><path d="M3 9v6h4l5 5V4L7 9H3zm13.5 3c0-1.77-1.02-3.29-2.5-4.03v8.05c1.48-.73 2.5-2.25 2.5-4.02zM14 3.23v2.06c2.89.86 5 3.54 5 6.71s-2.11 5.85-5 6.71v2.06c4.01-.91 7-4.49 7-8.77s-2.99-7.86-7-8.77z"/></svg>
@@ -373,12 +373,10 @@
 
         let scene, camera, renderer, starGroup, linesGroup;
         let isUserInteracting = false;
-        
         let lon = 0, lat = 0;
         let onPointerDownLon = 0, onPointerDownLat = 0;
         let onPointerDownPointerX = 0, onPointerDownPointerY = 0;
         const sensitivity = 0.2; 
-        
         let hoveredStar = null; 
 
         // COLORS & ATLAS
@@ -449,7 +447,7 @@
 
             try {
                 // Ensure to load fresh data
-                const response = await fetch('stars.json?v=18'); 
+                const response = await fetch('stars.json?v=19'); 
                 const stars = await response.json();
                 
                 const d = (new Date().getTime() / 86400000) + 2440587.5 - 2451545.0;
@@ -720,6 +718,32 @@
                         <span class='data-value'>${d.temp || "Unknown"}</span>
                     </div>
                 `;
+            } else if (btnType === 'ORB') {
+                content = `
+                    <div class='data-block'>
+                        <span class='data-label'>PLANETS</span>
+                        <span class='data-value'>${d.planets || "None Detected"}</span>
+                    </div>
+                    <div class='data-block'>
+                        <span class='data-label'>ROTATION</span>
+                        <span class='data-value'>${d.rot || "Unknown"}</span>
+                    </div>
+                `;
+            } else if (btnType === 'PHYS') {
+                content = `
+                    <div class='data-block'>
+                        <span class='data-label'>MASS</span>
+                        <span class='data-value'>${d.mass || "Unknown"}</span>
+                    </div>
+                    <div class='data-block'>
+                        <span class='data-label'>RADIUS</span>
+                        <span class='data-value'>${d.rad || "Unknown"}</span>
+                    </div>
+                    <div class='data-block'>
+                        <span class='data-label'>AGE</span>
+                        <span class='data-value'>${d.age || "Unknown"}</span>
+                    </div>
+                `;
             } else if (btnType === 'INTEL') {
                 let facts = d.facts || ["No intel available."];
                 if(typeof facts === 'string') facts = [facts];
@@ -737,6 +761,8 @@
 
         document.getElementById('btn-nav').addEventListener('click', () => showData('NAV'));
         document.getElementById('btn-vis').addEventListener('click', () => showData('VIS'));
+        document.getElementById('btn-orb').addEventListener('click', () => showData('ORB'));
+        document.getElementById('btn-phys').addEventListener('click', () => showData('PHYS'));
         document.getElementById('btn-intel').addEventListener('click', () => showData('INTEL'));
         
         // AUDIO BUTTON LISTENER
@@ -754,7 +780,7 @@
         // BOOT SEQUENCE HANDLER
         document.getElementById('start-btn').addEventListener('click', () => {
             if (audioCtx.state === 'suspended') audioCtx.resume();
-            playSound('click'); // Button chirp
+            playSound('click'); 
 
             // 1. Start heavy lifting immediately in background
             document.getElementById('header-text').innerText = "SCANNING SECTOR 001";
