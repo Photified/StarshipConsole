@@ -373,7 +373,7 @@
 
         let scene, camera, renderer, starGroup, linesGroup;
         let isUserInteracting = false;
-        let lon = 26, lat = 0;
+        let lon = 27, lat = 0;
         let onPointerDownLon = 0, onPointerDownLat = 0;
         let onPointerDownPointerX = 0, onPointerDownPointerY = 0;
         const sensitivity = 0.2; 
@@ -385,55 +385,64 @@
         
         // FULL DATA - CONSTELLATION LINES
         const constellationPairs = [
-            ['ALK','MIZ'],
-            ['MIZ','ALI'],
-            ['ALI','MEG'],
-            ['MEG','PHEC'], 
-            ['PHEC','MER'],
-            ['MER','DUB'],
-            ['DUB','MEG'],
-            ['POLA','KOC'],
-            ['KOC','PHER'], 
-            ['BET','BEL'],
-            ['MINT','ALNI'],
-            ['ALNI','ALN'],
-            ['SAI','RIG'], 
-            ['BEL','MINT'],
-            ['BET','ALNI'],
-            ['SAI','ALNI'],
-            ['RIG','MINT'], 
-            ['ANT','GRA'],
-            ['GRA','DSCH'],
-            ['ANT','WEI'],
-            ['WEI','SAR'],
-            ['SAR','SHA'],
-            ['SHA','LES'], 
-            ['DEN','SAD'],
-            ['SAD','ALB'],
-            ['SAD','GIE'], 
-            ['REG','ALGIE'],
-            ['ALGIE','ZOS'],
-            ['CAS','POL'],
-            ['POL','ALH'],
-            ['SIR','MIRZ'],
-            ['SIR','ADH'],
-            ['ADH','WES'],
-            ['WES','ALUD'],
-            ['ACR','GAC'],
-            ['MIM','GAC'], 
-            ['CAPH','SCH'],
-            ['SCH','RUCH'],
-            ['RUCH','SEGIN'],
-            ['MARK','SCH_PEG'],
-            ['SCH_PEG','ALPHER'], 
-            ['ALPHER','MIR_AND'],
-            ['MIR_AND','ALMA'], 
-            ['KAUS','KAUSM'],
-            ['KAUSM','KAUSB'],
-            ['KAUSM','ALN_SAG'], 
-            ['ALN_SAG','ASK'],
-            ['ASK','NUN'],
-            ['ASK','KAUS']
+            ['ALK', 'MIZ'],
+            ['MIZ', 'ALI'],
+            ['ALI', 'MEG'],
+            ['MEG', 'PHEC'], 
+            ['PHEC', 'MER'],
+            ['MER', 'DUB'],
+            ['DUB', 'MEG'],
+            ['POLA', 'KOC'],
+            ['KOC', 'PHER'], 
+            ['BET', 'BEL'],
+            ['MINT', 'ALNI'],
+            ['ALNI', 'ALN'],
+            ['SAI', 'RIG'], 
+            ['BEL', 'MINT'],
+            ['BET', 'ALNI'],
+            ['SAI', 'ALNI'],
+            ['RIG', 'MINT'], 
+            ['ANT', 'GRA'],
+            ['GRA', 'DSCH'],
+            ['ANT', 'WEI'],
+            ['WEI', 'SAR'],
+            ['SAR', 'SHA'],
+            ['SHA', 'LES'], 
+            ['DEN', 'SAD'],
+            ['SAD', 'ALB'],
+            ['SAD', 'GIE'], 
+            ['REG', 'ALGIE'],
+            ['ALGIE', 'ZOS'],
+            ['CAS', 'POL'],
+            ['POL', 'ALH'],
+            ['SIR', 'MIRZ'],
+            ['SIR', 'ADH'],
+            ['ADH', 'WES'],
+            ['WES', 'ALUD'],
+            ['ACR', 'GAC'],
+            ['MIM', 'GAC'], 
+            ['CAPH', 'SCH'],
+            ['SCH', 'RUCH'],
+            ['RUCH', 'SEGIN'],
+            ['MARK', 'SCH_PEG'],
+            ['SCH_PEG', 'ALPHER'], 
+            ['ALPHER', 'MIR_AND'],
+            ['MIR_AND', 'ALMA'], 
+            ['KAUS', 'KAUSM'],
+            ['KAUSM', 'KAUSB'],
+            ['KAUSM', 'ALN_SAG'], 
+            ['ALN_SAG', 'ASK'],
+            ['ASK', 'NUN'],
+            ['ASK', 'KAUS'],
+            ['ZOS', 'DENEBOLA'],
+            ['ALPHER', 'ALGENIB'],
+            ['ALGENIB', 'MARK'],
+            ['MARK', 'ENIF'],
+            ['ETAMIN', 'THUBAN'],
+            ['RASALGETHI', 'KORNEPHOROS'],
+            ['GIENAH_CORVI', 'ALGORAB'],
+            ['RIG', 'ARNEB'],
+            ['SADALMELIK', 'SADALSUUD']
         ];
 
         // FULL DATA - COORDINATES (Including Black Holes)
@@ -441,9 +450,19 @@
             "SGR_A": [17.76, -29.00],
             "CYG_X1": [19.96, 35.20],
             "GAIA_BH1": [17.47, -0.01],
-			"GRS_1915": [19.25, 10.95],
+            "GRS_1915": [19.25, 10.95],
             "V404_CYG": [20.40, 33.86],
             "V616_MON": [6.37, -0.34],
+            "DENEBOLA": [11.82, 14.57],
+            "ALGENIB": [0.22, 15.18],
+            "THUBAN": [14.07, 64.37],
+            "RASALGETHI": [17.25, 14.39],
+            "MIRA": [2.32, -2.97],
+            "ARNEB": [5.54, -17.82],
+            "GIENAH_CORVI": [12.26, -17.54],
+            "ENIF": [21.74, 9.87],
+            "SADALMELIK": [22.09, -0.32],
+            "ALRESCHA": [2.03, 2.76],
             "SIR": [6.75, -16.72],
             "CAN": [6.40, -52.70],
             "RIGK": [14.66, -60.83],
@@ -582,7 +601,7 @@
 
             try {
                 // Ensure to load fresh data
-                const response = await fetch('stars.json?v=21'); 
+                const response = await fetch('stars.json?v=22'); 
                 const stars = await response.json();
                 
                 const d = (new Date().getTime() / 86400000) + 2440587.5 - 2451545.0;
@@ -605,8 +624,8 @@
                         new THREE.MeshBasicMaterial({ color: starColor })
                     );
                     
-                    // --- NEW VISUAL LOGIC FOR BLACK HOLES ---
-                    if (s.type && s.type.includes('Black Hole')) {
+                    // --- VISUAL LOGIC FOR BLACK HOLES & MICROQUASARS ---
+                    if (s.type && (s.type.includes('Black Hole') || s.type.includes('Microquasar'))) {
                         // Make them distinct violet markers on the map
                         mesh.material.color.setHex(0x9933ff);
                         mesh.scale.set(1.5, 1.5, 1.5); // Slightly larger marker
@@ -620,7 +639,8 @@
                     );
                     
                     mesh.userData = s;
-                    mesh.userData.baseColor = s.type.includes('Black Hole') ? 0x9933ff : starColor;
+                    // Correct base color logic for both Black Holes and Microquasars
+                    mesh.userData.baseColor = (s.type.includes('Black Hole') || s.type.includes('Microquasar')) ? 0x9933ff : starColor;
 
                     const el = document.createElement('div');
                     el.className = 'label'; el.innerText = s.name;
@@ -785,7 +805,7 @@
             let shadow = 'white';
             
             // --- BLACK HOLE VISUAL LOGIC ---
-            if (d.type && d.type.includes('Black Hole')) {
+            if (d.type && (d.type.includes('Black Hole') || d.type.includes('Microquasar'))) {
                 // Create an "Accretion Disk" look
                 visual.style.background = `radial-gradient(circle at 50% 50%, black 30%, #aa00ff 50%, transparent 70%)`;
                 visual.style.boxShadow = `0 0 30px #aa00ff`;

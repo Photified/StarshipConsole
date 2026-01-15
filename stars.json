@@ -1218,5 +1218,105 @@
       "Swells and shrinks physically.",
       "Changes brightness every few hours."
     ]
+  },
+  {
+    "id": "DENEBOLA", "name": "DENEBOLA", "con": "Leo", "dist": "36 LY", "vis": "Bright",
+    "type": "White Star", "lum": "15x Sun", "temp": "1.5x Sun",
+    "mass": "1.8x Sun", "rad": "1.7x Wider than Sun", "age": "400 Million Years", "planets": "Debris Disk Detected", "rot": "0.7 Days",
+    "facts": [
+      "Marks the Lion's tail.",
+      "Surrounded by dust which emits infrared light.",
+      "Has a very rapid rotation speed."
+    ]
+  },
+  {
+    "id": "ALGENIB", "name": "ALGENIB", "con": "Pegasus", "dist": "390 LY", "vis": "Bright",
+    "type": "Blue Sub-Giant", "lum": "4,000x Sun", "temp": "3.8x Sun",
+    "mass": "9.0x Sun", "rad": "4.5x Wider than Sun", "age": "18 Million Years", "planets": "None Detected", "rot": "Unknown",
+    "facts": [
+      "One corner of the Great Square of Pegasus.",
+      "It pulses in brightness every few hours.",
+      "It is a Beta Cephei variable."
+    ]
+  },
+  {
+    "id": "THUBAN", "name": "THUBAN", "con": "Draco", "dist": "300 LY", "vis": "Dim",
+    "type": "White Giant", "lum": "250x Sun", "temp": "1.7x Sun",
+    "mass": "2.8x Sun", "rad": "3.4x Wider than Sun", "age": "Unknown", "planets": "None Detected", "rot": "Unknown",
+    "facts": [
+      "It was the North Star when the Pyramids were built.",
+      "Located in the tail of the Dragon.",
+      "It is a binary star system."
+    ]
+  },
+  {
+    "id": "RASALGETHI", "name": "RASALGETHI", "con": "Hercules", "dist": "360 LY", "vis": "Variable",
+    "type": "Red Supergiant", "lum": "17,000x Sun", "temp": "0.5x Sun",
+    "mass": "2.5x Sun", "rad": "280x Wider than Sun", "age": "Unknown", "planets": "None Detected", "rot": "Unknown",
+    "facts": [
+      "The 'Head of the Kneeler'.",
+      "One of the largest stars visible to the naked eye.",
+      "It varies in brightness irregularly."
+    ]
+  },
+  {
+    "id": "MIRA", "name": "MIRA", "con": "Cetus", "dist": "300 LY", "vis": "Variable",
+    "type": "Red Giant", "lum": "9,000x Sun", "temp": "0.5x Sun",
+    "mass": "1.2x Sun", "rad": "400x Wider than Sun", "age": "6 Billion Years", "planets": "None Detected", "rot": "Unknown",
+    "facts": [
+      "The first variable star ever discovered.",
+      "It changes from visible to invisible over 11 months.",
+      "It has a comet-like tail 13 light years long."
+    ]
+  },
+  {
+    "id": "ARNEB", "name": "ARNEB", "con": "Lepus", "dist": "2,200 LY", "vis": "Bright",
+    "type": "Yellow-White Supergiant", "lum": "13,000x Sun", "temp": "1.2x Sun",
+    "mass": "14x Sun", "rad": "75x Wider than Sun", "age": "13 Million Years", "planets": "None Detected", "rot": "Unknown",
+    "facts": [
+      "The brightest star in the Hare constellation.",
+      "It is dying and will become a Supernova.",
+      "Located just under Orion's feet."
+    ]
+  },
+  {
+    "id": "GIENAH_CORVI", "name": "GIENAH", "con": "Corvus", "dist": "154 LY", "vis": "Bright",
+    "type": "Blue Giant", "lum": "330x Sun", "temp": "2.1x Sun",
+    "mass": "4.0x Sun", "rad": "4.0x Wider than Sun", "age": "160 Million Years", "planets": "None Detected", "rot": "Unknown",
+    "facts": [
+      "The brightest star in the Crow.",
+      "Shares a name with a star in Cygnus.",
+      "Rich in mercury and manganese."
+    ]
+  },
+  {
+    "id": "ENIF", "name": "ENIF", "con": "Pegasus", "dist": "690 LY", "vis": "Bright",
+    "type": "Orange Supergiant", "lum": "6,700x Sun", "temp": "0.7x Sun",
+    "mass": "10x Sun", "rad": "150x Wider than Sun", "age": "20 Million Years", "planets": "None Detected", "rot": "Unknown",
+    "facts": [
+      "The 'Nose' of the Winged Horse.",
+      "It once flared to be 5x brighter than normal.",
+      "It has only a few million years left to live."
+    ]
+  },
+  {
+    "id": "SADALMELIK", "name": "SADALMELIK", "con": "Aquarius", "dist": "520 LY", "vis": "Bright",
+    "type": "Yellow Supergiant", "lum": "3,000x Sun", "temp": "1.0x Sun",
+    "mass": "6.0x Sun", "rad": "60x Wider than Sun", "age": "53 Million Years", "planets": "None Detected", "rot": "Unknown",
+    "facts": [
+      "The 'King's Lucky Star'.",
+      "A rare yellow supergiant like Canopus.",
+      "Located on the celestial equator."
+    ]
+  },
+  {
+    "id": "ALRESCHA", "name": "ALRESCHA", "con": "Pisces", "dist": "150 LY", "vis": "Dim",
+    "type": "White Binary", "lum": "30x Sun", "temp": "1.6x Sun",
+    "mass": "2.3x Sun", "rad": "1.8x Wider than Sun", "age": "Unknown", "planets": "None Detected", "rot": "Unknown",
+    "facts": [
+      "The 'Cord' tying the two fishes together.",
+      "A beautiful double star in telescopes.",
+      "Both stars are chemically peculiar."
+    ]
   }
 ]
