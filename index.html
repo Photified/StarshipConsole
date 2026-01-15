@@ -20,7 +20,7 @@
             font-family: Arial, sans-serif; font-weight: bold; 
             text-transform: uppercase; color: white; 
             user-select: none; -webkit-user-select: none;
-            touch-action: none; /* Critical for swipe performance */
+            touch-action: none; /* Critical for smooth swipe */
         }
 
         #space-canvas {
@@ -29,7 +29,7 @@
             z-index: -1;
         }
 
-        /* RETICLE */
+        /* RETICLE (Center Crosshair) */
         #reticle {
             position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%);
             width: 60px; height: 60px; 
@@ -38,6 +38,7 @@
             box-shadow: 0 0 10px rgba(255, 153, 0, 0.3);
             transition: border-color 0.2s, box-shadow 0.2s;
         }
+        /* Green highlight when aiming at a star */
         #reticle.locked {
             border-color: #00ff00;
             box-shadow: 0 0 20px #00ff00, inset 0 0 10px #00ff00;
@@ -69,7 +70,7 @@
         .sidebar { width: 100px; display: flex; flex-direction: column; gap: 5px; padding-top: 10px; pointer-events: auto; }
         .nav-pill { background: var(--blue); height: 35px; border-radius: 0 20px 20px 0; color: black; font-size: 10px; display: flex; align-items: center; padding-left: 10px; margin-bottom: 2px;}
         
-        /* READOUT MODAL */
+        /* READOUT MODAL (The popup info box) */
         #readout { 
             display: none; position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); 
             width: 80%; max-width: 350px; background: rgba(0,0,0,0.95); border: 2px solid var(--gold); 
@@ -135,14 +136,14 @@
 
         let scene, camera, renderer, starGroup;
         
-        // SWIPE NAVIGATION VARIABLES
+        // SWIPE VARIABLES
         let isUserInteracting = false;
         let lon = 0, lat = 0;
         let onPointerDownLon = 0, onPointerDownLat = 0;
         let onPointerDownPointerX = 0, onPointerDownPointerY = 0;
-        const sensitivity = 0.4; // Swipe Speed
+        const sensitivity = 0.4; // How fast the swipe feels
         
-        // HOVER STATE
+        // INTERACTION STATE
         let hoveredStar = null; 
 
         async function init(userLongitude) {
@@ -156,7 +157,7 @@
 
             starGroup = new THREE.Group();
 
-            // 1. BACKGROUND STARS
+            // 1. ADD BACKGROUND STARS (Non-interactive)
             const bgGeo = new THREE.BufferGeometry();
             const bgPos = [];
             for (let i = 0; i < 2000; i++) {
@@ -168,7 +169,7 @@
             bgGeo.setAttribute('position', new THREE.Float32BufferAttribute(bgPos, 3));
             scene.add(new THREE.Points(bgGeo, new THREE.PointsMaterial({ color: 0x666699, size: 2 })));
 
-            // 2. LOAD EXTERNAL STARS
+            // 2. LOAD STARS FROM JSON
             try {
                 const response = await fetch('stars.json');
                 const stars = await response.json();
@@ -199,7 +200,7 @@
                     starGroup.add(mesh);
                 });
                 scene.add(starGroup);
-            } catch (err) { console.error(err); }
+            } catch (err) { console.error("Could not load stars.json", err); }
 
             window.addEventListener('resize', () => {
                 camera.aspect = window.innerWidth / window.innerHeight;
@@ -218,12 +219,12 @@
         function animate() {
             requestAnimationFrame(animate);
 
-            // Update Header Coordinates
+            // Update Compass Display
             let hdg = Math.round(lon % 360);
             if (hdg < 0) hdg += 360;
             document.getElementById('nav-data').innerText = `HDG: ${hdg.toString().padStart(3, '0')} | ELV: ${Math.round(lat)}`;
 
-            // Camera Look
+            // Camera Look Logic
             const phi = THREE.MathUtils.degToRad(90 - lat);
             const theta = THREE.MathUtils.degToRad(lon);
             const target = new THREE.Vector3(
@@ -235,10 +236,11 @@
             camera.lookAt(target);
             renderer.render(scene, camera);
 
-            // Label Positioning
+            // Update Label Positions
             starGroup.children.forEach(mesh => {
                 if(mesh.userData.label) {
                     const v = mesh.position.clone().project(camera);
+                    // Hide if behind camera or too close to screen edge
                     if(v.z < 1 && Math.abs(v.x) < 0.9 && Math.abs(v.y) < 0.9) {
                         mesh.userData.label.style.display = 'block';
                         mesh.userData.label.style.left = `${(v.x * .5 + .5) * window.innerWidth + 15}px`;
@@ -248,7 +250,7 @@
             });
         }
 
-        // --- SWIPE LOGIC ---
+        // --- SWIPE HANDLERS ---
         function onPointerDown(event) {
             if (event.isPrimary === false) return;
             isUserInteracting = true;
@@ -259,21 +261,19 @@
         }
 
         function onPointerMove(event) {
-            // 1. If Dragging: Move Camera
+            // 1. If dragging, move camera
             if (isUserInteracting === true) {
                 const deltaX = event.clientX - onPointerDownPointerX;
                 const deltaY = event.clientY - onPointerDownPointerY;
                 lon = (onPointerDownLon - deltaX * sensitivity);
                 lat = (onPointerDownLat + deltaY * sensitivity);
                 lat = Math.max(-85, Math.min(85, lat)); 
-                return; // Stop here, don't check hover while dragging
+                return; // Stop here (don't highlight while spinning)
             }
 
-            // 2. If Not Dragging: Check Hover (Reticle/Mouse)
-            const mouse = new THREE.Vector2(0, 0); // Always aim from center for mobile feel
-            // If desktop mouse, use actual mouse coords:
-            // const mouse = new THREE.Vector2((event.clientX/window.innerWidth)*2-1, -(event.clientY/window.innerHeight)*2+1);
-            
+            // 2. If hovering, check for reticle intersection
+            // We use center of screen (0,0) for mobile reticle feel
+            const mouse = new THREE.Vector2(0, 0); 
             const raycaster = new THREE.Raycaster();
             raycaster.setFromCamera(mouse, camera);
             const hits = raycaster.intersectObjects(starGroup.children);
@@ -281,13 +281,16 @@
             if(hits.length > 0) {
                 const hit = hits[0].object;
                 if(hoveredStar !== hit) {
+                    // Turn off old highlight
                     if(hoveredStar) hoveredStar.material.color.setHex(0xffffff);
+                    // Turn on new highlight
                     hoveredStar = hit;
                     hoveredStar.material.color.setHex(0x00ff00);
                     document.getElementById('reticle').classList.add('locked');
                     document.body.style.cursor = 'pointer';
                 }
             } else {
+                // Clear highlight if looking at nothing
                 if(hoveredStar) {
                     hoveredStar.material.color.setHex(0xffffff);
                     hoveredStar = null;
@@ -299,13 +302,13 @@
 
         function onPointerUp() { isUserInteracting = false; }
 
-        // --- CLICK SELECTION LOGIC ---
+        // --- CLICK HANDLER ---
         window.addEventListener('click', (e) => {
-            // Prevent accidental clicks if we just dragged the screen
+            // Don't click if we just dragged the screen (prevents accidental selection on swipe stop)
             if (Math.abs(e.clientX - onPointerDownPointerX) > 5 || 
                 Math.abs(e.clientY - onPointerDownPointerY) > 5) return;
 
-            // 1. Raycast from click position (Desktop precision)
+            // 1. Raycast for precise mouse clicks (Desktop)
             const mouse = new THREE.Vector2(
                 (e.clientX / window.innerWidth) * 2 - 1, 
                 -(e.clientY / window.innerHeight) * 2 + 1
@@ -314,12 +317,13 @@
             raycaster.setFromCamera(mouse, camera);
             let hits = raycaster.intersectObjects(starGroup.children);
 
-            // 2. Fallback: If we missed with the mouse, check if we have a "Reticle Lock" (Mobile easy mode)
+            // 2. If no direct mouse hit, use the Reticle Target (Mobile)
             if (hits.length === 0 && hoveredStar) {
                 showReadout(hoveredStar.userData);
                 return;
             }
 
+            // 3. If direct mouse hit, show that
             if(hits.length > 0) {
                 showReadout(hits[0].object.userData);
             }
@@ -338,6 +342,7 @@
             document.getElementById('start-btn').style.display = 'none';
             document.getElementById('header-text').innerText = "SCANNING SECTOR 001";
             
+            // Ask for GPS to align sky
             if (navigator.geolocation) {
                 navigator.geolocation.getCurrentPosition(p => init(p.coords.longitude), () => init(0));
             } else { init(0); }
