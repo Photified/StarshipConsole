@@ -20,7 +20,7 @@
             font-family: Arial, sans-serif; font-weight: bold; 
             text-transform: uppercase; color: white; 
             user-select: none; -webkit-user-select: none;
-            touch-action: none; /* Critical for smooth swipe */
+            touch-action: none;
         }
 
         #space-canvas {
@@ -29,7 +29,7 @@
             z-index: -1;
         }
 
-        /* RETICLE (Center Crosshair) */
+        /* RETICLE */
         #reticle {
             position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%);
             width: 60px; height: 60px; 
@@ -38,12 +38,12 @@
             box-shadow: 0 0 10px rgba(255, 153, 0, 0.3);
             transition: border-color 0.2s, box-shadow 0.2s;
         }
-        /* Green highlight when aiming at a star */
         #reticle.locked {
             border-color: #00ff00;
             box-shadow: 0 0 20px #00ff00, inset 0 0 10px #00ff00;
         }
 
+        /* LCARS LAYOUT */
         #lcars-container {
             position: absolute; top: 0; left: 0; width: 100%; height: 100%;
             display: grid; grid-template-rows: 140px 1fr 100px;
@@ -62,25 +62,38 @@
             color: black; font-size: 20px; 
         }
         .bar-sub { background: var(--blue); height: 15px; width: 85%; border-bottom-left-radius: 10px; }
-        
         #nav-data { font-family: monospace; font-size: 16px; color: black; }
 
-        /* SIDEBAR */
+        /* SIDEBAR / ACTION BUTTONS */
         .middle-wrap { display: flex; height: 100%; }
         .sidebar { width: 100px; display: flex; flex-direction: column; gap: 5px; padding-top: 10px; pointer-events: auto; }
-        .nav-pill { background: var(--blue); height: 35px; border-radius: 0 20px 20px 0; color: black; font-size: 10px; display: flex; align-items: center; padding-left: 10px; margin-bottom: 2px;}
         
-        /* READOUT MODAL (The popup info box) */
+        .action-btn { 
+            background: var(--blue); height: 50px; 
+            border-radius: 0 25px 25px 0; color: black; 
+            font-size: 12px; display: flex; align-items: center; padding-left: 10px; 
+            margin-bottom: 5px; cursor: pointer; transition: background 0.2s;
+            border: 1px solid transparent;
+        }
+        .action-btn:active { background: white; border-color: var(--blue); }
+        
+        .reset-btn {
+            background: var(--red); height: 40px; margin-top: auto;
+            border-radius: 0 20px 20px 0; color: black;
+            display: flex; align-items: center; padding-left: 10px; cursor: pointer;
+        }
+
+        /* DATA READOUT (Center Screen) */
         #readout { 
             display: none; position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); 
-            width: 80%; max-width: 350px; background: rgba(0,0,0,0.95); border: 2px solid var(--gold); 
+            width: 80%; max-width: 350px; background: rgba(0,0,0,0.9); border: 2px solid var(--gold); 
             z-index: 100; padding: 20px; border-radius: 15px; pointer-events: auto;
             box-shadow: 0 0 30px rgba(0,0,0,1);
         }
-        .readout-title { color: var(--gold); border-bottom: 2px solid var(--gold); margin-bottom: 12px; font-size: 22px; }
-        .data-row { margin-bottom: 8px; }
-        .data-label { color: var(--blue); font-size: 11px; display: block; }
-        .data-value { color: white; font-size: 14px; display: block; margin-top: 2px; }
+        .readout-header { color: var(--gold); border-bottom: 2px solid var(--gold); margin-bottom: 12px; font-size: 22px; }
+        .readout-content { min-height: 60px; }
+        .data-label { color: var(--blue); font-size: 11px; display: block; margin-top: 10px; }
+        .data-value { color: white; font-size: 16px; display: block; margin-top: 2px; }
 
         .footer-wrap { background: var(--orange); border-top-left-radius: 50px; display: flex; align-items: center; padding-left: 130px; pointer-events: auto; height: 60px; align-self: end; }
         .btn-main { background: var(--gold); border: none; padding: 12px 25px; border-radius: 25px; font-weight: bold; cursor: pointer; color: black; font-size: 14px; }
@@ -108,25 +121,27 @@
                 <div class="bar-sub"></div>
             </div>
         </div>
+
         <div class="middle-wrap">
             <div class="sidebar">
-                <div class="nav-pill" style="background:var(--pink)">ASTROMETRICS</div>
-                <div class="nav-pill">V-LINK</div>
-                <div class="nav-pill" style="background:var(--orange)">LR-ARRAY</div>
-                <div class="nav-pill" style="background:var(--red); margin-top:20px;" onclick="location.reload()">RESET</div>
+                <div class="action-btn" id="btn-scan" style="background:var(--pink)">SCAN</div>
+                <div class="action-btn" id="btn-astro" style="background:var(--orange)">ASTRO</div>
+                <div class="action-btn" id="btn-intel" style="background:var(--blue)">INTEL</div>
+                
+                <div style="flex-grow:1"></div>
+
+                <div class="reset-btn" onclick="location.reload()">RESET</div>
             </div>
         </div>
+
         <div class="footer-wrap">
             <button id="start-btn" class="btn-main">ENGAGE SENSORS</button>
         </div>
     </div>
 
     <div id="readout">
-        <div class="readout-title" id="obj-name">SCANNING...</div>
-        <div class="data-row"><span class="data-label">DISTANCE</span><span class="data-value" id="obj-dist">--</span></div>
-        <div class="data-row"><span class="data-label">COMPOSITION</span><span class="data-value" id="obj-comp">--</span></div>
-        <div class="data-row"><span class="data-label">RADIUS</span><span class="data-value" id="obj-size">--</span></div>
-        <div class="data-row"><span class="data-label">DATA</span><span class="data-value" id="obj-fact" style="font-style: italic; color: #ccc;">--</span></div>
+        <div class="readout-header" id="obj-header">NO TARGET</div>
+        <div class="readout-content" id="obj-body"></div>
         <button class="btn-main" style="width:100%; margin-top:15px;" onclick="document.getElementById('readout').style.display='none'">CLOSE</button>
     </div>
 
@@ -135,16 +150,13 @@
         import * as THREE from 'three';
 
         let scene, camera, renderer, starGroup;
-        
-        // SWIPE VARIABLES
         let isUserInteracting = false;
         let lon = 0, lat = 0;
         let onPointerDownLon = 0, onPointerDownLat = 0;
         let onPointerDownPointerX = 0, onPointerDownPointerY = 0;
-        const sensitivity = 0.4; // How fast the swipe feels
+        const sensitivity = 0.4; 
         
-        // INTERACTION STATE
-        let hoveredStar = null; 
+        let hoveredStar = null; // Currently inside reticle
 
         async function init(userLongitude) {
             scene = new THREE.Scene();
@@ -157,7 +169,7 @@
 
             starGroup = new THREE.Group();
 
-            // 1. ADD BACKGROUND STARS (Non-interactive)
+            // 1. BACKGROUND STARS
             const bgGeo = new THREE.BufferGeometry();
             const bgPos = [];
             for (let i = 0; i < 2000; i++) {
@@ -169,7 +181,7 @@
             bgGeo.setAttribute('position', new THREE.Float32BufferAttribute(bgPos, 3));
             scene.add(new THREE.Points(bgGeo, new THREE.PointsMaterial({ color: 0x666699, size: 2 })));
 
-            // 2. LOAD STARS FROM JSON
+            // 2. LOAD STARS.JSON
             try {
                 const response = await fetch('stars.json');
                 const stars = await response.json();
@@ -200,7 +212,7 @@
                     starGroup.add(mesh);
                 });
                 scene.add(starGroup);
-            } catch (err) { console.error("Could not load stars.json", err); }
+            } catch (err) { console.error("Error loading stars:", err); }
 
             window.addEventListener('resize', () => {
                 camera.aspect = window.innerWidth / window.innerHeight;
@@ -208,7 +220,7 @@
                 renderer.setSize(window.innerWidth, window.innerHeight);
             });
 
-            // ATTACH SWIPE LISTENERS
+            // SWIPE LISTENERS
             document.addEventListener('pointerdown', onPointerDown);
             document.addEventListener('pointermove', onPointerMove);
             document.addEventListener('pointerup', onPointerUp);
@@ -219,12 +231,12 @@
         function animate() {
             requestAnimationFrame(animate);
 
-            // Update Compass Display
+            // Update Header
             let hdg = Math.round(lon % 360);
             if (hdg < 0) hdg += 360;
             document.getElementById('nav-data').innerText = `HDG: ${hdg.toString().padStart(3, '0')} | ELV: ${Math.round(lat)}`;
 
-            // Camera Look Logic
+            // Camera Look
             const phi = THREE.MathUtils.degToRad(90 - lat);
             const theta = THREE.MathUtils.degToRad(lon);
             const target = new THREE.Vector3(
@@ -232,15 +244,13 @@
                 500 * Math.cos(phi),
                 500 * Math.sin(phi) * Math.sin(theta)
             );
-
             camera.lookAt(target);
             renderer.render(scene, camera);
 
-            // Update Label Positions
+            // Update Labels
             starGroup.children.forEach(mesh => {
                 if(mesh.userData.label) {
                     const v = mesh.position.clone().project(camera);
-                    // Hide if behind camera or too close to screen edge
                     if(v.z < 1 && Math.abs(v.x) < 0.9 && Math.abs(v.y) < 0.9) {
                         mesh.userData.label.style.display = 'block';
                         mesh.userData.label.style.left = `${(v.x * .5 + .5) * window.innerWidth + 15}px`;
@@ -250,8 +260,10 @@
             });
         }
 
-        // --- SWIPE HANDLERS ---
+        // --- SWIPE & HOVER LOGIC ---
         function onPointerDown(event) {
+            // Ignore touches on UI buttons
+            if (event.target.closest('.action-btn') || event.target.closest('.reset-btn')) return;
             if (event.isPrimary === false) return;
             isUserInteracting = true;
             onPointerDownPointerX = event.clientX;
@@ -261,18 +273,16 @@
         }
 
         function onPointerMove(event) {
-            // 1. If dragging, move camera
             if (isUserInteracting === true) {
                 const deltaX = event.clientX - onPointerDownPointerX;
                 const deltaY = event.clientY - onPointerDownPointerY;
                 lon = (onPointerDownLon - deltaX * sensitivity);
                 lat = (onPointerDownLat + deltaY * sensitivity);
                 lat = Math.max(-85, Math.min(85, lat)); 
-                return; // Stop here (don't highlight while spinning)
+                return; 
             }
 
-            // 2. If hovering, check for reticle intersection
-            // We use center of screen (0,0) for mobile reticle feel
+            // CHECK RETICLE (Center Screen)
             const mouse = new THREE.Vector2(0, 0); 
             const raycaster = new THREE.Raycaster();
             raycaster.setFromCamera(mouse, camera);
@@ -281,68 +291,67 @@
             if(hits.length > 0) {
                 const hit = hits[0].object;
                 if(hoveredStar !== hit) {
-                    // Turn off old highlight
                     if(hoveredStar) hoveredStar.material.color.setHex(0xffffff);
-                    // Turn on new highlight
                     hoveredStar = hit;
                     hoveredStar.material.color.setHex(0x00ff00);
                     document.getElementById('reticle').classList.add('locked');
-                    document.body.style.cursor = 'pointer';
                 }
             } else {
-                // Clear highlight if looking at nothing
                 if(hoveredStar) {
                     hoveredStar.material.color.setHex(0xffffff);
                     hoveredStar = null;
                     document.getElementById('reticle').classList.remove('locked');
-                    document.body.style.cursor = 'default';
                 }
             }
         }
 
         function onPointerUp() { isUserInteracting = false; }
 
-        // --- CLICK HANDLER ---
-        window.addEventListener('click', (e) => {
-            // Don't click if we just dragged the screen (prevents accidental selection on swipe stop)
-            if (Math.abs(e.clientX - onPointerDownPointerX) > 5 || 
-                Math.abs(e.clientY - onPointerDownPointerY) > 5) return;
 
-            // 1. Raycast for precise mouse clicks (Desktop)
-            const mouse = new THREE.Vector2(
-                (e.clientX / window.innerWidth) * 2 - 1, 
-                -(e.clientY / window.innerHeight) * 2 + 1
-            );
-            const raycaster = new THREE.Raycaster();
-            raycaster.setFromCamera(mouse, camera);
-            let hits = raycaster.intersectObjects(starGroup.children);
-
-            // 2. If no direct mouse hit, use the Reticle Target (Mobile)
-            if (hits.length === 0 && hoveredStar) {
-                showReadout(hoveredStar.userData);
+        // --- ACTION BUTTON LOGIC ---
+        function showData(type) {
+            if (!hoveredStar) {
+                // If no star selected, show error
+                document.getElementById('obj-header').innerText = "NO TARGET";
+                document.getElementById('obj-body').innerHTML = "<div class='data-label'>ERROR</div><div class='data-value'>SENSORS CANNOT LOCK</div>";
+                document.getElementById('readout').style.display = 'block';
                 return;
             }
 
-            // 3. If direct mouse hit, show that
-            if(hits.length > 0) {
-                showReadout(hits[0].object.userData);
-            }
-        });
+            const d = hoveredStar.userData;
+            document.getElementById('obj-header').innerText = d.name;
 
-        function showReadout(d) {
-            document.getElementById('obj-name').innerText = d.name;
-            document.getElementById('obj-dist').innerText = d.dist ? `${d.dist} LY` : "--";
-            document.getElementById('obj-comp').innerText = d.type || "--";
-            document.getElementById('obj-size').innerText = d.size || "--";
-            document.getElementById('obj-fact').innerText = d.fact;
+            // Display different info based on which button was pressed
+            let content = "";
+            if (type === 'SCAN') {
+                content = `
+                    <div class='data-label'>DISTANCE</div><div class='data-value'>${d.dist} LY</div>
+                    <div class='data-label'>CONSTELLATION</div><div class='data-value'>${d.con || "UNKNOWN"}</div>
+                `;
+            } else if (type === 'ASTRO') {
+                content = `
+                    <div class='data-label'>SPECTRAL TYPE</div><div class='data-value'>${d.type || "UNKNOWN"}</div>
+                    <div class='data-label'>RADIUS</div><div class='data-value'>${d.size || "UNKNOWN"}</div>
+                `;
+            } else if (type === 'INTEL') {
+                content = `
+                    <div class='data-label'>TACTICAL DATA</div><div class='data-value' style='font-style:italic'>${d.fact}</div>
+                `;
+            }
+
+            document.getElementById('obj-body').innerHTML = content;
             document.getElementById('readout').style.display = 'block';
         }
 
+        // Attach listeners to sidebar buttons
+        document.getElementById('btn-scan').addEventListener('click', () => showData('SCAN'));
+        document.getElementById('btn-astro').addEventListener('click', () => showData('ASTRO'));
+        document.getElementById('btn-intel').addEventListener('click', () => showData('INTEL'));
+
+        // Start
         document.getElementById('start-btn').addEventListener('click', () => {
             document.getElementById('start-btn').style.display = 'none';
             document.getElementById('header-text').innerText = "SCANNING SECTOR 001";
-            
-            // Ask for GPS to align sky
             if (navigator.geolocation) {
                 navigator.geolocation.getCurrentPosition(p => init(p.coords.longitude), () => init(0));
             } else { init(0); }
