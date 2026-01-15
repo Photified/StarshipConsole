@@ -26,7 +26,59 @@
             z-index: -1;
         }
 
-        /* RETICLE */
+        /* --- BOOT SCREEN & LOADER --- */
+        #boot-overlay {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: black; z-index: 5000;
+            display: flex; align-items: center; justify-content: center;
+            flex-direction: column;
+            transition: opacity 0.5s ease-out;
+        }
+
+        .boot-header {
+            color: var(--red); font-size: 18px; margin-bottom: 10px; letter-spacing: 2px;
+        }
+        
+        .boot-instruction {
+            color: var(--gold); font-size: 14px; margin-bottom: 30px;
+            animation: flash 2s infinite;
+        }
+
+        @keyframes flash { 0% { opacity: 1; } 50% { opacity: 0.3; } 100% { opacity: 1; } }
+
+        #loading-interface {
+            display: none; width: 300px; flex-direction: column; align-items: flex-start;
+        }
+
+        .load-text {
+            color: var(--blue); font-size: 14px; margin-bottom: 5px; margin-left: 5px;
+        }
+
+        .lcars-bar-container {
+            display: flex; gap: 4px; width: 100%; height: 20px;
+        }
+
+        .lcars-seg {
+            flex: 1; background: #333; border-radius: 2px;
+            transition: background 0.1s;
+        }
+        
+        /* Active colors for loading segments */
+        .lcars-seg.on:nth-child(odd) { background: var(--orange); }
+        .lcars-seg.on:nth-child(even) { background: var(--gold); }
+        .lcars-seg.on:last-child { background: var(--red); } 
+
+        /* MAIN BOOT BUTTON */
+        .big-btn {
+            background: var(--gold); border: none; padding: 15px 40px; 
+            border-radius: 30px; font-weight: bold; cursor: pointer; 
+            color: black; font-size: 16px; letter-spacing: 1px;
+            border: 2px solid var(--orange);
+            box-shadow: 0 0 15px rgba(255, 153, 0, 0.3);
+        }
+        .big-btn:active { background: white; }
+
+        /* --- MAIN UI STYLES --- */
         #reticle {
             position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%);
             width: 60px; height: 60px; 
@@ -46,24 +98,20 @@
         #reticle::after { top: 50%; left: -10px; right: -10px; height: 1px; }
         #reticle::before { left: 50%; top: -10px; bottom: -10px; width: 1px; }
 
-        /* LCARS LAYOUT */
         #lcars-container {
             position: absolute; top: 0; left: 0; width: 100%; height: 100%;
             display: grid; grid-template-rows: 140px 1fr 100px;
             pointer-events: none; z-index: 10;
+            opacity: 0; transition: opacity 1s; /* Hidden until loaded */
         }
 
-        /* HEADER */
         .header-wrap { display: flex; pointer-events: auto; align-items: flex-start; }
-        
         .elbow-main { 
             width: 120px; height: 120px; background: var(--pink); 
             border-bottom-left-radius: 45px; margin-right: 5px; flex-shrink: 0; 
             display: flex; align-items: center; justify-content: center;
         }
-        
         .badge-img { width: 80px; height: auto; opacity: 0.9; }
-
         .top-bars { flex-grow: 1; display: flex; flex-direction: column; gap: 5px; }
         .bar-top { 
             background: var(--orange); height: 50px; 
@@ -75,7 +123,6 @@
         .bar-sub { background: var(--blue); height: 15px; width: 85%; border-bottom-left-radius: 10px; }
         #nav-data { font-family: monospace; font-size: 16px; color: black; }
 
-        /* SIDEBAR */
         .middle-wrap { display: flex; height: 100%; }
         .sidebar { width: 100px; display: flex; flex-direction: column; gap: 5px; padding-top: 10px; pointer-events: auto; }
         
@@ -89,14 +136,10 @@
         .action-btn.active { opacity: 1; box-shadow: 0 0 10px var(--blue); background: var(--gold); }
         .action-btn:active { background: white; }
         
-        /* AUDIO BUTTON STYLE */
         .audio-btn {
-            background: var(--gold); 
-            height: 40px; 
-            border-radius: 0 20px 20px 0; 
-            display: flex; align-items: center; justify-content: center;
-            margin-bottom: 5px; cursor: pointer;
-            transition: all 0.2s;
+            background: var(--gold); height: 40px; 
+            border-radius: 0 20px 20px 0; display: flex; align-items: center; justify-content: center;
+            margin-bottom: 5px; cursor: pointer; transition: all 0.2s;
         }
         .audio-btn svg { width: 24px; height: 24px; fill: black; }
         .audio-btn.muted { background: #444; }
@@ -108,7 +151,6 @@
             display: flex; align-items: center; padding-left: 10px; cursor: pointer;
         }
 
-        /* ZOOM SLIDER */
         .zoom-container {
             height: 150px; background: var(--gold);
             margin-bottom: 5px; border-radius: 0 25px 25px 0;
@@ -116,12 +158,8 @@
             position: relative;
         }
         .zoom-label {
-            position: absolute; 
-            left: 12px; 
-            top: 50%;   
-            font-size: 10px; color: black; 
-            writing-mode: vertical-rl; 
-            transform: translateY(50%) rotate(180deg);
+            position: absolute; left: 12px; top: 50%; font-size: 10px; color: black; 
+            writing-mode: vertical-rl; transform: translateY(50%) rotate(180deg);
             pointer-events: none;
         }
         input[type=range] {
@@ -137,38 +175,25 @@
             width: 100%; height: 10px; background: #222; border-radius: 5px; border: 1px solid rgba(255,255,255,0.2);
         }
 
-        /* READOUT DASHBOARD */
         #readout { 
-            display: none; 
-            position: fixed; 
-            bottom: 20px; left: 110px; 
-            width: calc(100% - 125px);
-            background: var(--lcars-bg); 
-            border-top: 30px solid var(--gold); 
-            border-bottom-left-radius: 30px;
-            z-index: 100; padding: 20px; 
-            pointer-events: auto;
-            backdrop-filter: blur(5px);
-            box-shadow: 5px 5px 20px rgba(0,0,0,0.8);
-            flex-direction: row; align-items: flex-start; gap: 15px;
-            box-sizing: border-box;
+            display: none; position: fixed; bottom: 20px; left: 110px; 
+            width: calc(100% - 125px); background: var(--lcars-bg); 
+            border-top: 30px solid var(--gold); border-bottom-left-radius: 30px;
+            z-index: 100; padding: 20px; pointer-events: auto;
+            backdrop-filter: blur(5px); box-shadow: 5px 5px 20px rgba(0,0,0,0.8);
+            flex-direction: row; align-items: flex-start; gap: 15px; box-sizing: border-box;
         }
         
         #star-visual {
             width: 80px; height: 80px; border-radius: 50%;
             background: radial-gradient(circle at 30% 30%, white, transparent);
             box-shadow: 0 0 20px white; border: 1px solid rgba(255,255,255,0.2);
-            flex-shrink: 0;
-            margin-top: 20px; 
+            flex-shrink: 0; margin-top: 20px; 
         }
 
         .readout-info { 
-            flex-grow: 1; 
-            overflow-y: auto; 
-            max-height: 200px;
-            padding-top: 10px; 
-            overscroll-behavior: contain; 
-            -webkit-overflow-scrolling: touch;
+            flex-grow: 1; overflow-y: auto; max-height: 200px; padding-top: 10px; 
+            overscroll-behavior: contain; -webkit-overflow-scrolling: touch;
         }
 
         .readout-header { 
@@ -176,22 +201,12 @@
             display: inline-block; padding: 5px 25px;
             margin-top: -45px; margin-left: -20px;
             font-size: 20px; font-weight: bold;
-            border-bottom-right-radius: 20px;
-            margin-bottom: 15px;
+            border-bottom-right-radius: 20px; margin-bottom: 15px;
         }
         
-        /* DATA BLOCKS */
-        .data-block { 
-            margin-bottom: 12px;
-            border-left: 3px solid var(--orange); 
-            padding-left: 10px;
-        }
-        .data-label { 
-            color: var(--gold); font-size: 10px; display: block; margin-bottom: 2px; opacity: 0.8;
-        }
-        .data-value { 
-            color: var(--blue); font-size: 16px; font-weight: normal; display: block; line-height: 1.3;
-        }
+        .data-block { margin-bottom: 12px; border-left: 3px solid var(--orange); padding-left: 10px; }
+        .data-label { color: var(--gold); font-size: 10px; display: block; margin-bottom: 2px; opacity: 0.8; }
+        .data-value { color: var(--blue); font-size: 16px; font-weight: normal; display: block; line-height: 1.3; }
 
         .close-btn {
             position: absolute; top: -20px; right: -10px;
@@ -202,15 +217,10 @@
             box-shadow: 0 0 10px rgba(255,0,0,0.5);
         }
 
-        .footer-wrap { background: var(--orange); border-top-left-radius: 50px; display: flex; align-items: center; padding-left: 130px; pointer-events: auto; height: 60px; align-self: end; }
-        .btn-main { background: var(--gold); border: none; padding: 12px 25px; border-radius: 25px; font-weight: bold; cursor: pointer; color: black; font-size: 14px; }
-
         .label { 
             position: absolute; color: var(--blue); border-left: 2px solid var(--gold); 
             padding-left: 6px; font-size: 11px; pointer-events: none;
-            text-shadow: 0 0 4px black;
-            white-space: nowrap; display: none;
-            opacity: 0.8;
+            text-shadow: 0 0 4px black; white-space: nowrap; display: none; opacity: 0.8;
         }
     </style>
 </head>
@@ -219,6 +229,31 @@
     <div id="space-canvas"></div>
     <div id="reticle"></div>
 
+    <div id="boot-overlay">
+        <div class="boot-header">OPTICAL SENSORS OFFLINE</div>
+        <div class="boot-instruction">INITIALIZE SYSTEM TO BEGIN</div>
+        
+        <button id="start-btn" class="big-btn">ENGAGE SENSORS</button>
+        
+        <div id="loading-interface">
+            <div class="load-text">CALIBRATING ASTROMETRICS...</div>
+            <div class="lcars-bar-container">
+                <div class="lcars-seg"></div>
+                <div class="lcars-seg"></div>
+                <div class="lcars-seg"></div>
+                <div class="lcars-seg"></div>
+                <div class="lcars-seg"></div>
+                <div class="lcars-seg"></div>
+                <div class="lcars-seg"></div>
+                <div class="lcars-seg"></div>
+                <div class="lcars-seg"></div>
+                <div class="lcars-seg"></div>
+                <div class="lcars-seg"></div>
+                <div class="lcars-seg"></div>
+            </div>
+        </div>
+    </div>
+
     <div id="lcars-container">
         <div class="header-wrap">
             <div class="elbow-main">
@@ -226,7 +261,7 @@
             </div>
             <div class="top-bars">
                 <div class="bar-top">
-                    <span id="header-text">SYSTEM STANDBY</span>
+                    <span id="header-text">SYSTEM ONLINE</span>
                     <span id="nav-data">HDG: 000</span>
                 </div>
                 <div class="bar-sub"></div>
@@ -250,10 +285,6 @@
                 <div style="flex-grow:1"></div>
                 <div class="reset-btn" onclick="location.reload()">RESET</div>
             </div>
-        </div>
-
-        <div class="footer-wrap">
-            <button id="start-btn" class="btn-main">ENGAGE SENSORS</button>
         </div>
     </div>
 
@@ -326,56 +357,48 @@
         const conColors = { "URSA MAJOR": 0x00ff00, "URSA MINOR": 0xcc00ff, "ORION": 0x00aaff, "SCORPIUS": 0xff3300, "CASSIOPEIA": 0xff0099, "CYGNUS": 0x00ffff, "CRUX": 0xffff00, "CANIS MAJOR": 0x0055ff, "LEO": 0xffaa00, "GEMINI": 0xffaaee };
         const defaultStarColor = 0xffffff;
         
-        // FULL DATA ARRAYS
+        // FULL DATA - CONSTELLATION LINES
         const constellationPairs = [
-            ['ALK', 'MIZ'], ['MIZ', 'ALI'], ['ALI', 'MEG'], ['MEG', 'PHEC'], 
-            ['PHEC', 'MER'], ['MER', 'DUB'], ['DUB', 'MEG'],
-            ['POLA', 'KOC'], ['KOC', 'PHER'], 
-            ['BET', 'BEL'], ['MINT', 'ALNI'], ['ALNI', 'ALN'], ['SAI', 'RIG'], 
-            ['BEL', 'MINT'], ['BET', 'ALNI'], ['SAI', 'ALNI'], ['RIG', 'MINT'], 
-            ['ANT', 'GRA'], ['GRA', 'DSCH'], ['ANT', 'WEI'], ['WEI', 'SAR'], ['SAR', 'SHA'], ['SHA', 'LES'], 
-            ['DEN', 'SAD'], ['SAD', 'ALB'], ['SAD', 'GIE'], 
-            ['REG', 'ALGIE'], ['ALGIE', 'ZOS'],
-            ['CAS', 'POL'], ['POL', 'ALH'],
-            ['SIR', 'MIRZ'], ['SIR', 'ADH'], ['ADH', 'WES'], ['WES', 'ALUD'],
-            ['ACR', 'GAC'], ['MIM', 'GAC'], 
-            ['CAPH', 'SCH'], ['SCH', 'RUCH'], ['RUCH', 'SEGIN'],
-            ['MARK', 'SCH_PEG'], ['SCH_PEG', 'ALPHER'], 
-            ['ALPHER', 'MIR'], ['MIR', 'ALMA'], 
-            ['KAUS', 'KAUSM'], ['KAUSM', 'KAUSB'], ['KAUSM', 'ALN_SAG'], 
-            ['ALN_SAG', 'ASK'], ['ASK', 'NUN'], ['ASK', 'KAUS']
+            ['ALK','MIZ'],['MIZ','ALI'],['ALI','MEG'],['MEG','PHEC'],['PHEC','MER'],['MER','DUB'],['DUB','MEG'],
+            ['POLA','KOC'],['KOC','PHER'],
+            ['BET','BEL'],['MINT','ALNI'],['ALNI','ALN'],['SAI','RIG'],['BEL','MINT'],['BET','ALNI'],['SAI','ALNI'],['RIG','MINT'],
+            ['ANT','GRA'],['GRA','DSCH'],['ANT','WEI'],['WEI','SAR'],['SAR','SHA'],['SHA','LES'],
+            ['DEN','SAD'],['SAD','ALB'],['SAD','GIE'],
+            ['REG','ALGIE'],['ALGIE','ZOS'],
+            ['CAS','POL'],['POL','ALH'],
+            ['SIR','MIRZ'],['SIR','ADH'],['ADH','WES'],['WES','ALUD'],
+            ['ACR','GAC'],['MIM','GAC'],
+            ['CAPH','SCH'],['SCH','RUCH'],['RUCH','SEGIN'],
+            ['MARK','SCH_PEG'],['SCH_PEG','ALPHER'],
+            ['ALPHER','MIR'],['MIR','ALMA'],
+            ['KAUS','KAUSM'],['KAUSM','KAUSB'],['KAUSM','ALN_SAG'],['ALN_SAG','ASK'],['ASK','NUN'],['ASK','KAUS']
         ];
 
+        // FULL DATA - COORDINATES
         const coordMap = {
-            "SIR": [6.75, -16.72], "CAN": [6.40, -52.70], "RIGK": [14.66, -60.83], "ARC": [14.26, 19.18],
-            "VEG": [18.62, 38.78], "CAP": [5.27, 45.99], "RIG": [5.24, -8.20], "PRO": [7.65, 5.22],
-            "BET": [5.92, 7.41], "ACH": [1.63, -57.23], "HAD": [14.06, -60.37], "ALT": [19.85, 8.87],
-            "ACR": [12.44, -63.10], "ALD": [4.60, 16.51], "SPI": [13.42, -11.16], "ANT": [16.49, -26.43],
-            "POL": [7.76, 28.02], "FOM": [22.96, -29.62], "DEN": [20.69, 45.28], "MIM": [12.80, -59.68],
-            "REG": [10.14, 11.96], "ADH": [6.98, -28.97], "SHA": [17.56, -37.10], "CAS": [7.58, 31.88],
-            "GAC": [12.52, -57.11], "BEL": [5.42, 6.35], "ELN": [5.43, 28.60], "MIA": [9.22, -69.71],
-            "ALN": [5.60, -1.20], "ALNI": [5.68, -1.94], "ALI": [12.90, 55.96], "DUB": [11.06, 61.75],
-            "MIR": [3.41, 49.86], "WES": [7.14, -26.39], "SAR": [17.62, -42.99], "KAUS": [18.40, -34.38],
-            "AVI": [8.37, -59.50], "ALK": [13.79, 49.31], "MEN": [5.99, 44.95], "ATR": [16.81, -69.03],
-            "ALH": [6.63, 16.39], "PEA": [20.42, -56.73], "ALS": [8.74, -54.70], "MIRZ": [6.38, -17.96],
-            "ALP": [9.46, -8.66], "POLA": [2.53, 89.26], "HAM": [2.12, 23.46], "ALG": [3.13, 40.96],
-            "DIP": [0.72, -17.99], "NUN": [18.92, -26.29], "ALPHE": [15.58, 26.71], "SCH": [0.67, 56.54],
-            "ASP": [9.28, -59.27], "SUH": [9.13, -43.43], "CAPH": [0.15, 59.15], "RUCH": [1.43, 60.23],
-            "SEGIN": [1.90, 63.67], "MER": [11.03, 56.38], "PHEC": [11.89, 53.69], "MEG": [12.25, 57.03],
-            "MIZ": [13.40, 54.92], "ALCO": [13.41, 54.98], "KOC": [14.84, 74.15], "PHER": [15.34, 71.83],
-            "MINT": [5.53, -0.30], "SAI": [5.79, -9.67], "GRA": [16.09, -19.80], "DSCH": [16.00, -22.62],
-            "WEI": [16.83, -42.36], "LES": [17.51, -37.29], "ALGIE": [10.33, 19.84], "ZOS": [11.23, 20.52],
-            "ALB": [19.51, 27.96], "SAD": [20.37, 40.26], "GIE": [20.79, 33.97], "MARK": [23.08, 15.21],
-            "SCH_PEG": [23.06, 28.08], "ALPHER": [0.14, 29.09], "MIR": [1.16, 35.62], "ALMA": [2.06, 42.33],
-            "MENK": [3.04, 4.09], "KAUSM": [18.46, -29.83], "KAUSB": [18.47, -25.42], "ALN_SAG": [18.09, -30.42],
-            "ASK": [19.04, -29.88], "POLI": [18.00, -21.06], "RUK": [19.39, -40.34], "ANA": [0.44, -42.30],
-            "ALUD": [7.40, -29.30], "MUL": [7.06, -15.63], "FUR": [6.34, -30.06], "RAS": [17.58, 12.56],
-            "CEB": [17.72, 4.57], "SAB": [17.17, -15.72], "YED": [16.24, -3.69], "MAR": [16.51, -10.57],
-            "ETAMIN": [17.94, 51.49], "ALD": [21.31, 62.58], "ALF": [21.48, 70.56], "ERR": [23.66, 77.63],
-            "TAR": [19.77, 10.61], "ALSH": [19.92, 6.41], "DENE": [19.08, 13.86], "ROT": [20.62, 14.66],
-            "SUA": [20.66, 15.91], "ZUB": [14.84, -16.04], "ZUBN": [15.28, -9.38], "UNUK": [15.74, 6.42],
-            "VIN": [13.04, 10.96], "POR": [12.69, -1.45], "COR": [12.93, 38.31], "IZA": [14.76, 27.07],
-            "MUPH": [13.91, 18.39], "ALKA": [15.41, 40.39], "NEK": [15.03, 38.31], "SEGINUS": [14.53, 38.30]
+            "SIR":[6.75,-16.72], "CAN":[6.40,-52.70], "RIGK":[14.66,-60.83], "ARC":[14.26,19.18], "VEG":[18.62,38.78],
+            "CAP":[5.27,45.99], "RIG":[5.24,-8.20], "PRO":[7.65,5.22], "BET":[5.92,7.41], "ACH":[1.63,-57.23],
+            "HAD":[14.06,-60.37], "ALT":[19.85,8.87], "ACR":[12.44,-63.10], "ALD":[4.60,16.51], "SPI":[13.42,-11.16],
+            "ANT":[16.49,-26.43], "POL":[7.76,28.02], "FOM":[22.96,-29.62], "DEN":[20.69,45.28], "MIM":[12.80,-59.68],
+            "REG":[10.14,11.96], "ADH":[6.98,-28.97], "SHA":[17.56,-37.10], "CAS":[7.58,31.88], "GAC":[12.52,-57.11],
+            "BEL":[5.42,6.35], "ELN":[5.43,28.60], "MIA":[9.22,-69.71], "ALN":[5.60,-1.20], "ALNI":[5.68,-1.94],
+            "ALI":[12.90,55.96], "DUB":[11.06,61.75], "MIR":[3.41,49.86], "WES":[7.14,-26.39], "SAR":[17.62,-42.99],
+            "KAUS":[18.40,-34.38], "AVI":[8.37,-59.50], "ALK":[13.79,49.31], "MEN":[5.99,44.95], "ATR":[16.81,-69.03],
+            "ALH":[6.63,16.39], "PEA":[20.42,-56.73], "ALS":[8.74,-54.70], "MIRZ":[6.38,-17.96], "ALP":[9.46,-8.66],
+            "POLA":[2.53,89.26], "HAM":[2.12,23.46], "ALG":[3.13,40.96], "DIP":[0.72,-17.99], "NUN":[18.92,-26.29],
+            "ALPHE":[15.58,26.71], "SCH":[0.67,56.54], "ASP":[9.28,-59.27], "SUH":[9.13,-43.43], "CAPH":[0.15,59.15],
+            "RUCH":[1.43,60.23], "SEGIN":[1.90,63.67], "MER":[11.03,56.38], "PHEC":[11.89,53.69], "MEG":[12.25,57.03],
+            "MIZ":[13.40,54.92], "ALCO":[13.41,54.98], "KOC":[14.84,74.15], "PHER":[15.34,71.83], "MINT":[5.53,-0.30],
+            "SAI":[5.79,-9.67], "GRA":[16.09,-19.80], "DSCH":[16.00,-22.62], "WEI":[16.83,-42.36], "LES":[17.51,-37.29],
+            "ALGIE":[10.33,19.84], "ZOS":[11.23,20.52], "ALB":[19.51,27.96], "SAD":[20.37,40.26], "GIE":[20.79,33.97],
+            "MARK":[23.08,15.21], "SCH_PEG":[23.06,28.08], "ALPHER":[0.14,29.09], "MIR":[1.16,35.62], "ALMA":[2.06,42.33],
+            "MENK":[3.04,4.09], "KAUSM":[18.46,-29.83], "KAUSB":[18.47,-25.42], "ALN_SAG":[18.09,-30.42], "ASK":[19.04,-29.88],
+            "POLI":[18.00,-21.06], "RUK":[19.39,-40.34], "ANA":[0.44,-42.30], "ALUD":[7.40,-29.30], "MUL":[7.06,-15.63],
+            "FUR":[6.34,-30.06], "RAS":[17.58,12.56], "CEB":[17.72,4.57], "SAB":[17.17,-15.72], "YED":[16.24,-3.69],
+            "MAR":[16.51,-10.57], "ETAMIN":[17.94,51.49], "ALD":[21.31,62.58], "ALF":[21.48,70.56], "ERR":[23.66,77.63],
+            "TAR":[19.77,10.61], "ALSH":[19.92,6.41], "DENE":[19.08,13.86], "ROT":[20.62,14.66], "SUA":[20.66,15.91],
+            "ZUB":[14.84,-16.04], "ZUBN":[15.28,-9.38], "UNUK":[15.74,6.42], "VIN":[13.04,10.96], "POR":[12.69,-1.45],
+            "COR":[12.93,38.31], "IZA":[14.76,27.07], "MUPH":[13.91,18.39], "ALKA":[15.41,40.39], "NEK":[15.03,38.31], "SEGINUS":[14.53,38.30]
         };
 
         async function init(userLongitude) {
@@ -542,6 +565,7 @@
         }
 
         function onPointerDown(event) {
+            // IGNORE READOUT CLICKS TO FIX SCROLL BUG
             if (event.target.closest('#readout')) return;
 
             if (event.target.closest('.action-btn') || event.target.closest('.audio-btn') || event.target.closest('.reset-btn') || event.target.id === 'zoom-slider') return;
@@ -700,13 +724,50 @@
             document.getElementById('readout').style.display = 'none';
         });
 
+        // BOOT SEQUENCE HANDLER
         document.getElementById('start-btn').addEventListener('click', () => {
             if (audioCtx.state === 'suspended') audioCtx.resume();
+            playSound('click'); // Button chirp
+
+            // Hide the button and instructions
             document.getElementById('start-btn').style.display = 'none';
-            document.getElementById('header-text').innerText = "SCANNING SECTOR 001";
-            if (navigator.geolocation) {
-                navigator.geolocation.getCurrentPosition(p => init(p.coords.longitude), () => init(0));
-            } else { init(0); }
+            document.querySelector('.boot-instruction').style.display = 'none';
+            document.querySelector('.boot-header').style.display = 'none';
+            
+            // Show loading bar
+            const loader = document.getElementById('loading-interface');
+            loader.style.display = 'flex';
+            
+            // Play processing sound looping
+            const loadInterval = setInterval(() => playSound('lock'), 200);
+
+            // Animate bar segments
+            const segments = document.querySelectorAll('.lcars-seg');
+            let currentSeg = 0;
+            
+            const segInterval = setInterval(() => {
+                if(currentSeg < segments.length) {
+                    segments[currentSeg].classList.add('on');
+                    currentSeg++;
+                } else {
+                    // FINISHED
+                    clearInterval(segInterval);
+                    clearInterval(loadInterval);
+                    playSound('click'); // Final success beep
+                    
+                    // Fade out boot screen
+                    document.getElementById('boot-overlay').style.opacity = '0';
+                    setTimeout(() => {
+                        document.getElementById('boot-overlay').style.display = 'none';
+                        document.getElementById('lcars-container').style.opacity = '1'; // Show main UI
+                    }, 500);
+
+                    // Initialize Three.js
+                    if (navigator.geolocation) {
+                        navigator.geolocation.getCurrentPosition(p => init(p.coords.longitude), () => init(0));
+                    } else { init(0); }
+                }
+            }, 150); // Speed of loading bar
         });
     </script>
 </body>
