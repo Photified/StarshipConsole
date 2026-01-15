@@ -9,7 +9,7 @@
         :root { 
             --orange: #ff9900; --pink: #cc99cc; --blue: #9999ff; 
             --gold: #ffcc66; --red: #cc0000; --dark-blue: #08081a;
-            --lcars-bg: rgba(0, 0, 0, 0.85);
+            --lcars-bg: rgba(0, 0, 0, 0.9);
         }
         
         body { 
@@ -112,7 +112,7 @@
             width: 100%; height: 10px; background: #222; border-radius: 5px; border: 1px solid rgba(255,255,255,0.2);
         }
 
-        /* READOUT DASHBOARD */
+        /* READOUT DASHBOARD - NEW STACKED LAYOUT */
         #readout { 
             display: none; 
             position: fixed; 
@@ -125,7 +125,7 @@
             pointer-events: auto;
             backdrop-filter: blur(5px);
             box-shadow: 5px 5px 20px rgba(0,0,0,0.8);
-            flex-direction: row; align-items: center; gap: 20px;
+            flex-direction: row; align-items: flex-start; gap: 15px; /* Changed align to start */
             box-sizing: border-box;
         }
         
@@ -134,43 +134,45 @@
             background: radial-gradient(circle at 30% 30%, white, transparent);
             box-shadow: 0 0 20px white; border: 1px solid rgba(255,255,255,0.2);
             flex-shrink: 0;
+            margin-top: 10px; /* Align with text */
         }
 
-        .readout-info { flex-grow: 1; }
+        .readout-info { 
+            flex-grow: 1; 
+            overflow-y: auto; /* Allow scrolling if text is massive */
+            max-height: 200px;
+        }
+
         .readout-header { 
             color: black; background: var(--gold);
-            display: inline-block; padding: 5px 15px;
+            display: inline-block; padding: 5px 25px;
             margin-top: -55px; margin-left: -20px;
             font-size: 20px; font-weight: bold;
             border-bottom-right-radius: 20px;
-            margin-bottom: 25px;
+            margin-bottom: 15px;
         }
         
-        /* FIXED DATA ROW STYLING - FLEXBOX FOR ALIGNMENT */
-        .data-row { 
-            display: flex; 
-            align-items: flex-start; /* Align text to top */
-            margin-bottom: 8px; 
-            border-bottom: 1px solid #333; 
-            padding-bottom: 4px; 
+        /* STACKED DATA ROW */
+        .data-block { 
+            margin-bottom: 12px;
+            border-left: 3px solid var(--orange); /* Cool Scan Line */
+            padding-left: 10px;
         }
         
         .data-label { 
             color: var(--gold); 
-            font-size: 11px; 
-            width: 100px; /* Fixed width so all labels align perfectly */
-            text-align: right; 
-            margin-right: 15px;
-            flex-shrink: 0; /* Prevents label from squishing */
-            padding-top: 2px; /* Slight offset to align with larger value font */
+            font-size: 10px; 
+            display: block; /* Force new line */
+            margin-bottom: 2px;
+            opacity: 0.8;
         }
         
         .data-value { 
             color: var(--blue); 
             font-size: 16px; 
             font-weight: normal; 
-            flex-grow: 1; /* Allows text to fill remaining space */
-            text-align: left;
+            display: block; /* Force new line */
+            line-height: 1.3;
         }
 
         .close-btn {
@@ -268,6 +270,7 @@
         };
         const defaultStarColor = 0xffffff;
 
+        // ACCURATE CONSTELLATION ATLAS (ID Pairs)
         const constellationPairs = [
             ['ALK', 'MIZ'], ['MIZ', 'ALI'], ['ALI', 'MEG'], ['MEG', 'PHEC'], 
             ['PHEC', 'MER'], ['MER', 'DUB'], ['DUB', 'MEG'],
@@ -340,7 +343,7 @@
 
             try {
                 // Ensure to load fresh data
-                const response = await fetch('stars.json?v=15'); 
+                const response = await fetch('stars.json?v=16'); 
                 const stars = await response.json();
                 
                 const d = (new Date().getTime() / 86400000) + 2440587.5 - 2451545.0;
@@ -579,23 +582,41 @@
             
             if (btnType === 'NAV') {
                 content = `
-                    <div class='data-row'><div class='data-label'>SECTOR</div><div class='data-value'>${d.con || "Unknown"}</div></div>
-                    <div class='data-row'><div class='data-label'>DISTANCE</div><div class='data-value'>${d.dist || "Unknown"}</div></div>
-                    <div class='data-row'><div class='data-label'>VISIBILITY</div><div class='data-value'>${d.vis || "Unknown"}</div></div>
+                    <div class='data-block'>
+                        <span class='data-label'>SECTOR</span>
+                        <span class='data-value'>${d.con || "Unknown"}</span>
+                    </div>
+                    <div class='data-block'>
+                        <span class='data-label'>DISTANCE</span>
+                        <span class='data-value'>${d.dist || "Unknown"}</span>
+                    </div>
+                    <div class='data-block'>
+                        <span class='data-label'>VISIBILITY</span>
+                        <span class='data-value'>${d.vis || "Unknown"}</span>
+                    </div>
                 `;
             } else if (btnType === 'VIS') {
                 content = `
-                    <div class='data-row'><div class='data-label'>TYPE</div><div class='data-value'>${d.type || "Unknown"}</div></div>
-                    <div class='data-row'><div class='data-label'>BRIGHTNESS</div><div class='data-value'>${d.lum || "Unknown"}</div></div>
-                    <div class='data-row'><div class='data-label'>TEMP</div><div class='data-value'>${d.temp || "Unknown"}</div></div>
+                    <div class='data-block'>
+                        <span class='data-label'>TYPE</span>
+                        <span class='data-value'>${d.type || "Unknown"}</span>
+                    </div>
+                    <div class='data-block'>
+                        <span class='data-label'>BRIGHTNESS</span>
+                        <span class='data-value'>${d.lum || "Unknown"}</span>
+                    </div>
+                    <div class='data-block'>
+                        <span class='data-label'>TEMP</span>
+                        <span class='data-value'>${d.temp || "Unknown"}</span>
+                    </div>
                 `;
             } else if (btnType === 'INTEL') {
                 let facts = d.facts || ["No intel available."];
                 if(typeof facts === 'string') facts = [facts];
                 content = facts.map((f, i) => `
-                    <div class='data-row'>
-                        <div class='data-label'>FACT ${i+1}</div>
-                        <div class='data-value' style='font-size:12px; line-height:1.3; white-space:normal'>${f}</div>
+                    <div class='data-block'>
+                        <span class='data-label'>FACT ${i+1}</span>
+                        <span class='data-value' style='font-size:14px'>${f}</span>
                     </div>
                 `).join('');
             }
