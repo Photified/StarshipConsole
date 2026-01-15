@@ -34,7 +34,6 @@
             box-shadow: 0 0 10px rgba(255, 153, 0, 0.3);
             transition: all 0.3s ease;
         }
-        /* Lock visual - changed to GOLD to stand out against colored stars */
         #reticle.locked {
             border-color: #ffff00;
             box-shadow: 0 0 25px #ffff00, inset 0 0 10px #ffff00;
@@ -160,19 +159,17 @@
         let targetLon = 0, targetLat = 0;
         let hoveredStar = null; 
 
-        // --- CONSTELLATION COLOR MAP ---
-        // Maps the "con" code in stars.json to a hex color
         const conColors = {
-            "URSA MAJOR": 0x00ff00,    // Green
-            "URSA MINOR": 0xcc00ff,    // Purple
-            "ORION": 0x00aaff,         // Cyan/Blue
-            "SCORPIUS": 0xff3300,      // Red/Orange
-            "CASSIOPEIA": 0xff0099,    // Pink
-            "CYGNUS": 0x00ffff,        // Light Cyan
-            "CRUX": 0xffff00,          // Yellow
-            "CANIS MAJOR": 0x0055ff,   // Deep Blue
-            "LEO": 0xffaa00,           // Gold
-            "GEMINI": 0xffaaee         // Light Pink
+            "URSA MAJOR": 0x00ff00,    
+            "URSA MINOR": 0xcc00ff,    
+            "ORION": 0x00aaff,         
+            "SCORPIUS": 0xff3300,      
+            "CASSIOPEIA": 0xff0099,    
+            "CYGNUS": 0x00ffff,        
+            "CRUX": 0xffff00,          
+            "CANIS MAJOR": 0x0055ff,   
+            "LEO": 0xffaa00,           
+            "GEMINI": 0xffaaee         
         };
         const defaultStarColor = 0xffffff;
 
@@ -187,7 +184,6 @@
 
             starGroup = new THREE.Group();
 
-            // 1. BACKGROUND STARS (Dim)
             const bgGeo = new THREE.BufferGeometry();
             const bgPos = [];
             for (let i = 0; i < 2000; i++) {
@@ -199,7 +195,6 @@
             bgGeo.setAttribute('position', new THREE.Float32BufferAttribute(bgPos, 3));
             scene.add(new THREE.Points(bgGeo, new THREE.PointsMaterial({ color: 0x444466, size: 2 })));
 
-            // 2. LOAD STARS
             try {
                 const response = await fetch('stars.json');
                 const stars = await response.json();
@@ -211,7 +206,6 @@
                     const decRad = s.dec * (Math.PI/180);
                     const phi = Math.PI/2 - decRad;
                     
-                    // Determine Color based on Constellation
                     const starColor = conColors[s.con] || defaultStarColor;
 
                     const mesh = new THREE.Mesh(
@@ -219,7 +213,6 @@
                         new THREE.MeshBasicMaterial({ color: starColor })
                     );
                     
-                    // Position Star
                     const r = 1200;
                     mesh.position.set(
                         r * Math.sin(phi) * Math.cos(raRad),
@@ -227,15 +220,12 @@
                         r * Math.sin(phi) * Math.sin(raRad)
                     );
                     
-                    // Store data including original color so we can reset it after hover
                     mesh.userData = s;
                     mesh.userData.baseColor = starColor;
 
-                    // Label
                     const el = document.createElement('div');
                     el.className = 'label'; 
                     el.innerText = s.name;
-                    // Labels inherit the star color for extra style
                     el.style.color = '#' + starColor.toString(16).padStart(6, '0');
                     el.style.borderLeftColor = '#' + starColor.toString(16).padStart(6, '0');
                     
@@ -252,7 +242,6 @@
                 renderer.setSize(window.innerWidth, window.innerHeight);
             });
 
-            // Input Listeners
             document.addEventListener('pointerdown', onPointerDown);
             document.addEventListener('pointermove', onPointerMove);
             document.addEventListener('pointerup', onPointerUp);
@@ -260,9 +249,13 @@
             animate();
         }
 
+        // --- MATH REPAIR ---
+        // Safely calculate spherical coords without NaN crashes
         function getStarAngles(position) {
             const r = Math.sqrt(position.x*position.x + position.y*position.y + position.z*position.z);
-            const phi = Math.acos(position.y / r);
+            // SAFETY CLAMP: Ensure value is between -1 and 1
+            const safeY = Math.max(-1, Math.min(1, position.y / r));
+            const phi = Math.acos(safeY);
             const theta = Math.atan2(position.x, position.z); 
             
             let starLat = 90 - THREE.MathUtils.radToDeg(phi);
@@ -275,9 +268,16 @@
         function animate() {
             requestAnimationFrame(animate);
 
+            // NAN PROTECTION: Hard reset if math breaks
+            if (isNaN(lon) || isNaN(lat)) {
+                lon = 0; lat = 0; isSnapping = false;
+                console.log("System Alert: Nav Data Reset");
+            }
+
             if(isSnapping) {
                 lat += (targetLat - lat) * 0.1;
                 lon += (targetLon - lon) * 0.1;
+                
                 if(Math.abs(targetLat - lat) < 0.05 && Math.abs(targetLon - lon) < 0.05) {
                     isSnapping = false;
                 }
@@ -330,7 +330,6 @@
                 return; 
             }
 
-            // CHECK HOVER
             const raycaster = new THREE.Raycaster();
             raycaster.setFromCamera(new THREE.Vector2(0, 0), camera);
             const hits = raycaster.intersectObjects(starGroup.children);
@@ -340,15 +339,15 @@
             if(hits.length > 0) {
                 const hit = hits[0].object;
                 if(hoveredStar !== hit) {
-                    if(hoveredStar) hoveredStar.material.color.setHex(hoveredStar.userData.baseColor); // Reset to base color
+                    if(hoveredStar) hoveredStar.material.color.setHex(hoveredStar.userData.baseColor); 
                     hoveredStar = hit;
-                    hoveredStar.material.color.setHex(0xffff00); // Highlight Gold
+                    hoveredStar.material.color.setHex(0xffff00); 
                     document.getElementById('reticle').classList.add('locked');
                     buttons.forEach(b => b.classList.add('active'));
                 }
             } else {
                 if(hoveredStar) {
-                    hoveredStar.material.color.setHex(hoveredStar.userData.baseColor); // Reset to base color
+                    hoveredStar.material.color.setHex(hoveredStar.userData.baseColor);
                     hoveredStar = null;
                     document.getElementById('reticle').classList.remove('locked');
                     buttons.forEach(b => b.classList.remove('active'));
@@ -359,15 +358,19 @@
         function onPointerUp() { 
             isUserInteracting = false; 
             if(hoveredStar) {
+                // FORCE RESET SNAP LOGIC
+                isSnapping = false; 
+                
                 const angles = getStarAngles(hoveredStar.position);
-                let currentLon = lon % 360; 
-                if(currentLon < 0) currentLon += 360;
                 
-                let diff = angles.lon - currentLon;
-                if(diff > 180) diff -= 360;
-                if(diff < -180) diff += 360;
+                // Smart Cycle Math to prevent spinning 360 degrees unnecessarily
+                let currentLon = lon; 
+                // Normalize angle diff to -180 to 180
+                let diff = angles.lon - (currentLon % 360);
+                if (diff > 180) diff -= 360;
+                if (diff < -180) diff += 360;
                 
-                targetLon = lon + diff;
+                targetLon = currentLon + diff;
                 targetLat = angles.lat;
                 isSnapping = true;
             }
@@ -400,6 +403,7 @@
 
         function showData(btnType) {
             let target = hoveredStar;
+            // Fuzzy search logic if no lock
             if(!target) {
                 let closestDist = Infinity;
                 let closestStar = null;
@@ -425,8 +429,6 @@
 
             const d = target.userData;
             document.getElementById('obj-header').innerText = d.name;
-
-            // Header matches star color
             const hexColor = '#' + target.userData.baseColor.toString(16).padStart(6, '0');
             document.getElementById('obj-header').style.color = hexColor;
             document.getElementById('obj-header').style.borderColor = hexColor;
