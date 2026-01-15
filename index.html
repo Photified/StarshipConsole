@@ -32,7 +32,7 @@
             border: 2px solid rgba(255, 153, 0, 0.5); border-radius: 50%; 
             pointer-events: none; z-index: 5;
             box-shadow: 0 0 10px rgba(255, 153, 0, 0.3);
-            transition: all 0.3s ease;
+            transition: all 0.2s ease;
         }
         #reticle.locked {
             border-color: #ffff00;
@@ -81,7 +81,7 @@
             display: flex; align-items: center; padding-left: 10px; cursor: pointer;
         }
 
-        /* ZOOM SLIDER FIXED */
+        /* ZOOM SLIDER */
         .zoom-container {
             height: 150px; background: var(--gold);
             margin-bottom: 5px; border-radius: 0 25px 25px 0;
@@ -96,33 +96,28 @@
             -webkit-appearance: none; width: 120px; height: 40px;
             background: transparent; transform: rotate(270deg);
         }
-        /* The Thumb (Handle) */
         input[type=range]::-webkit-slider-thumb {
             -webkit-appearance: none; height: 30px; width: 20px;
             background: black; border: 2px solid var(--orange); border-radius: 5px;
             margin-top: -10px;
         }
-        /* The Track (Bar) - Made dark black so it's visible on Gold */
         input[type=range]::-webkit-slider-runnable-track {
             width: 100%; height: 10px; background: #222; border-radius: 5px; border: 1px solid rgba(255,255,255,0.2);
         }
 
-        /* SOLID LCARS POPUP */
+        /* READOUT DASHBOARD */
         #readout { 
             display: none; 
             position: fixed; 
-            bottom: 20px; /* Floating slightly off bottom */
-            left: 110px; /* CLEARS THE SIDEBAR */
-            width: calc(100% - 125px); /* Fills rest of screen width */
-            background: black; /* Solid Black Background */
-            border-top: 30px solid var(--gold); /* LCARS Header Bar */
+            bottom: 20px; left: 110px; 
+            width: calc(100% - 125px);
+            background: black; 
+            border-top: 30px solid var(--gold); 
             border-bottom-left-radius: 30px;
             z-index: 100; padding: 20px; 
             pointer-events: auto;
             box-shadow: 5px 5px 20px rgba(0,0,0,0.8);
-            flex-direction: row;
-            align-items: center;
-            gap: 20px;
+            flex-direction: row; align-items: center; gap: 20px;
             box-sizing: border-box;
         }
         
@@ -134,16 +129,11 @@
         }
 
         .readout-info { flex-grow: 1; }
-        /* Header is now part of the gold bar visually */
         .readout-header { 
-            color: black; 
-            background: var(--gold);
-            display: inline-block;
-            padding: 5px 15px;
-            margin-top: -55px; /* Pulls text up into the orange border */
-            margin-left: -20px;
-            font-size: 20px; 
-            font-weight: bold;
+            color: black; background: var(--gold);
+            display: inline-block; padding: 5px 15px;
+            margin-top: -55px; margin-left: -20px;
+            font-size: 20px; font-weight: bold;
             border-bottom-right-radius: 20px;
         }
         
@@ -227,8 +217,6 @@
         let onPointerDownPointerX = 0, onPointerDownPointerY = 0;
         const sensitivity = 0.2; 
         
-        let isSnapping = false;
-        let targetLon = 0, targetLat = 0;
         let hoveredStar = null; 
 
         const conColors = {
@@ -260,9 +248,9 @@
             bgGeo.setAttribute('position', new THREE.Float32BufferAttribute(bgPos, 3));
             scene.add(new THREE.Points(bgGeo, new THREE.PointsMaterial({ color: 0x444466, size: 2 })));
 
-            // CACHE BUSTER: '?v=3' forces reload
+            // REVERTED TO LOADING EXTERNAL FILE (Use ?v=4 to force update)
             try {
-                const response = await fetch('stars.json?v=3'); 
+                const response = await fetch('stars.json?v=4'); 
                 const stars = await response.json();
                 const d = (new Date().getTime() / 86400000) + 2440587.5 - 2451545.0;
                 const lst = (280.46 + 360.985 * d + userLongitude) % 360;
@@ -318,28 +306,14 @@
             animate();
         }
 
-        function getStarAngles(position) {
-            const r = Math.sqrt(position.x*position.x + position.y*position.y + position.z*position.z);
-            const safeY = Math.max(-1, Math.min(1, position.y / r));
-            const phi = Math.acos(safeY);
-            const theta = Math.atan2(position.x, position.z); 
-            let starLat = 90 - THREE.MathUtils.radToDeg(phi);
-            let starLon = THREE.MathUtils.radToDeg(theta); 
-            if(starLon < 0) starLon += 360;
-            return { lon: starLon, lat: starLat };
-        }
-
         function animate() {
             requestAnimationFrame(animate);
-            if (isNaN(lon) || isNaN(lat)) { lon = 0; lat = 0; isSnapping = false; }
-            if(isSnapping) {
-                lat += (targetLat - lat) * 0.1;
-                lon += (targetLon - lon) * 0.1;
-                if(Math.abs(targetLat - lat) < 0.05 && Math.abs(targetLon - lon) < 0.05) isSnapping = false;
-            }
+            if (isNaN(lon) || isNaN(lat)) { lon = 0; lat = 0; }
+
             let hdg = Math.round(lon % 360);
             if (hdg < 0) hdg += 360;
             document.getElementById('nav-data').innerText = `HDG: ${hdg.toString().padStart(3, '0')}`;
+            
             const phi = THREE.MathUtils.degToRad(90 - lat);
             const theta = THREE.MathUtils.degToRad(lon);
             const target = new THREE.Vector3(
@@ -349,6 +323,7 @@
             );
             camera.lookAt(target);
             renderer.render(scene, camera);
+            
             starGroup.children.forEach(mesh => {
                 if(mesh.userData.label) {
                     const v = mesh.position.clone().project(camera);
@@ -365,7 +340,7 @@
         function onPointerDown(event) {
             if (event.target.closest('.action-btn') || event.target.closest('.reset-btn') || event.target.id === 'zoom-slider') return;
             if (event.isPrimary === false) return;
-            isUserInteracting = true; isSnapping = false; 
+            isUserInteracting = true; 
             onPointerDownPointerX = event.clientX; onPointerDownPointerY = event.clientY;
             onPointerDownLon = lon; onPointerDownLat = lat;
         }
@@ -402,27 +377,14 @@
             }
         }
 
-        function onPointerUp() { 
-            isUserInteracting = false; 
-            if(hoveredStar) {
-                isSnapping = false; 
-                const angles = getStarAngles(hoveredStar.position);
-                let currentLon = lon; 
-                let diff = angles.lon - (currentLon % 360);
-                if (diff > 180) diff -= 360;
-                if (diff < -180) diff += 360;
-                targetLon = currentLon + diff;
-                targetLat = angles.lat;
-                isSnapping = true;
-            }
-        }
+        function onPointerUp() { isUserInteracting = false; }
 
         function updateStarVisual(d) {
             const visual = document.getElementById('star-visual');
             let color = 'white';
             let shadow = 'white';
             
-            // Check if type exists to avoid crashes
+            // Safe check for type
             const type = d.type || "G";
             
             if (type.includes('O') || type.includes('B')) { color = '#aaddff'; shadow = '#0088ff'; }
@@ -464,7 +426,6 @@
         function showData(btnType) {
             let target = hoveredStar;
             if(!target) {
-                // If aiming fails, use closest
                 let closestDist = Infinity;
                 let closestStar = null;
                 const raycaster = new THREE.Raycaster();
