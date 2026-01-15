@@ -40,6 +40,7 @@
             width: 80px; height: 80px;
         }
 
+        /* LCARS LAYOUT */
         #lcars-container {
             position: absolute; top: 0; left: 0; width: 100%; height: 100%;
             display: grid; grid-template-rows: 140px 1fr 100px;
@@ -100,28 +101,46 @@
             background: black; border: 2px solid var(--orange); border-radius: 5px;
             margin-top: -10px;
         }
-        input[type=range]::-webkit-slider-runnable-track {
-            width: 100%; height: 10px; background: rgba(0,0,0,0.3); border-radius: 5px;
-        }
 
-        /* READOUT MODAL */
+        /* READOUT DASHBOARD (BOTTOM) */
         #readout { 
-            display: none; position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); 
-            width: 80%; max-width: 350px; background: rgba(0,0,0,0.95); border: 2px solid var(--gold); 
-            z-index: 100; padding: 20px; border-radius: 15px; pointer-events: auto;
-            box-shadow: 0 0 30px rgba(0,0,0,1);
+            display: none; 
+            position: fixed; 
+            bottom: 0; left: 0; width: 100%;
+            background: rgba(0,0,0,0.9); 
+            border-top: 3px solid var(--gold);
+            z-index: 100; padding: 20px; 
+            pointer-events: auto;
+            box-shadow: 0 -5px 30px rgba(0,0,0,1);
+            flex-direction: row;
+            align-items: center;
+            gap: 20px;
+            box-sizing: border-box;
+            border-radius: 20px 20px 0 0;
         }
-        .readout-header { color: var(--gold); border-bottom: 2px solid var(--gold); margin-bottom: 12px; font-size: 22px; }
-        .data-label { color: var(--blue); font-size: 11px; display: block; margin-top: 10px; }
-        .data-value { color: white; font-size: 16px; display: block; margin-top: 2px; }
-
-        /* STAR VISUAL IN POPUP */
+        
         #star-visual {
-            width: 60px; height: 60px; border-radius: 50%; margin: 0 auto 15px auto;
+            width: 80px; height: 80px; border-radius: 50%;
             background: radial-gradient(circle at 30% 30%, white, transparent);
             box-shadow: 0 0 20px white; border: 1px solid rgba(255,255,255,0.2);
+            flex-shrink: 0;
         }
 
+        .readout-info { flex-grow: 1; }
+        .readout-header { color: var(--gold); border-bottom: 2px solid var(--gold); margin-bottom: 5px; font-size: 20px; }
+        .data-label { color: var(--blue); font-size: 10px; display: inline-block; width: 80px; }
+        .data-value { color: white; font-size: 14px; display: inline-block; font-weight: normal; }
+        .data-row { margin-bottom: 4px; border-bottom: 1px solid #333; padding-bottom: 2px; }
+
+        .close-btn {
+            position: absolute; top: -15px; right: 20px;
+            width: 40px; height: 40px; background: var(--red);
+            border-radius: 50%; color: black; font-weight: bold;
+            display: flex; align-items: center; justify-content: center;
+            cursor: pointer; border: 2px solid white;
+        }
+
+        /* FOOTER HIDDEN WHEN READOUT IS ACTIVE */
         .footer-wrap { background: var(--orange); border-top-left-radius: 50px; display: flex; align-items: center; padding-left: 130px; pointer-events: auto; height: 60px; align-self: end; }
         .btn-main { background: var(--gold); border: none; padding: 12px 25px; border-radius: 25px; font-weight: bold; cursor: pointer; color: black; font-size: 14px; }
 
@@ -169,10 +188,12 @@
     </div>
 
     <div id="readout">
+        <div class="close-btn" onclick="document.getElementById('readout').style.display='none'">X</div>
         <div id="star-visual"></div>
-        <div class="readout-header" id="obj-header">NO TARGET</div>
-        <div id="obj-body"></div>
-        <button class="btn-main" style="width:100%; margin-top:15px;" onclick="document.getElementById('readout').style.display='none'">CLOSE</button>
+        <div class="readout-info">
+            <div class="readout-header" id="obj-header">NO TARGET</div>
+            <div id="obj-body"></div>
+        </div>
     </div>
 
     <script type="importmap"> { "imports": { "three": "https://unpkg.com/three@0.160.0/build/three.module.js" } } </script>
@@ -220,8 +241,9 @@
             bgGeo.setAttribute('position', new THREE.Float32BufferAttribute(bgPos, 3));
             scene.add(new THREE.Points(bgGeo, new THREE.PointsMaterial({ color: 0x444466, size: 2 })));
 
+            // CACHE BUSTER: '?v=2' ensures the browser loads the new JSON file
             try {
-                const response = await fetch('stars.json');
+                const response = await fetch('stars.json?v=2'); 
                 const stars = await response.json();
                 const d = (new Date().getTime() / 86400000) + 2440587.5 - 2451545.0;
                 const lst = (280.46 + 360.985 * d + userLongitude) % 360;
@@ -382,7 +404,6 @@
             let color = 'white';
             let shadow = 'white';
             
-            // Map spectral types to colors
             if (d.type.includes('O') || d.type.includes('B')) { color = '#aaddff'; shadow = '#0088ff'; }
             else if (d.type.includes('A')) { color = '#ffffff'; shadow = '#ccccff'; }
             else if (d.type.includes('F')) { color = '#fff8e0'; shadow = '#ffddaa'; }
@@ -440,7 +461,8 @@
                 document.getElementById('obj-header').innerText = "NO TARGET";
                 document.getElementById('obj-body').innerHTML = "<div class='data-label'>STATUS</div><div class='data-value'>ALIGN SENSORS TO STAR</div>";
                 document.getElementById('star-visual').style.background = 'gray';
-                document.getElementById('readout').style.display = 'block';
+                document.getElementById('star-visual').style.boxShadow = 'none';
+                document.getElementById('readout').style.display = 'flex';
                 return;
             }
 
@@ -455,24 +477,24 @@
             let content = "";
             if (btnType === 'SCAN') {
                 content = `
-                    <div class='data-label'>RANGE</div><div class='data-value'>${cleanData(d.dist, 'dist')}</div>
-                    <div class='data-label'>SECTOR</div><div class='data-value' style='color:${hexColor}'>${d.con || "UNKNOWN"}</div>
+                    <div class='data-row'><div class='data-label'>RANGE</div><div class='data-value'>${cleanData(d.dist, 'dist')}</div></div>
+                    <div class='data-row'><div class='data-label'>SECTOR</div><div class='data-value' style='color:${hexColor}'>${d.con || "UNKNOWN"}</div></div>
                 `;
             } else if (btnType === 'ASTRO') {
                 content = `
-                    <div class='data-label'>CLASS</div><div class='data-value'>${cleanData(d.type, 'type')}</div>
-                    <div class='data-label'>SIZE</div><div class='data-value'>${cleanData(d.size, 'size')}</div>
-                    <div class='data-label'>TEMP</div><div class='data-value'>${d.temp || "UNKNOWN"}</div>
+                    <div class='data-row'><div class='data-label'>CLASS</div><div class='data-value'>${cleanData(d.type, 'type')}</div></div>
+                    <div class='data-row'><div class='data-label'>SIZE</div><div class='data-value'>${cleanData(d.size, 'size')}</div></div>
+                    <div class='data-row'><div class='data-label'>TEMP</div><div class='data-value'>${d.temp || "UNKNOWN"}</div></div>
                 `;
             } else if (btnType === 'INTEL') {
                 content = `
-                    <div class='data-label'>LUMINOSITY</div><div class='data-value'>${d.lum || "UNKNOWN"}</div>
-                    <div class='data-label'>DATABASE</div><div class='data-value' style='color:#ffcc66; font-style:italic'>"${d.fact}"</div>
+                    <div class='data-row'><div class='data-label'>LUMINOSITY</div><div class='data-value'>${d.lum || "UNKNOWN"}</div></div>
+                    <div class='data-row'><div class='data-label'>DATABASE</div><div class='data-value' style='color:#ffcc66; font-style:italic'>"${d.fact}"</div></div>
                 `;
             }
 
             document.getElementById('obj-body').innerHTML = content;
-            document.getElementById('readout').style.display = 'block';
+            document.getElementById('readout').style.display = 'flex';
         }
 
         document.getElementById('btn-scan').addEventListener('click', () => showData('SCAN'));
