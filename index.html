@@ -40,7 +40,6 @@
             width: 80px; height: 80px;
         }
 
-        /* LAYOUT GRID */
         #lcars-container {
             position: absolute; top: 0; left: 0; width: 100%; height: 100%;
             display: grid; grid-template-rows: 140px 1fr 100px;
@@ -61,7 +60,7 @@
         .bar-sub { background: var(--blue); height: 15px; width: 85%; border-bottom-left-radius: 10px; }
         #nav-data { font-family: monospace; font-size: 16px; color: black; }
 
-        /* SIDEBAR / BUTTONS */
+        /* SIDEBAR */
         .middle-wrap { display: flex; height: 100%; }
         .sidebar { width: 100px; display: flex; flex-direction: column; gap: 5px; padding-top: 10px; pointer-events: auto; }
         
@@ -81,7 +80,31 @@
             display: flex; align-items: center; padding-left: 10px; cursor: pointer;
         }
 
-        /* READOUT MODAL */
+        /* ZOOM SLIDER (LCARS STYLE) */
+        .zoom-container {
+            height: 150px; background: var(--gold);
+            margin-bottom: 5px; border-radius: 0 25px 25px 0;
+            display: flex; align-items: center; justify-content: center;
+            position: relative;
+        }
+        .zoom-label {
+            position: absolute; left: 5px; top: 10px; font-size: 10px; color: black; 
+            writing-mode: vertical-rl; transform: rotate(180deg);
+        }
+        input[type=range] {
+            -webkit-appearance: none; width: 120px; height: 40px;
+            background: transparent; transform: rotate(270deg);
+        }
+        input[type=range]::-webkit-slider-thumb {
+            -webkit-appearance: none; height: 30px; width: 20px;
+            background: black; border: 2px solid var(--orange); border-radius: 5px;
+            margin-top: -10px; /* offset */
+        }
+        input[type=range]::-webkit-slider-runnable-track {
+            width: 100%; height: 10px; background: rgba(0,0,0,0.3); border-radius: 5px;
+        }
+
+        /* READOUT */
         #readout { 
             display: none; position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); 
             width: 80%; max-width: 350px; background: rgba(0,0,0,0.9); border: 2px solid var(--gold); 
@@ -125,6 +148,12 @@
                 <div class="action-btn" id="btn-scan" style="background:var(--pink)">SCAN</div>
                 <div class="action-btn" id="btn-astro" style="background:var(--orange)">ASTRO</div>
                 <div class="action-btn" id="btn-intel" style="background:var(--blue)">INTEL</div>
+                
+                <div class="zoom-container">
+                    <span class="zoom-label">MAGNIFICATION</span>
+                    <input type="range" id="zoom-slider" min="40" max="120" value="100">
+                </div>
+
                 <div style="flex-grow:1"></div>
                 <div class="reset-btn" onclick="location.reload()">RESET</div>
             </div>
@@ -148,17 +177,16 @@
         let scene, camera, renderer, starGroup;
         let isUserInteracting = false;
         
-        // Navigation Vars
         let lon = 0, lat = 0;
         let onPointerDownLon = 0, onPointerDownLat = 0;
         let onPointerDownPointerX = 0, onPointerDownPointerY = 0;
         const sensitivity = 0.2; 
         
-        // Snapping Vars
         let isSnapping = false;
         let targetLon = 0, targetLat = 0;
         let hoveredStar = null; 
 
+        // Constellation Color Map
         const conColors = {
             "URSA MAJOR": 0x00ff00,    
             "URSA MINOR": 0xcc00ff,    
@@ -175,7 +203,8 @@
 
         async function init(userLongitude) {
             scene = new THREE.Scene();
-            camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 1, 4000);
+            // Start with FOV 100 for "Wide Angle" view
+            camera = new THREE.PerspectiveCamera(100, window.innerWidth / window.innerHeight, 1, 4000);
             
             renderer = new THREE.WebGLRenderer({ alpha: true, antialias: true });
             renderer.setSize(window.innerWidth, window.innerHeight);
@@ -184,6 +213,7 @@
 
             starGroup = new THREE.Group();
 
+            // Background Stars
             const bgGeo = new THREE.BufferGeometry();
             const bgPos = [];
             for (let i = 0; i < 2000; i++) {
@@ -195,6 +225,7 @@
             bgGeo.setAttribute('position', new THREE.Float32BufferAttribute(bgPos, 3));
             scene.add(new THREE.Points(bgGeo, new THREE.PointsMaterial({ color: 0x444466, size: 2 })));
 
+            // Load Stars
             try {
                 const response = await fetch('stars.json');
                 const stars = await response.json();
@@ -246,14 +277,21 @@
             document.addEventListener('pointermove', onPointerMove);
             document.addEventListener('pointerup', onPointerUp);
 
+            // ZOOM CONTROL
+            document.getElementById('zoom-slider').addEventListener('input', (e) => {
+                // Invert logic: Slider up (low value) = Zoom In (Low FOV)
+                // Slider down (high value) = Zoom Out (High FOV)
+                // Actually standard logic: High value = High FOV (Zoom Out/Wide)
+                camera.fov = parseInt(e.target.value);
+                camera.updateProjectionMatrix();
+            });
+
             animate();
         }
 
-        // --- MATH REPAIR ---
-        // Safely calculate spherical coords without NaN crashes
+        // MATH FIX: Safe angle calculation
         function getStarAngles(position) {
             const r = Math.sqrt(position.x*position.x + position.y*position.y + position.z*position.z);
-            // SAFETY CLAMP: Ensure value is between -1 and 1
             const safeY = Math.max(-1, Math.min(1, position.y / r));
             const phi = Math.acos(safeY);
             const theta = Math.atan2(position.x, position.z); 
@@ -268,19 +306,12 @@
         function animate() {
             requestAnimationFrame(animate);
 
-            // NAN PROTECTION: Hard reset if math breaks
-            if (isNaN(lon) || isNaN(lat)) {
-                lon = 0; lat = 0; isSnapping = false;
-                console.log("System Alert: Nav Data Reset");
-            }
+            if (isNaN(lon) || isNaN(lat)) { lon = 0; lat = 0; isSnapping = false; }
 
             if(isSnapping) {
                 lat += (targetLat - lat) * 0.1;
                 lon += (targetLon - lon) * 0.1;
-                
-                if(Math.abs(targetLat - lat) < 0.05 && Math.abs(targetLon - lon) < 0.05) {
-                    isSnapping = false;
-                }
+                if(Math.abs(targetLat - lat) < 0.05 && Math.abs(targetLon - lon) < 0.05) isSnapping = false;
             }
 
             let hdg = Math.round(lon % 360);
@@ -300,7 +331,9 @@
             starGroup.children.forEach(mesh => {
                 if(mesh.userData.label) {
                     const v = mesh.position.clone().project(camera);
-                    if(v.z < 1 && Math.abs(v.x) < 0.85 && Math.abs(v.y) < 0.85) {
+                    // Adjust visibility logic based on FOV to prevent disappearing too soon
+                    const limit = 0.9;
+                    if(v.z < 1 && Math.abs(v.x) < limit && Math.abs(v.y) < limit) {
                         mesh.userData.label.style.display = 'block';
                         mesh.userData.label.style.left = `${(v.x * .5 + .5) * window.innerWidth + 20}px`;
                         mesh.userData.label.style.top = `${(-(v.y * .5) + .5) * window.innerHeight}px`;
@@ -310,7 +343,11 @@
         }
 
         function onPointerDown(event) {
-            if (event.target.closest('.action-btn') || event.target.closest('.reset-btn')) return;
+            // Ignore UI interactions
+            if (event.target.closest('.action-btn') || 
+                event.target.closest('.reset-btn') || 
+                event.target.id === 'zoom-slider') return;
+            
             if (event.isPrimary === false) return;
             isUserInteracting = true;
             isSnapping = false; 
@@ -358,18 +395,12 @@
         function onPointerUp() { 
             isUserInteracting = false; 
             if(hoveredStar) {
-                // FORCE RESET SNAP LOGIC
                 isSnapping = false; 
-                
                 const angles = getStarAngles(hoveredStar.position);
-                
-                // Smart Cycle Math to prevent spinning 360 degrees unnecessarily
                 let currentLon = lon; 
-                // Normalize angle diff to -180 to 180
                 let diff = angles.lon - (currentLon % 360);
                 if (diff > 180) diff -= 360;
                 if (diff < -180) diff += 360;
-                
                 targetLon = currentLon + diff;
                 targetLat = angles.lat;
                 isSnapping = true;
@@ -403,7 +434,6 @@
 
         function showData(btnType) {
             let target = hoveredStar;
-            // Fuzzy search logic if no lock
             if(!target) {
                 let closestDist = Infinity;
                 let closestStar = null;
