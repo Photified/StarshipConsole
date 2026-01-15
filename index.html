@@ -25,7 +25,8 @@
             background: radial-gradient(circle at center, #0a0a1a 0%, #000005 100%);
             z-index: -1;
             opacity: 0; 
-            transition: opacity 1.5s ease-in-out;
+            /* FIXED: Faster transition to eliminate "lag" feel */
+            transition: opacity 0.5s ease-out;
         }
 
         /* --- BOOT SCREEN (INTERNAL) --- */
@@ -33,7 +34,6 @@
             position: fixed; 
             top: 50%; 
             left: 50%; 
-            /* Centers the boot UI in the empty space to the right of the sidebar */
             transform: translate(-50%, -50%);
             margin-left: 50px; 
             
@@ -101,7 +101,8 @@
             box-shadow: 0 0 10px rgba(153, 153, 255, 0.3);
             transition: all 0.2s ease;
             opacity: 0;
-            transition: opacity 1s;
+            /* FIXED: Faster transition */
+            transition: opacity 0.5s;
         }
         #reticle.locked {
             border-color: #ff9900;
@@ -174,21 +175,12 @@
             position: relative;
             pointer-events: auto;
         }
-        
-        /* --- FIXED CENTERED TEXT --- */
         .zoom-label {
-            position: absolute; 
-            left: 5px; 
-            top: 50%; 
-            font-size: 10px; 
-            color: black; 
-            writing-mode: vertical-rl; 
-            /* -50% Y moves it UP to perfect center. Rotate flips it 180 */
-            transform: translateY(-50%) rotate(180deg);
+            position: absolute; left: 12px; top: 50%; font-size: 10px; color: black; 
+            writing-mode: vertical-rl; transform: translateY(-50%) rotate(180deg);
             pointer-events: none;
             white-space: nowrap;
         }
-        
         input[type=range] {
             -webkit-appearance: none; width: 120px; height: 40px;
             background: transparent; transform: rotate(270deg);
@@ -762,7 +754,7 @@
         // BOOT SEQUENCE HANDLER
         document.getElementById('start-btn').addEventListener('click', () => {
             if (audioCtx.state === 'suspended') audioCtx.resume();
-            playSound('click'); 
+            playSound('click'); // Button chirp
 
             // 1. Start heavy lifting immediately in background
             document.getElementById('header-text').innerText = "SCANNING SECTOR 001";
@@ -776,10 +768,10 @@
             document.querySelector('.boot-header').style.display = 'none';
             document.getElementById('loading-interface').style.display = 'flex';
             
-            // 3. Play sound loop
+            // 3. Play processing sound looping
             const loadInterval = setInterval(() => playSound('lock'), 200);
 
-            // 4. Animate segments
+            // 4. Animate bar segments
             const segments = document.querySelectorAll('.lcars-seg');
             let currentSeg = 0;
             
@@ -791,8 +783,9 @@
                     // FINISHED
                     clearInterval(segInterval);
                     clearInterval(loadInterval);
-                    playSound('click'); 
+                    playSound('click'); // Final success beep
                     
+                    // Fade out boot screen
                     document.getElementById('boot-screen').style.opacity = '0';
                     document.getElementById('space-canvas').style.opacity = '1';
                     document.getElementById('reticle').style.opacity = '1';
@@ -801,7 +794,7 @@
                         document.getElementById('boot-screen').style.display = 'none';
                     }, 500);
                 }
-            }, 150); // Speed
+            }, 150); // Speed of loading bar
         });
     </script>
 </body>
