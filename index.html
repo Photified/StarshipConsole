@@ -22,7 +22,6 @@
 
         #space-canvas {
             position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            /* Deep Space Gradient Background */
             background: radial-gradient(circle at center, #0a0a1a 0%, #000005 100%);
             z-index: -1;
         }
@@ -60,16 +59,10 @@
         .elbow-main { 
             width: 120px; height: 120px; background: var(--pink); 
             border-bottom-left-radius: 45px; margin-right: 5px; flex-shrink: 0; 
-            
-            /* Center the Badge Image */
             display: flex; align-items: center; justify-content: center;
         }
         
-        .badge-img {
-            width: 80px;
-            height: auto;
-            opacity: 0.9;
-        }
+        .badge-img { width: 80px; height: auto; opacity: 0.9; }
 
         .top-bars { flex-grow: 1; display: flex; flex-direction: column; gap: 5px; }
         .bar-top { 
@@ -96,6 +89,19 @@
         .action-btn.active { opacity: 1; box-shadow: 0 0 10px var(--blue); background: var(--gold); }
         .action-btn:active { background: white; }
         
+        /* AUDIO BUTTON STYLE */
+        .audio-btn {
+            background: var(--gold); 
+            height: 40px; 
+            border-radius: 0 20px 20px 0; 
+            display: flex; align-items: center; justify-content: center;
+            margin-bottom: 5px; cursor: pointer;
+            transition: all 0.2s;
+        }
+        .audio-btn svg { width: 24px; height: 24px; fill: black; }
+        .audio-btn.muted { background: #444; }
+        .audio-btn.muted svg { fill: #888; }
+
         .reset-btn {
             background: var(--red); height: 40px; margin-top: auto;
             border-radius: 0 20px 20px 0; color: black;
@@ -110,8 +116,13 @@
             position: relative;
         }
         .zoom-label {
-            position: absolute; left: 5px; top: 10px; font-size: 10px; color: black; 
-            writing-mode: vertical-rl; transform: rotate(180deg);
+            position: absolute; 
+            left: 12px; 
+            top: 50%;   
+            font-size: 10px; color: black; 
+            writing-mode: vertical-rl; 
+            transform: translateY(50%) rotate(180deg);
+            pointer-events: none;
         }
         input[type=range] {
             -webkit-appearance: none; width: 120px; height: 40px;
@@ -175,21 +186,11 @@
             border-left: 3px solid var(--orange); 
             padding-left: 10px;
         }
-        
         .data-label { 
-            color: var(--gold); 
-            font-size: 10px; 
-            display: block; 
-            margin-bottom: 2px;
-            opacity: 0.8;
+            color: var(--gold); font-size: 10px; display: block; margin-bottom: 2px; opacity: 0.8;
         }
-        
         .data-value { 
-            color: var(--blue); 
-            font-size: 16px; 
-            font-weight: normal; 
-            display: block; 
-            line-height: 1.3;
+            color: var(--blue); font-size: 16px; font-weight: normal; display: block; line-height: 1.3;
         }
 
         .close-btn {
@@ -237,6 +238,11 @@
                 <div class="action-btn" id="btn-nav" style="background:var(--pink)">NAV</div>
                 <div class="action-btn" id="btn-vis" style="background:var(--orange)">ANALYSIS</div>
                 <div class="action-btn" id="btn-intel" style="background:var(--blue)">INTEL</div>
+                
+                <div class="audio-btn" id="btn-audio">
+                    <svg viewBox="0 0 24 24"><path d="M3 9v6h4l5 5V4L7 9H3zm13.5 3c0-1.77-1.02-3.29-2.5-4.03v8.05c1.48-.73 2.5-2.25 2.5-4.02zM14 3.23v2.06c2.89.86 5 3.54 5 6.71s-2.11 5.85-5 6.71v2.06c4.01-.91 7-4.49 7-8.77s-2.99-7.86-7-8.77z"/></svg>
+                </div>
+
                 <div class="zoom-container">
                     <span class="zoom-label">MAGNIFICATION</span>
                     <input type="range" id="zoom-slider" min="40" max="120" value="100">
@@ -264,10 +270,12 @@
     <script type="module">
         import * as THREE from 'three';
 
-        // --- AUDIO SYSTEM (No external files needed) ---
+        // --- AUDIO SYSTEM ---
         const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+        let isMuted = false;
         
         function playSound(type) {
+            if (isMuted) return;
             if (audioCtx.state === 'suspended') audioCtx.resume();
             
             const osc = audioCtx.createOscillator();
@@ -314,22 +322,11 @@
         
         let hoveredStar = null; 
 
-        // LCARS COLORS for specific constellations
-        const conColors = {
-            "URSA MAJOR": 0x00ff00,    // Green
-            "URSA MINOR": 0xcc00ff,    // Purple
-            "ORION": 0x00aaff,         // Light Blue
-            "SCORPIUS": 0xff3300,      // Red/Orange
-            "CASSIOPEIA": 0xff0099,    // Magenta
-            "CYGNUS": 0x00ffff,        // Cyan
-            "CRUX": 0xffff00,          // Yellow
-            "CANIS MAJOR": 0x0055ff,   // Deep Blue
-            "LEO": 0xffaa00,           // Gold
-            "GEMINI": 0xffaaee         // Pink
-        };
+        // COLORS & ATLAS
+        const conColors = { "URSA MAJOR": 0x00ff00, "URSA MINOR": 0xcc00ff, "ORION": 0x00aaff, "SCORPIUS": 0xff3300, "CASSIOPEIA": 0xff0099, "CYGNUS": 0x00ffff, "CRUX": 0xffff00, "CANIS MAJOR": 0x0055ff, "LEO": 0xffaa00, "GEMINI": 0xffaaee };
         const defaultStarColor = 0xffffff;
-
-        // EXPANDED DATA ARRAYS (For completeness)
+        
+        // FULL DATA ARRAYS
         const constellationPairs = [
             ['ALK', 'MIZ'], ['MIZ', 'ALI'], ['ALI', 'MEG'], ['MEG', 'PHEC'], 
             ['PHEC', 'MER'], ['MER', 'DUB'], ['DUB', 'MEG'],
@@ -400,6 +397,7 @@
             createBackgroundLayer(200, 4.0, 0xffffff, 1.0);
 
             try {
+                // Ensure to load fresh data
                 const response = await fetch('stars.json?v=18'); 
                 const stars = await response.json();
                 
@@ -544,10 +542,9 @@
         }
 
         function onPointerDown(event) {
-            // IGNORE READOUT CLICKS TO FIX SCROLL BUG
             if (event.target.closest('#readout')) return;
 
-            if (event.target.closest('.action-btn') || event.target.closest('.reset-btn') || event.target.id === 'zoom-slider') return;
+            if (event.target.closest('.action-btn') || event.target.closest('.audio-btn') || event.target.closest('.reset-btn') || event.target.id === 'zoom-slider') return;
             if (event.isPrimary === false) return;
             isUserInteracting = true; 
             onPointerDownPointerX = event.clientX; onPointerDownPointerY = event.clientY;
@@ -560,6 +557,7 @@
                 const deltaY = event.clientY - onPointerDownPointerY;
                 lon = (onPointerDownLon - deltaX * sensitivity);
                 lat = (onPointerDownLat + deltaY * sensitivity);
+                // LOOK ANGLE INCREASED TO 89.9 DEGREES
                 lat = Math.max(-89.9, Math.min(89.9, lat)); 
                 return; 
             }
@@ -690,16 +688,20 @@
         document.getElementById('btn-vis').addEventListener('click', () => showData('VIS'));
         document.getElementById('btn-intel').addEventListener('click', () => showData('INTEL'));
         
-        // CLOSE BUTTON + SOUND
+        // AUDIO BUTTON LISTENER
+        document.getElementById('btn-audio').addEventListener('click', () => {
+            isMuted = !isMuted;
+            document.getElementById('btn-audio').classList.toggle('muted', isMuted);
+            playSound('click'); // Play sound to confirm click unless muted
+        });
+
         document.getElementById('btn-close').addEventListener('click', () => {
             playSound('dismiss');
             document.getElementById('readout').style.display = 'none';
         });
 
         document.getElementById('start-btn').addEventListener('click', () => {
-            // INIT AUDIO CONTEXT
             if (audioCtx.state === 'suspended') audioCtx.resume();
-            
             document.getElementById('start-btn').style.display = 'none';
             document.getElementById('header-text').innerText = "SCANNING SECTOR 001";
             if (navigator.geolocation) {
