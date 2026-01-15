@@ -143,6 +143,8 @@
             margin-top: -55px; margin-left: -20px;
             font-size: 20px; font-weight: bold;
             border-bottom-right-radius: 20px;
+            /* FIXED SPACING ISSUE */
+            margin-bottom: 25px;
         }
         
         .data-label { color: var(--gold); font-size: 10px; display: inline-block; width: 80px; text-align: right; margin-right: 10px;}
@@ -189,9 +191,9 @@
 
         <div class="middle-wrap">
             <div class="sidebar">
-                <div class="action-btn" id="btn-nav" style="background:var(--pink)">NAVIGATION</div>
-                <div class="action-btn" id="btn-vis" style="background:var(--orange)">VISUAL</div>
-                <div class="action-btn" id="btn-sys" style="background:var(--blue)">SYSTEM</div>
+                <div class="action-btn" id="btn-nav" style="background:var(--pink)">NAV</div>
+                <div class="action-btn" id="btn-phys" style="background:var(--orange)">PHYSICS</div>
+                <div class="action-btn" id="btn-intel" style="background:var(--blue)">INTEL</div>
                 <div class="zoom-container">
                     <span class="zoom-label">MAGNIFICATION</span>
                     <input type="range" id="zoom-slider" min="40" max="120" value="100">
@@ -229,7 +231,7 @@
         
         let hoveredStar = null; 
 
-        // LCARS COLORS for specific constellations
+        // RESTORED CONSTELLATION COLORS
         const conColors = {
             "URSA MAJOR": 0x00ff00,    // Green
             "URSA MINOR": 0xcc00ff,    // Purple
@@ -317,7 +319,7 @@
 
             try {
                 // Ensure to load fresh data
-                const response = await fetch('stars.json?v=11'); 
+                const response = await fetch('stars.json?v=12'); 
                 const stars = await response.json();
                 
                 const d = (new Date().getTime() / 86400000) + 2440587.5 - 2451545.0;
@@ -512,11 +514,11 @@
             let color = 'white';
             let shadow = 'white';
             
-            if (d.desc && d.desc.includes('Blue')) { color = '#aaddff'; shadow = '#0088ff'; }
-            else if (d.desc && d.desc.includes('White')) { color = '#ffffff'; shadow = '#ccccff'; }
-            else if (d.desc && d.desc.includes('Yellow')) { color = '#ffee00'; shadow = '#ffaa00'; }
-            else if (d.desc && d.desc.includes('Orange')) { color = '#ffaa55'; shadow = '#ff6600'; }
-            else if (d.desc && d.desc.includes('Red')) { color = '#ff5555'; shadow = '#cc0000'; }
+            if (d.spec && (d.spec.includes('B') || d.spec.includes('O'))) { color = '#aaddff'; shadow = '#0088ff'; }
+            else if (d.spec && d.spec.includes('A')) { color = '#ffffff'; shadow = '#ccccff'; }
+            else if (d.spec && (d.spec.includes('F') || d.spec.includes('G'))) { color = '#ffee00'; shadow = '#ffaa00'; }
+            else if (d.spec && d.spec.includes('K')) { color = '#ffaa55'; shadow = '#ff6600'; }
+            else if (d.spec && d.spec.includes('M')) { color = '#ff5555'; shadow = '#cc0000'; }
 
             visual.style.background = `radial-gradient(circle at 30% 30%, ${color}, transparent)`;
             visual.style.boxShadow = `0 0 20px ${shadow}`;
@@ -556,21 +558,20 @@
 
             let content = "";
             
-            if (btnType === 'NAVIGATION') {
+            if (btnType === 'NAV') {
                 content = `
                     <div class='data-row'><div class='data-label'>SECTOR</div><div class='data-value'>${d.con || "Unknown"}</div></div>
                     <div class='data-row'><div class='data-label'>DISTANCE</div><div class='data-value'>${d.dist || "Unknown"}</div></div>
-                    <div class='data-row'><div class='data-label'>ROLE</div><div class='data-value'>${d.role || "Standard Star"}</div></div>
                 `;
-            } else if (btnType === 'VISUAL') {
+            } else if (btnType === 'PHYSICS') {
                 content = `
-                    <div class='data-row'><div class='data-label'>APPEARANCE</div><div class='data-value'>${d.desc || "Unknown"}</div></div>
-                    <div class='data-row'><div class='data-label'>SIZE</div><div class='data-value'>${d.size || "Unknown"}</div></div>
-                    <div class='data-row'><div class='data-label'>THREAT</div><div class='data-value'>${d.danger || "Unknown"}</div></div>
+                    <div class='data-row'><div class='data-label'>MAGNITUDE</div><div class='data-value'>${d.mag || "Unknown"}</div></div>
+                    <div class='data-row'><div class='data-label'>SPECTRAL</div><div class='data-value'>${d.spec || "Unknown"}</div></div>
+                    <div class='data-row'><div class='data-label'>LUMINOSITY</div><div class='data-value'>${d.lum || "Unknown"}</div></div>
                 `;
-            } else if (btnType === 'SYSTEM') {
+            } else if (btnType === 'INTEL') {
                 content = `
-                    <div class='data-row'><div class='data-label'>INTEL</div><div class='data-value' style='color:#ffcc66; font-size:13px; line-height:1.4'>"${d.intel || "No data available."}"</div></div>
+                    <div class='data-row'><div class='data-label'>DATA LOG</div><div class='data-value' style='color:#ffcc66; font-size:13px; line-height:1.4'>"${d.intel || "No detailed scan available."}"</div></div>
                 `;
             }
 
@@ -578,9 +579,9 @@
             document.getElementById('readout').style.display = 'flex';
         }
 
-        document.getElementById('btn-nav').addEventListener('click', () => showData('NAVIGATION'));
-        document.getElementById('btn-vis').addEventListener('click', () => showData('VISUAL'));
-        document.getElementById('btn-sys').addEventListener('click', () => showData('SYSTEM'));
+        document.getElementById('btn-nav').addEventListener('click', () => showData('NAV'));
+        document.getElementById('btn-phys').addEventListener('click', () => showData('PHYSICS'));
+        document.getElementById('btn-intel').addEventListener('click', () => showData('INTEL'));
 
         document.getElementById('start-btn').addEventListener('click', () => {
             document.getElementById('start-btn').style.display = 'none';
