@@ -20,7 +20,7 @@
             font-family: Arial, sans-serif; font-weight: bold; 
             text-transform: uppercase; color: white; 
             user-select: none; -webkit-user-select: none;
-            touch-action: none;
+            touch-action: none; /* Critical for swipe performance */
         }
 
         #space-canvas {
@@ -36,12 +36,11 @@
             border: 2px solid rgba(255, 153, 0, 0.5); border-radius: 50%; 
             pointer-events: none; z-index: 5;
             box-shadow: 0 0 10px rgba(255, 153, 0, 0.3);
-            transition: border-color 0.2s;
+            transition: border-color 0.2s, box-shadow 0.2s;
         }
-        /* State for when hovering over a star */
         #reticle.locked {
             border-color: #00ff00;
-            box-shadow: 0 0 15px #00ff00;
+            box-shadow: 0 0 20px #00ff00, inset 0 0 10px #00ff00;
         }
 
         #lcars-container {
@@ -62,31 +61,13 @@
             color: black; font-size: 20px; 
         }
         .bar-sub { background: var(--blue); height: 15px; width: 85%; border-bottom-left-radius: 10px; }
-
-        /* COORDINATES DISPLAY */
+        
         #nav-data { font-family: monospace; font-size: 16px; color: black; }
 
         /* SIDEBAR */
         .middle-wrap { display: flex; height: 100%; }
         .sidebar { width: 100px; display: flex; flex-direction: column; gap: 5px; padding-top: 10px; pointer-events: auto; }
         .nav-pill { background: var(--blue); height: 35px; border-radius: 0 20px 20px 0; color: black; font-size: 10px; display: flex; align-items: center; padding-left: 10px; margin-bottom: 2px;}
-        
-        /* D-PAD CONTROLS */
-        #controls-wrap {
-            position: fixed; bottom: 30px; right: 30px; 
-            width: 160px; height: 160px; z-index: 50; pointer-events: auto;
-            display: grid; grid-template-columns: 1fr 1fr 1fr; grid-template-rows: 1fr 1fr 1fr;
-        }
-        .ctrl-btn {
-            background: rgba(255, 153, 0, 0.15); border: 2px solid var(--orange);
-            color: var(--orange); display: flex; align-items: center; justify-content: center;
-            cursor: pointer; font-size: 24px; user-select: none;
-        }
-        .ctrl-btn:active { background: var(--orange); color: black; }
-        #btn-up { grid-column: 2; grid-row: 1; border-radius: 15px 15px 0 0; border-bottom: none; }
-        #btn-left { grid-column: 1; grid-row: 2; border-radius: 15px 0 0 15px; border-right: none; }
-        #btn-right { grid-column: 3; grid-row: 2; border-radius: 0 15px 15px 0; border-left: none; }
-        #btn-down { grid-column: 2; grid-row: 3; border-radius: 0 0 15px 15px; border-top: none; }
         
         /* READOUT MODAL */
         #readout { 
@@ -139,13 +120,6 @@
         </div>
     </div>
 
-    <div id="controls-wrap" style="display:none;">
-        <div class="ctrl-btn" id="btn-up">▲</div>
-        <div class="ctrl-btn" id="btn-left">◀</div>
-        <div class="ctrl-btn" id="btn-right">▶</div>
-        <div class="ctrl-btn" id="btn-down">▼</div>
-    </div>
-
     <div id="readout">
         <div class="readout-title" id="obj-name">SCANNING...</div>
         <div class="data-row"><span class="data-label">DISTANCE</span><span class="data-value" id="obj-dist">--</span></div>
@@ -160,12 +134,16 @@
         import * as THREE from 'three';
 
         let scene, camera, renderer, starGroup;
-        let lon = 0, lat = 0;
-        let hoveredStar = null; // Track what star we are looking at
         
-        // MOVEMENT STATE
-        let moveUp = false, moveDown = false, moveLeft = false, moveRight = false;
-        const turnSpeed = 1.2; // Slightly faster for responsiveness
+        // SWIPE NAVIGATION VARIABLES
+        let isUserInteracting = false;
+        let lon = 0, lat = 0;
+        let onPointerDownLon = 0, onPointerDownLat = 0;
+        let onPointerDownPointerX = 0, onPointerDownPointerY = 0;
+        const sensitivity = 0.4; // Swipe Speed
+        
+        // HOVER STATE
+        let hoveredStar = null; 
 
         async function init(userLongitude) {
             scene = new THREE.Scene();
@@ -178,7 +156,7 @@
 
             starGroup = new THREE.Group();
 
-            // 1. GENERATE BACKGROUND STARS
+            // 1. BACKGROUND STARS
             const bgGeo = new THREE.BufferGeometry();
             const bgPos = [];
             for (let i = 0; i < 2000; i++) {
@@ -190,12 +168,10 @@
             bgGeo.setAttribute('position', new THREE.Float32BufferAttribute(bgPos, 3));
             scene.add(new THREE.Points(bgGeo, new THREE.PointsMaterial({ color: 0x666699, size: 2 })));
 
-            // 2. LOAD EXTERNAL STARS.JSON
+            // 2. LOAD EXTERNAL STARS
             try {
                 const response = await fetch('stars.json');
                 const stars = await response.json();
-                
-                // Calculate position based on time + longitude
                 const d = (new Date().getTime() / 86400000) + 2440587.5 - 2451545.0;
                 const lst = (280.46 + 360.985 * d + userLongitude) % 360;
 
@@ -204,9 +180,8 @@
                     const decRad = s.dec * (Math.PI/180);
                     const phi = Math.PI/2 - decRad;
                     
-                    // Create Clickable Mesh
                     const mesh = new THREE.Mesh(
-                        new THREE.SphereGeometry(8, 8, 8), // Increased size slightly for easier clicking
+                        new THREE.SphereGeometry(8, 8, 8), 
                         new THREE.MeshBasicMaterial({ color: 0xffffff })
                     );
                     
@@ -217,46 +192,38 @@
                     );
                     mesh.userData = s;
 
-                    // Attach Label
                     const el = document.createElement('div');
-                    el.className = 'label'; 
-                    el.innerText = s.name;
+                    el.className = 'label'; el.innerText = s.name;
                     document.body.appendChild(el);
                     mesh.userData.label = el;
                     starGroup.add(mesh);
                 });
                 scene.add(starGroup);
-            } catch (err) { console.error("Error loading stars:", err); }
+            } catch (err) { console.error(err); }
 
             window.addEventListener('resize', () => {
                 camera.aspect = window.innerWidth / window.innerHeight;
                 camera.updateProjectionMatrix();
                 renderer.setSize(window.innerWidth, window.innerHeight);
             });
-            
-            // Add Pointer Move for "Hover" effect
+
+            // ATTACH SWIPE LISTENERS
+            document.addEventListener('pointerdown', onPointerDown);
             document.addEventListener('pointermove', onPointerMove);
-            
+            document.addEventListener('pointerup', onPointerUp);
+
             animate();
         }
 
         function animate() {
             requestAnimationFrame(animate);
 
-            if(moveLeft) lon -= turnSpeed;
-            if(moveRight) lon += turnSpeed;
-            if(moveUp) lat += turnSpeed;
-            if(moveDown) lat -= turnSpeed;
-            
-            lat = Math.max(-85, Math.min(85, lat)); 
-
-            // Update Compass Header
-            // Normalize lon to 0-360 degrees
+            // Update Header Coordinates
             let hdg = Math.round(lon % 360);
             if (hdg < 0) hdg += 360;
             document.getElementById('nav-data').innerText = `HDG: ${hdg.toString().padStart(3, '0')} | ELV: ${Math.round(lat)}`;
 
-            // Camera Look Logic
+            // Camera Look
             const phi = THREE.MathUtils.degToRad(90 - lat);
             const theta = THREE.MathUtils.degToRad(lon);
             const target = new THREE.Vector3(
@@ -268,11 +235,10 @@
             camera.lookAt(target);
             renderer.render(scene, camera);
 
-            // Update 3D Labels
+            // Label Positioning
             starGroup.children.forEach(mesh => {
                 if(mesh.userData.label) {
                     const v = mesh.position.clone().project(camera);
-                    // Hide labels if too close to edge
                     if(v.z < 1 && Math.abs(v.x) < 0.9 && Math.abs(v.y) < 0.9) {
                         mesh.userData.label.style.display = 'block';
                         mesh.userData.label.style.left = `${(v.x * .5 + .5) * window.innerWidth + 15}px`;
@@ -282,29 +248,46 @@
             });
         }
 
-        // --- INTERACTION LOGIC ---
+        // --- SWIPE LOGIC ---
+        function onPointerDown(event) {
+            if (event.isPrimary === false) return;
+            isUserInteracting = true;
+            onPointerDownPointerX = event.clientX;
+            onPointerDownPointerY = event.clientY;
+            onPointerDownLon = lon;
+            onPointerDownLat = lat;
+        }
 
-        function onPointerMove(e) {
-            // Raycast from center of screen (Reticle) mostly, but also check mouse position for desktops
-            // On mobile, the "Center" is usually where people aim
-            const mouse = new THREE.Vector2(0, 0); // Center of screen for reticle aiming
+        function onPointerMove(event) {
+            // 1. If Dragging: Move Camera
+            if (isUserInteracting === true) {
+                const deltaX = event.clientX - onPointerDownPointerX;
+                const deltaY = event.clientY - onPointerDownPointerY;
+                lon = (onPointerDownLon - deltaX * sensitivity);
+                lat = (onPointerDownLat + deltaY * sensitivity);
+                lat = Math.max(-85, Math.min(85, lat)); 
+                return; // Stop here, don't check hover while dragging
+            }
+
+            // 2. If Not Dragging: Check Hover (Reticle/Mouse)
+            const mouse = new THREE.Vector2(0, 0); // Always aim from center for mobile feel
+            // If desktop mouse, use actual mouse coords:
+            // const mouse = new THREE.Vector2((event.clientX/window.innerWidth)*2-1, -(event.clientY/window.innerHeight)*2+1);
+            
             const raycaster = new THREE.Raycaster();
             raycaster.setFromCamera(mouse, camera);
-            
             const hits = raycaster.intersectObjects(starGroup.children);
             
             if(hits.length > 0) {
-                // LOCK ON
                 const hit = hits[0].object;
                 if(hoveredStar !== hit) {
-                    if(hoveredStar) hoveredStar.material.color.setHex(0xffffff); // Reset old
+                    if(hoveredStar) hoveredStar.material.color.setHex(0xffffff);
                     hoveredStar = hit;
-                    hoveredStar.material.color.setHex(0x00ff00); // Highlight new (Green)
+                    hoveredStar.material.color.setHex(0x00ff00);
                     document.getElementById('reticle').classList.add('locked');
                     document.body.style.cursor = 'pointer';
                 }
             } else {
-                // NO TARGET
                 if(hoveredStar) {
                     hoveredStar.material.color.setHex(0xffffff);
                     hoveredStar = null;
@@ -314,23 +297,29 @@
             }
         }
 
-        // CLICK HANDLER
-        window.addEventListener('click', (e) => {
-            if (e.target.closest('.ctrl-btn')) return;
+        function onPointerUp() { isUserInteracting = false; }
 
-            // Use the "Hovered Star" if we have one (Reticle Aim)
-            if(hoveredStar) {
-                const d = hoveredStar.userData;
-                showReadout(d);
+        // --- CLICK SELECTION LOGIC ---
+        window.addEventListener('click', (e) => {
+            // Prevent accidental clicks if we just dragged the screen
+            if (Math.abs(e.clientX - onPointerDownPointerX) > 5 || 
+                Math.abs(e.clientY - onPointerDownPointerY) > 5) return;
+
+            // 1. Raycast from click position (Desktop precision)
+            const mouse = new THREE.Vector2(
+                (e.clientX / window.innerWidth) * 2 - 1, 
+                -(e.clientY / window.innerHeight) * 2 + 1
+            );
+            const raycaster = new THREE.Raycaster();
+            raycaster.setFromCamera(mouse, camera);
+            let hits = raycaster.intersectObjects(starGroup.children);
+
+            // 2. Fallback: If we missed with the mouse, check if we have a "Reticle Lock" (Mobile easy mode)
+            if (hits.length === 0 && hoveredStar) {
+                showReadout(hoveredStar.userData);
                 return;
             }
 
-            // Fallback: Check mouse click position (for desktop mouse users)
-            const mouse = new THREE.Vector2((e.clientX/window.innerWidth)*2-1, -(e.clientY/window.innerHeight)*2+1);
-            const raycaster = new THREE.Raycaster();
-            raycaster.setFromCamera(mouse, camera);
-            const hits = raycaster.intersectObjects(starGroup.children);
-            
             if(hits.length > 0) {
                 showReadout(hits[0].object.userData);
             }
@@ -345,23 +334,9 @@
             document.getElementById('readout').style.display = 'block';
         }
 
-        // CONTROL HANDLERS
-        const setupBtn = (id, startFn, endFn) => {
-            const btn = document.getElementById(id);
-            btn.addEventListener('pointerdown', (e) => { e.preventDefault(); startFn(); });
-            btn.addEventListener('pointerup', (e) => { e.preventDefault(); endFn(); });
-            btn.addEventListener('pointerleave', (e) => { e.preventDefault(); endFn(); });
-        };
-
-        setupBtn('btn-up', () => moveUp=true, () => moveUp=false);
-        setupBtn('btn-down', () => moveDown=true, () => moveDown=false);
-        setupBtn('btn-left', () => moveLeft=true, () => moveLeft=false);
-        setupBtn('btn-right', () => moveRight=true, () => moveRight=false);
-
         document.getElementById('start-btn').addEventListener('click', () => {
             document.getElementById('start-btn').style.display = 'none';
             document.getElementById('header-text').innerText = "SCANNING SECTOR 001";
-            document.getElementById('controls-wrap').style.display = 'grid';
             
             if (navigator.geolocation) {
                 navigator.geolocation.getCurrentPosition(p => init(p.coords.longitude), () => init(0));
