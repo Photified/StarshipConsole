@@ -56,7 +56,21 @@
 
         /* HEADER */
         .header-wrap { display: flex; pointer-events: auto; align-items: flex-start; }
-        .elbow-main { width: 120px; height: 120px; background: var(--pink); border-bottom-left-radius: 45px; margin-right: 5px; flex-shrink: 0; }
+        
+        .elbow-main { 
+            width: 120px; height: 120px; background: var(--pink); 
+            border-bottom-left-radius: 45px; margin-right: 5px; flex-shrink: 0; 
+            
+            /* Center the Badge Image */
+            display: flex; align-items: center; justify-content: center;
+        }
+        
+        .badge-img {
+            width: 80px;
+            height: auto;
+            opacity: 0.9;
+        }
+
         .top-bars { flex-grow: 1; display: flex; flex-direction: column; gap: 5px; }
         .bar-top { 
             background: var(--orange); height: 50px; 
@@ -112,7 +126,7 @@
             width: 100%; height: 10px; background: #222; border-radius: 5px; border: 1px solid rgba(255,255,255,0.2);
         }
 
-        /* READOUT DASHBOARD - NEW STACKED LAYOUT */
+        /* READOUT DASHBOARD */
         #readout { 
             display: none; 
             position: fixed; 
@@ -125,7 +139,7 @@
             pointer-events: auto;
             backdrop-filter: blur(5px);
             box-shadow: 5px 5px 20px rgba(0,0,0,0.8);
-            flex-direction: row; align-items: flex-start; gap: 15px; /* Changed align to start */
+            flex-direction: row; align-items: flex-start; gap: 15px;
             box-sizing: border-box;
         }
         
@@ -134,35 +148,38 @@
             background: radial-gradient(circle at 30% 30%, white, transparent);
             box-shadow: 0 0 20px white; border: 1px solid rgba(255,255,255,0.2);
             flex-shrink: 0;
-            margin-top: 10px; /* Align with text */
+            margin-top: 20px; 
         }
 
         .readout-info { 
             flex-grow: 1; 
-            overflow-y: auto; /* Allow scrolling if text is massive */
+            overflow-y: auto; 
             max-height: 200px;
+            padding-top: 10px; 
+            overscroll-behavior: contain; 
+            -webkit-overflow-scrolling: touch;
         }
 
         .readout-header { 
             color: black; background: var(--gold);
             display: inline-block; padding: 5px 25px;
-            margin-top: -55px; margin-left: -20px;
+            margin-top: -45px; margin-left: -20px;
             font-size: 20px; font-weight: bold;
             border-bottom-right-radius: 20px;
             margin-bottom: 15px;
         }
         
-        /* STACKED DATA ROW */
+        /* DATA BLOCKS */
         .data-block { 
             margin-bottom: 12px;
-            border-left: 3px solid var(--orange); /* Cool Scan Line */
+            border-left: 3px solid var(--orange); 
             padding-left: 10px;
         }
         
         .data-label { 
             color: var(--gold); 
             font-size: 10px; 
-            display: block; /* Force new line */
+            display: block; 
             margin-bottom: 2px;
             opacity: 0.8;
         }
@@ -171,7 +188,7 @@
             color: var(--blue); 
             font-size: 16px; 
             font-weight: normal; 
-            display: block; /* Force new line */
+            display: block; 
             line-height: 1.3;
         }
 
@@ -203,7 +220,9 @@
 
     <div id="lcars-container">
         <div class="header-wrap">
-            <div class="elbow-main"></div>
+            <div class="elbow-main">
+                <img src="badge.png" class="badge-img" alt="Badge">
+            </div>
             <div class="top-bars">
                 <div class="bar-top">
                     <span id="header-text">SYSTEM STANDBY</span>
@@ -270,7 +289,6 @@
         };
         const defaultStarColor = 0xffffff;
 
-        // ACCURATE CONSTELLATION ATLAS (ID Pairs)
         const constellationPairs = [
             ['ALK', 'MIZ'], ['MIZ', 'ALI'], ['ALI', 'MEG'], ['MEG', 'PHEC'], 
             ['PHEC', 'MER'], ['MER', 'DUB'], ['DUB', 'MEG'],
@@ -343,7 +361,7 @@
 
             try {
                 // Ensure to load fresh data
-                const response = await fetch('stars.json?v=16'); 
+                const response = await fetch('stars.json?v=17'); 
                 const stars = await response.json();
                 
                 const d = (new Date().getTime() / 86400000) + 2440587.5 - 2451545.0;
@@ -487,6 +505,8 @@
         }
 
         function onPointerDown(event) {
+            if (event.target.closest('#readout')) return;
+
             if (event.target.closest('.action-btn') || event.target.closest('.reset-btn') || event.target.id === 'zoom-slider') return;
             if (event.isPrimary === false) return;
             isUserInteracting = true; 
@@ -500,7 +520,6 @@
                 const deltaY = event.clientY - onPointerDownPointerY;
                 lon = (onPointerDownLon - deltaX * sensitivity);
                 lat = (onPointerDownLat + deltaY * sensitivity);
-                // LOOK ANGLE INCREASED TO 89.9 DEGREES
                 lat = Math.max(-89.9, Math.min(89.9, lat)); 
                 return; 
             }
