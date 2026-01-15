@@ -7,72 +7,190 @@
     <link rel="manifest" href="manifest.json">
     <style>
         :root { 
-            --orange: #ff9900; --pink: #cc99cc; --blue: #9999ff; 
-            --gold: #ffcc66; --red: #cc0000; --dark-blue: #08081a;
+            --orange: #ff9900; 
+            --pink: #cc99cc; 
+            --blue: #9999ff; 
+            --gold: #ffcc66; 
+            --red: #cc0000; 
+            --dark-blue: #08081a;
         }
         
         body { 
-            margin: 0; overflow: hidden; background: #000; 
-            font-family: Arial, sans-serif; font-weight: bold; 
-            text-transform: uppercase; color: white; 
-            user-select: none; -webkit-user-select: none;
+            margin: 0; 
+            overflow: hidden; 
+            background: #000; 
+            font-family: Arial, sans-serif; 
+            font-weight: bold; 
+            text-transform: uppercase; 
+            color: white; 
+            user-select: none; 
+            -webkit-user-select: none;
         }
 
         /* DEEP SPACE BACKGROUND */
         #space-canvas {
-            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            position: fixed; 
+            top: 0; left: 0; 
+            width: 100%; height: 100%;
             background: radial-gradient(circle at center, #111122 0%, #000 100%);
             z-index: -1;
         }
 
-        /* TARGETING RETICLE */
+        /* TACTICAL RETICLE (Crosshair) */
         #reticle {
-            position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%);
-            width: 50px; height: 50px; border: 1px solid rgba(153, 153, 255, 0.4);
-            border-radius: 50%; pointer-events: none; z-index: 5;
+            position: fixed; 
+            top: 50%; left: 50%; 
+            transform: translate(-50%, -50%);
+            width: 50px; height: 50px; 
+            border: 1px solid rgba(153, 153, 255, 0.4);
+            border-radius: 50%; 
+            pointer-events: none; 
+            z-index: 5;
         }
-        #reticle::before { content: ''; position: absolute; top: 50%; left: -15px; width: 80px; height: 1px; background: rgba(153, 153, 255, 0.2); }
-        #reticle::after { content: ''; position: absolute; left: 50%; top: -15px; width: 1px; height: 80px; background: rgba(153, 153, 255, 0.2); }
+        #reticle::before { 
+            content: ''; position: absolute; top: 50%; left: -15px; 
+            width: 80px; height: 1px; background: rgba(153, 153, 255, 0.2); 
+        }
+        #reticle::after { 
+            content: ''; position: absolute; left: 50%; top: -15px; 
+            width: 1px; height: 80px; background: rgba(153, 153, 255, 0.2); 
+        }
 
-        /* LCARS INTERFACE */
+        /* LCARS INTERFACE CONTAINER */
         #lcars-container {
-            position: absolute; top: 0; left: 0; width: 100%; height: 100%;
-            display: grid; grid-template-rows: 140px 1fr 100px;
-            pointer-events: none; z-index: 10;
+            position: absolute; top: 0; left: 0; 
+            width: 100%; height: 100%;
+            display: grid; 
+            grid-template-rows: 140px 1fr 100px;
+            pointer-events: none; 
+            z-index: 10;
         }
 
-        .header-wrap { display: flex; pointer-events: auto; align-items: flex-start; }
-        .elbow-main { width: 120px; height: 120px; background: var(--pink); border-bottom-left-radius: 45px; margin-right: 5px; flex-shrink: 0; }
-        .top-bars { flex-grow: 1; display: flex; flex-direction: column; gap: 5px; }
-        .bar-top { background: var(--orange); height: 50px; border-bottom-left-radius: 20px; display: flex; align-items: center; padding-left: 25px; color: black; font-size: 20px; }
-        .bar-sub { background: var(--blue); height: 15px; width: 85%; border-bottom-left-radius: 10px; }
+        /* HEADER AREA */
+        .header-wrap { 
+            display: flex; 
+            pointer-events: auto; 
+            align-items: flex-start; 
+        }
+        .elbow-main { 
+            width: 120px; height: 120px; 
+            background: var(--pink); 
+            border-bottom-left-radius: 45px; 
+            margin-right: 5px; 
+            flex-shrink: 0; 
+        }
+        .top-bars { 
+            flex-grow: 1; 
+            display: flex; 
+            flex-direction: column; 
+            gap: 5px; 
+        }
+        .bar-top { 
+            background: var(--orange); 
+            height: 50px; 
+            border-bottom-left-radius: 20px; 
+            display: flex; 
+            align-items: center; 
+            padding-left: 25px; 
+            color: black; 
+            font-size: 20px; 
+        }
+        .bar-sub { 
+            background: var(--blue); 
+            height: 15px; 
+            width: 85%; 
+            border-bottom-left-radius: 10px; 
+        }
 
-        .middle-wrap { display: flex; height: 100%; }
-        .sidebar { width: 100px; display: flex; flex-direction: column; gap: 5px; padding-top: 10px; pointer-events: auto; }
-        .nav-pill { background: var(--blue); height: 35px; border-radius: 0 20px 20px 0; color: black; font-size: 10px; display: flex; align-items: center; padding-left: 10px; }
+        /* SIDEBAR AREA */
+        .middle-wrap { 
+            display: flex; 
+            height: 100%; 
+        }
+        .sidebar { 
+            width: 100px; 
+            display: flex; 
+            flex-direction: column; 
+            gap: 5px; 
+            padding-top: 10px; 
+            pointer-events: auto; 
+        }
+        .nav-pill { 
+            background: var(--blue); 
+            height: 35px; 
+            border-radius: 0 20px 20px 0; 
+            color: black; 
+            font-size: 10px; 
+            display: flex; 
+            align-items: center; 
+            padding-left: 10px; 
+        }
         
+        /* DATA READOUT MODAL */
         #readout { 
-            display: none; position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); 
-            width: 80%; max-width: 320px; background: rgba(0,0,0,0.9); border: 2px solid var(--gold); 
-            z-index: 100; padding: 20px; border-radius: 15px; pointer-events: auto;
+            display: none; 
+            position: fixed; 
+            top: 50%; left: 50%; 
+            transform: translate(-50%, -50%); 
+            width: 80%; max-width: 350px; 
+            background: rgba(0,0,0,0.95); 
+            border: 2px solid var(--gold); 
+            z-index: 100; 
+            padding: 20px; 
+            border-radius: 15px; 
+            pointer-events: auto;
             box-shadow: 0 0 30px rgba(0,0,0,1);
         }
-        .readout-title { color: var(--gold); border-bottom: 2px solid var(--gold); margin-bottom: 12px; font-size: 22px; }
+        .readout-title { 
+            color: var(--gold); 
+            border-bottom: 2px solid var(--gold); 
+            margin-bottom: 12px; 
+            font-size: 22px; 
+        }
+        .data-row { margin-bottom: 8px; }
+        .data-label { color: var(--blue); font-size: 11px; display: block; }
+        .data-value { color: white; font-size: 14px; display: block; margin-top: 2px; }
 
-        .footer-wrap { background: var(--orange); border-top-left-radius: 50px; display: flex; align-items: center; padding-left: 130px; pointer-events: auto; height: 60px; align-self: end; }
-        .btn-main { background: var(--gold); border: none; padding: 12px 25px; border-radius: 25px; font-weight: bold; cursor: pointer; color: black; font-size: 14px; }
+        /* FOOTER AREA */
+        .footer-wrap { 
+            background: var(--orange); 
+            border-top-left-radius: 50px; 
+            display: flex; 
+            align-items: center; 
+            padding-left: 130px; 
+            pointer-events: auto; 
+            height: 60px; 
+            align-self: end; 
+        }
+        .btn-main { 
+            background: var(--gold); 
+            border: none; 
+            padding: 12px 25px; 
+            border-radius: 25px; 
+            font-weight: bold; 
+            cursor: pointer; 
+            color: black; 
+            font-size: 14px; 
+        }
 
         /* 3D LABELS */
         .label { 
-            position: absolute; color: var(--blue); border-left: 2px solid var(--gold); 
-            padding-left: 6px; font-size: 11px; pointer-events: none;
-            background: rgba(0,0,0,0.5); white-space: nowrap; display: none;
+            position: absolute; 
+            color: var(--blue); 
+            border-left: 2px solid var(--gold); 
+            padding-left: 6px; 
+            font-size: 11px; 
+            pointer-events: none;
+            background: rgba(0,0,0,0.5); 
+            white-space: nowrap; 
+            display: none;
         }
     </style>
 </head>
 <body>
 
     <div id="space-canvas"></div>
+    
     <div id="reticle"></div>
 
     <div id="lcars-container">
@@ -85,7 +203,7 @@
         </div>
         <div class="middle-wrap">
             <div class="sidebar">
-                <div class="nav-pill" style="background:var(--pink)">SCANNER</div>
+                <div class="nav-pill" style="background:var(--pink)">ASTROMETRICS</div>
                 <div class="nav-pill">V-LINK</div>
                 <div class="nav-pill" style="background:var(--orange)">LR-ARRAY</div>
                 <div class="nav-pill" style="background:var(--red); margin-top:20px;" onclick="location.reload()">RESET</div>
@@ -99,23 +217,47 @@
 
     <div id="readout">
         <div class="readout-title" id="obj-name">SCANNING...</div>
-        <div id="obj-data" style="font-size:14px; margin-bottom:20px; line-height:1.5;"></div>
-        <button class="btn-main" style="width:100%" onclick="document.getElementById('readout').style.display='none'">DISMISS</button>
+        
+        <div class="data-row">
+            <span class="data-label">DISTANCE</span>
+            <span class="data-value" id="obj-dist">--</span>
+        </div>
+        <div class="data-row">
+            <span class="data-label">COMPOSITION (SPECTRAL)</span>
+            <span class="data-value" id="obj-comp">--</span>
+        </div>
+        <div class="data-row">
+            <span class="data-label">ESTIMATED RADIUS</span>
+            <span class="data-value" id="obj-size">--</span>
+        </div>
+        <div class="data-row">
+            <span class="data-label">TACTICAL DATA</span>
+            <span class="data-value" id="obj-fact" style="font-style: italic; color: #ccc;">--</span>
+        </div>
+
+        <button class="btn-main" style="width:100%; margin-top:15px;" onclick="document.getElementById('readout').style.display='none'">CLOSE READOUT</button>
     </div>
 
-    <script type="importmap"> { "imports": { "three": "https://unpkg.com/three@0.160.0/build/three.module.js" } } </script>
+    <script type="importmap"> 
+        { "imports": { "three": "https://unpkg.com/three@0.160.0/build/three.module.js" } } 
+    </script>
+
     <script type="module">
         import * as THREE from 'three';
 
         let scene, camera, renderer, starGroup;
+        
+        // Navigation State
         let isUserInteracting = false;
         let lon = 0, lat = 0;
         let onPointerDownLon = 0, onPointerDownLat = 0;
         let onPointerDownPointerX = 0, onPointerDownPointerY = 0;
 
         async function init(userLongitude) {
+            // 1. Scene Setup
             scene = new THREE.Scene();
-            camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 1, 3000);
+            // FOV 75 for a nice wide bridge-view feel
+            camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 1, 4000);
             
             renderer = new THREE.WebGLRenderer({ alpha: true, antialias: true });
             renderer.setSize(window.innerWidth, window.innerHeight);
@@ -124,13 +266,14 @@
 
             starGroup = new THREE.Group();
 
-            // 1. ADD BACKGROUND DENSITY (1500 STAR POINTS)
+            // 2. GENERATE MASSIVE STAR FIELD (5,000 Stars)
+            // This creates the "Full Sky" look
             const bgGeometry = new THREE.BufferGeometry();
             const bgPositions = [];
-            for (let i = 0; i < 1500; i++) {
+            for (let i = 0; i < 5000; i++) {
                 const phi = Math.acos(2 * Math.random() - 1);
                 const theta = 2 * Math.PI * Math.random();
-                const radius = 1500;
+                const radius = 2000; // Far background
                 bgPositions.push(
                     radius * Math.sin(phi) * Math.cos(theta),
                     radius * Math.cos(phi),
@@ -138,32 +281,35 @@
                 );
             }
             bgGeometry.setAttribute('position', new THREE.Float32BufferAttribute(bgPositions, 3));
-            const bgMaterial = new THREE.PointsMaterial({ color: 0x555588, size: 2 });
+            // Dimmer, smaller stars for the background
+            const bgMaterial = new THREE.PointsMaterial({ color: 0x666699, size: 1.5 });
             scene.add(new THREE.Points(bgGeometry, bgMaterial));
 
-            // 2. LOAD ACTUAL STARS FROM JSON
+            // 3. LOAD INTERACTIVE STAR DATA
             try {
                 const response = await fetch('stars.json');
                 const stars = await response.json();
                 
-                // Calculate LST for real-world positioning
+                // Calculate Local Sidereal Time (LST) to place stars correctly based on Longitude
                 const d = (new Date().getTime() / 86400000) + 2440587.5 - 2451545.0;
                 const lst = (280.46 + 360.985 * d + userLongitude) % 360;
 
                 stars.forEach(s => {
+                    // Convert RA/Dec to Cartesian (x,y,z)
                     const raRad = (s.ra * 15 - lst) * (Math.PI/180);
                     const decRad = s.dec * (Math.PI/180);
                     const phi = Math.PI/2 - decRad;
                     
                     const mesh = new THREE.Mesh(
-                        new THREE.SphereGeometry(3, 8, 8), 
+                        new THREE.SphereGeometry(4, 8, 8), // Larger, clickable stars
                         new THREE.MeshBasicMaterial({ color: 0xffffff })
                     );
                     
+                    // Place them closer than the background stars so they render on top
                     mesh.position.set(
-                        1000 * Math.sin(phi) * Math.cos(raRad),
-                        1000 * Math.cos(phi),
-                        1000 * Math.sin(phi) * Math.sin(raRad)
+                        1200 * Math.sin(phi) * Math.cos(raRad),
+                        1200 * Math.cos(phi),
+                        1200 * Math.sin(phi) * Math.sin(raRad)
                     );
                     
                     mesh.userData = s;
@@ -182,7 +328,7 @@
                 console.error("Star database error:", err);
             }
 
-            // INPUT LISTENERS
+            // 4. INPUT LISTENERS (Touch & Mouse)
             document.addEventListener('pointerdown', onPointerDown);
             document.addEventListener('pointermove', onPointerMove);
             document.addEventListener('pointerup', onPointerUp);
@@ -191,6 +337,7 @@
             animate();
         }
 
+        // --- NAVIGATION LOGIC ---
         function onPointerDown(event) {
             isUserInteracting = true;
             onPointerDownPointerX = event.clientX;
@@ -201,10 +348,11 @@
 
         function onPointerMove(event) {
             if (isUserInteracting === true) {
-                // Adjust numbers here to change scroll speed
+                // Drag speed factor: 0.15 feels "heavy" and precise
                 lon = (onPointerDownPointerX - event.clientX) * 0.15 + onPointerDownLon;
                 lat = (event.clientY - onPointerDownPointerY) * 0.15 + onPointerDownLat;
-                lat = Math.max(-85, Math.min(85, lat)); // Prevent flipping over
+                // Limit vertical look to avoid flipping upside down
+                lat = Math.max(-85, Math.min(85, lat)); 
             }
         }
 
@@ -216,10 +364,11 @@
             renderer.setSize(window.innerWidth, window.innerHeight);
         }
 
+        // --- RENDER LOOP ---
         function animate() {
             requestAnimationFrame(animate);
 
-            // Convert Lon/Lat to 3D LookAt target
+            // Convert Lon/Lat (Spherical) to 3D Vector (Cartesian)
             const phi = THREE.MathUtils.degToRad(90 - lat);
             const theta = THREE.MathUtils.degToRad(lon);
 
@@ -232,14 +381,16 @@
             camera.lookAt(target);
             renderer.render(scene, camera);
 
-            // Label positioning logic
+            // --- LABEL LOGIC ---
             starGroup.children.forEach(mesh => {
                 if(mesh.userData.label) {
                     const vector = mesh.position.clone().project(camera);
-                    // Only show if in front of camera and not hidden by UI
-                    if(vector.z < 1 && Math.abs(vector.x) < 0.8 && Math.abs(vector.y) < 0.8) {
+                    
+                    // Check if star is in front of camera (z < 1) 
+                    // AND inside the "safe zone" of the screen (0.9 instead of 1.0 to avoid edge clutter)
+                    if(vector.z < 1 && Math.abs(vector.x) < 0.9 && Math.abs(vector.y) < 0.9) {
                         mesh.userData.label.style.display = 'block';
-                        mesh.userData.label.style.left = `${(vector.x * 0.5 + 0.5) * window.innerWidth + 10}px`;
+                        mesh.userData.label.style.left = `${(vector.x * 0.5 + 0.5) * window.innerWidth + 15}px`;
                         mesh.userData.label.style.top = `${(-(vector.y * 0.5) + 0.5) * window.innerHeight}px`;
                     } else {
                         mesh.userData.label.style.display = 'none';
@@ -248,30 +399,48 @@
             });
         }
 
-        // STARTUP
+        // --- STARTUP SEQUENCE ---
         document.getElementById('start-btn').addEventListener('click', () => {
             document.getElementById('start-btn').style.display = 'none';
             document.getElementById('header-text').innerText = "SCANNING SECTOR 001";
-            document.getElementById('status-text').innerText = "TACTICAL OVERRIDE";
+            document.getElementById('status-text').innerText = "MANUAL OVERRIDE";
             
-            navigator.geolocation.getCurrentPosition((pos) => {
-                init(pos.coords.longitude);
-            }, () => {
-                init(0); // Fallback to 0 longitude if GPS fails
-            });
+            // Try to get GPS for accurate initial sky position
+            if (navigator.geolocation) {
+                navigator.geolocation.getCurrentPosition(
+                    (pos) => init(pos.coords.longitude), 
+                    () => init(0) // Fail gracefully to 0 longitude
+                );
+            } else {
+                init(0);
+            }
         });
 
-        // TAP TO IDENTIFY STAR
+        // --- INTERACTION: TAP TO IDENTIFY ---
         window.addEventListener('click', (e) => {
-            if (isUserInteracting) return;
-            const mouse = new THREE.Vector2((e.clientX/window.innerWidth)*2-1, -(e.clientY/window.innerHeight)*2+1);
+            if (isUserInteracting) return; // Don't click if we are dragging
+            
+            // Raycast logic: Draw a line from camera through mouse click
+            const mouse = new THREE.Vector2(
+                (e.clientX / window.innerWidth) * 2 - 1, 
+                -(e.clientY / window.innerHeight) * 2 + 1
+            );
             const raycaster = new THREE.Raycaster();
             raycaster.setFromCamera(mouse, camera);
+            
+            // Check collision with stars
             const hits = raycaster.intersectObjects(starGroup.children);
             if(hits.length > 0) {
                 const d = hits[0].object.userData;
+                
+                // Populate the Readout Modal
                 document.getElementById('obj-name').innerText = d.name;
-                document.getElementById('obj-data').innerHTML = `CONSTELLATION: ${d.con}<br>DISTANCE: ${d.dist} LY<br><br>SENSORS DETECT:<br>${d.fact}`;
+                document.getElementById('obj-dist').innerText = d.dist ? `${d.dist} LIGHT YEARS` : "UNKNOWN";
+                document.getElementById('obj-comp').innerText = d.type || "STANDARD STELLAR FUSION";
+                document.getElementById('obj-size').innerText = d.size || "UNCLASSIFIED";
+                document.getElementById('obj-fact').innerText = d.fact;
+                
+                // Show Modal
                 document.getElementById('readout').style.display = 'block';
             }
         });
