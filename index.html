@@ -159,8 +159,16 @@
         .audio-btn.muted { background: #444; }
         .audio-btn.muted svg { fill: #888; }
 
+        .help-btn {
+            background: var(--gold); height: 40px; 
+            border-radius: 0 20px 20px 0; color: black;
+            display: flex; align-items: center; padding-left: 10px; cursor: pointer;
+            margin-bottom: 5px; font-size: 11px;
+            opacity: 0.8;
+        }
+
         .reset-btn {
-            background: var(--red); height: 40px; margin-top: auto;
+            background: var(--red); height: 40px; 
             border-radius: 0 20px 20px 0; color: black;
             display: flex; align-items: center; padding-left: 10px; cursor: pointer;
             margin-bottom: 15px;
@@ -234,6 +242,29 @@
             box-shadow: 0 0 10px rgba(255,0,0,0.5);
         }
 
+        /* --- HELP MODAL --- */
+        #help-overlay {
+            display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0,0,0,0.85); z-index: 200;
+            backdrop-filter: blur(5px);
+            align-items: center; justify-content: center;
+            pointer-events: auto;
+        }
+        .help-box {
+            width: 300px; border-left: 20px solid var(--gold);
+            background: rgba(0,0,0,0.5); padding: 20px;
+            border-top-right-radius: 20px; border-bottom-right-radius: 20px;
+        }
+        .help-title { color: var(--gold); font-size: 20px; margin-bottom: 15px; border-bottom: 2px solid var(--orange); display: inline-block;}
+        .help-item { margin-bottom: 15px; }
+        .help-lbl { color: var(--blue); font-size: 12px; margin-bottom: 2px; }
+        .help-desc { color: white; font-size: 14px; font-weight: normal; }
+        .help-ack { 
+            background: var(--red); color: black; padding: 10px; 
+            text-align: center; cursor: pointer; font-weight: bold; 
+            margin-top: 20px; border-radius: 15px;
+        }
+
         .footer-wrap { 
             background: var(--orange); 
             border-top-left-radius: 50px; 
@@ -283,7 +314,11 @@
                     <span class="zoom-label">MAGNIFICATION</span>
                     <input type="range" id="zoom-slider" min="40" max="120" value="100">
                 </div>
+                
                 <div style="flex-grow:1"></div>
+                
+                <div class="help-btn" id="btn-help">HELP</div>
+                
                 <div class="reset-btn" onclick="location.reload()">RESET</div>
             </div>
             
@@ -322,6 +357,29 @@
         <div class="readout-info">
             <div class="readout-header" id="obj-header">NO TARGET</div>
             <div id="obj-body"></div>
+        </div>
+    </div>
+
+    <div id="help-overlay">
+        <div class="help-box">
+            <div class="help-title">INPUT PROTOCOLS</div>
+            <div class="help-item">
+                <div class="help-lbl">NAVIGATION</div>
+                <div class="help-desc">Drag screen to rotate sensors.</div>
+            </div>
+            <div class="help-item">
+                <div class="help-lbl">IDENTIFICATION</div>
+                <div class="help-desc">Tap star markers to target.</div>
+            </div>
+            <div class="help-item">
+                <div class="help-lbl">ANALYSIS</div>
+                <div class="help-desc">Select tabs (Left) for data.</div>
+            </div>
+            <div class="help-item">
+                <div class="help-lbl">OPTICS</div>
+                <div class="help-desc">Use slider to adjust magnification.</div>
+            </div>
+            <div class="help-ack" id="btn-help-ack">ACKNOWLEDGE</div>
         </div>
     </div>
 
@@ -721,6 +779,17 @@
                 camera.fov = parseInt(e.target.value);
                 camera.updateProjectionMatrix();
             });
+            
+            // --- HELP BUTTON LOGIC ---
+            document.getElementById('btn-help').addEventListener('click', () => {
+                playSound('click');
+                document.getElementById('help-overlay').style.display = 'flex';
+            });
+            
+            document.getElementById('btn-help-ack').addEventListener('click', () => {
+                playSound('dismiss');
+                document.getElementById('help-overlay').style.display = 'none';
+            });
 
             animate();
         }
@@ -781,7 +850,7 @@
         function onPointerDown(event) {
             if (event.target.closest('#readout')) return;
 
-            if (event.target.closest('.action-btn') || event.target.closest('.audio-btn') || event.target.closest('.reset-btn') || event.target.id === 'zoom-slider') return;
+            if (event.target.closest('.action-btn') || event.target.closest('.audio-btn') || event.target.closest('.reset-btn') || event.target.id === 'zoom-slider' || event.target.id === 'btn-help') return;
             if (event.isPrimary === false) return;
             isUserInteracting = true; 
             onPointerDownPointerX = event.clientX; onPointerDownPointerY = event.clientY;
