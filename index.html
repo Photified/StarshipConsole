@@ -7,12 +7,8 @@
     <link rel="manifest" href="manifest.json">
     <style>
         :root { 
-            --orange: #ff9900; 
-            --pink: #cc99cc; 
-            --blue: #9999ff; 
-            --gold: #ffcc66; 
-            --red: #cc0000; 
-            --dark-blue: #08081a;
+            --orange: #ff9900; --pink: #cc99cc; --blue: #9999ff; 
+            --gold: #ffcc66; --red: #cc0000; --dark-blue: #08081a;
         }
         
         body { 
@@ -20,7 +16,7 @@
             font-family: Arial, sans-serif; font-weight: bold; 
             text-transform: uppercase; color: white; 
             user-select: none; -webkit-user-select: none;
-            touch-action: none;
+            touch-action: none; /* Prevents browser zooming/scrolling */
         }
 
         #space-canvas {
@@ -36,16 +32,15 @@
             border: 2px solid rgba(255, 153, 0, 0.5); border-radius: 50%; 
             pointer-events: none; z-index: 5;
             box-shadow: 0 0 10px rgba(255, 153, 0, 0.3);
-            transition: all 0.3s cubic-bezier(0.25, 1, 0.5, 1);
+            transition: all 0.3s ease;
         }
-        /* Lock visual */
         #reticle.locked {
             border-color: #00ff00;
             box-shadow: 0 0 25px #00ff00, inset 0 0 10px #00ff00;
-            width: 80px; height: 80px; /* Expands when locked */
+            width: 80px; height: 80px;
         }
 
-        /* LCARS LAYOUT */
+        /* LAYOUT GRID */
         #lcars-container {
             position: absolute; top: 0; left: 0; width: 100%; height: 100%;
             display: grid; grid-template-rows: 140px 1fr 100px;
@@ -66,7 +61,7 @@
         .bar-sub { background: var(--blue); height: 15px; width: 85%; border-bottom-left-radius: 10px; }
         #nav-data { font-family: monospace; font-size: 16px; color: black; }
 
-        /* SIDEBAR / ACTION BUTTONS */
+        /* SIDEBAR / BUTTONS */
         .middle-wrap { display: flex; height: 100%; }
         .sidebar { width: 100px; display: flex; flex-direction: column; gap: 5px; padding-top: 10px; pointer-events: auto; }
         
@@ -75,11 +70,10 @@
             border-radius: 0 25px 25px 0; color: black; 
             font-size: 12px; display: flex; align-items: center; padding-left: 10px; 
             margin-bottom: 5px; cursor: pointer; transition: background 0.2s;
-            border: 1px solid transparent; opacity: 0.5; /* Dimmed when inactive */
+            border: 1px solid transparent; opacity: 0.6;
         }
-        /* Buttons light up when target locked */
-        .sidebar.active .action-btn { opacity: 1; }
-        .action-btn:active { background: white; border-color: var(--blue); }
+        .action-btn.active { opacity: 1; box-shadow: 0 0 10px var(--blue); }
+        .action-btn:active { background: white; }
         
         .reset-btn {
             background: var(--red); height: 40px; margin-top: auto;
@@ -87,7 +81,7 @@
             display: flex; align-items: center; padding-left: 10px; cursor: pointer;
         }
 
-        /* DATA READOUT (Center Screen) */
+        /* READOUT MODAL */
         #readout { 
             display: none; position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); 
             width: 80%; max-width: 350px; background: rgba(0,0,0,0.9); border: 2px solid var(--gold); 
@@ -95,10 +89,10 @@
             box-shadow: 0 0 30px rgba(0,0,0,1);
         }
         .readout-header { color: var(--gold); border-bottom: 2px solid var(--gold); margin-bottom: 12px; font-size: 22px; }
-        .readout-content { min-height: 60px; }
         .data-label { color: var(--blue); font-size: 11px; display: block; margin-top: 10px; }
         .data-value { color: white; font-size: 16px; display: block; margin-top: 2px; }
 
+        /* FOOTER */
         .footer-wrap { background: var(--orange); border-top-left-radius: 50px; display: flex; align-items: center; padding-left: 130px; pointer-events: auto; height: 60px; align-self: end; }
         .btn-main { background: var(--gold); border: none; padding: 12px 25px; border-radius: 25px; font-weight: bold; cursor: pointer; color: black; font-size: 14px; }
 
@@ -120,14 +114,14 @@
             <div class="top-bars">
                 <div class="bar-top">
                     <span id="header-text">SYSTEM STANDBY</span>
-                    <span id="nav-data">HDG: 000 | ELV: 00</span>
+                    <span id="nav-data">HDG: 000</span>
                 </div>
                 <div class="bar-sub"></div>
             </div>
         </div>
 
         <div class="middle-wrap">
-            <div class="sidebar" id="sidebar-ctrl">
+            <div class="sidebar">
                 <div class="action-btn" id="btn-scan" style="background:var(--pink)">SCAN</div>
                 <div class="action-btn" id="btn-astro" style="background:var(--orange)">ASTRO</div>
                 <div class="action-btn" id="btn-intel" style="background:var(--blue)">INTEL</div>
@@ -143,7 +137,7 @@
 
     <div id="readout">
         <div class="readout-header" id="obj-header">NO TARGET</div>
-        <div class="readout-content" id="obj-body"></div>
+        <div id="obj-body"></div>
         <button class="btn-main" style="width:100%; margin-top:15px;" onclick="document.getElementById('readout').style.display='none'">CLOSE</button>
     </div>
 
@@ -154,19 +148,16 @@
         let scene, camera, renderer, starGroup;
         let isUserInteracting = false;
         
-        // CAMERA ANGLES
+        // Navigation Vars
         let lon = 0, lat = 0;
-        
-        // SWIPE LOGIC
         let onPointerDownLon = 0, onPointerDownLat = 0;
         let onPointerDownPointerX = 0, onPointerDownPointerY = 0;
-        const sensitivity = 0.2; // REDUCED SENSITIVITY for better control
+        const sensitivity = 0.2; 
         
-        // SNAPPING LOGIC
-        let hoveredStar = null; 
-        let targetLon = 0;
-        let targetLat = 0;
+        // Snapping Vars
         let isSnapping = false;
+        let targetLon = 0, targetLat = 0;
+        let hoveredStar = null; 
 
         async function init(userLongitude) {
             scene = new THREE.Scene();
@@ -191,7 +182,7 @@
             bgGeo.setAttribute('position', new THREE.Float32BufferAttribute(bgPos, 3));
             scene.add(new THREE.Points(bgGeo, new THREE.PointsMaterial({ color: 0x666699, size: 2 })));
 
-            // 2. LOAD STARS.JSON
+            // 2. LOAD STARS
             try {
                 const response = await fetch('stars.json');
                 const stars = await response.json();
@@ -199,28 +190,25 @@
                 const lst = (280.46 + 360.985 * d + userLongitude) % 360;
 
                 stars.forEach(s => {
-                    // Convert RA/Dec to 3D spherical
                     const raRad = (s.ra * 15 - lst) * (Math.PI/180);
                     const decRad = s.dec * (Math.PI/180);
                     const phi = Math.PI/2 - decRad;
                     
                     const mesh = new THREE.Mesh(
-                        new THREE.SphereGeometry(10, 8, 8), // Big hit box
+                        new THREE.SphereGeometry(12, 8, 8), // Large hit box
                         new THREE.MeshBasicMaterial({ color: 0xffffff })
                     );
                     
+                    // Position Star
+                    const r = 1200;
                     mesh.position.set(
-                        1200 * Math.sin(phi) * Math.cos(raRad),
-                        1200 * Math.cos(phi),
-                        1200 * Math.sin(phi) * Math.sin(raRad)
+                        r * Math.sin(phi) * Math.cos(raRad),
+                        r * Math.cos(phi),
+                        r * Math.sin(phi) * Math.sin(raRad)
                     );
-                    
-                    // STORE RAW COORDS FOR SNAPPING
-                    // We need these to auto-rotate the camera later
                     mesh.userData = s;
-                    mesh.userData.snapLon = THREE.MathUtils.radToDeg(raRad); 
-                    mesh.userData.snapLat = s.dec; 
 
+                    // Label
                     const el = document.createElement('div');
                     el.className = 'label'; el.innerText = s.name;
                     document.body.appendChild(el);
@@ -236,7 +224,7 @@
                 renderer.setSize(window.innerWidth, window.innerHeight);
             });
 
-            // LISTENERS
+            // Input Listeners
             document.addEventListener('pointerdown', onPointerDown);
             document.addEventListener('pointermove', onPointerMove);
             document.addEventListener('pointerup', onPointerUp);
@@ -244,28 +232,44 @@
             animate();
         }
 
+        // CALCULATE WHERE TO LOOK TO FACE A STAR
+        function getStarAngles(position) {
+            // Convert 3D position back to Lon/Lat angles
+            const r = Math.sqrt(position.x*position.x + position.y*position.y + position.z*position.z);
+            const phi = Math.acos(position.y / r);
+            const theta = Math.atan2(position.x, position.z); // Note: ThreeJS uses X/Z plane for Theta usually
+            
+            // Convert to degrees for our navigation system
+            let starLat = 90 - THREE.MathUtils.radToDeg(phi);
+            let starLon = THREE.MathUtils.radToDeg(theta); 
+            
+            // Fix Theta orientation for atan2
+            if(starLon < 0) starLon += 360;
+            
+            return { lon: starLon, lat: starLat };
+        }
+
         function animate() {
             requestAnimationFrame(animate);
 
-            // AUTO-SNAP LOGIC
-            if (isSnapping) {
-                // Smoothly interpolate current angle towards target angle
-                // Simple Linear Interpolation (Lerp)
-                lon += (targetLon - lon) * 0.1;
+            // SNAPPING LOGIC (Smoothly rotate camera to target)
+            if(isSnapping) {
+                // Smooth Lerp
                 lat += (targetLat - lat) * 0.1;
+                lon += (targetLon - lon) * 0.1;
                 
-                // Stop snapping if we are close enough
-                if (Math.abs(targetLon - lon) < 0.1 && Math.abs(targetLat - lat) < 0.1) {
+                // Stop snapping when close
+                if(Math.abs(targetLat - lat) < 0.05 && Math.abs(targetLon - lon) < 0.05) {
                     isSnapping = false;
                 }
             }
 
-            // Update Header Text
+            // Update Header
             let hdg = Math.round(lon % 360);
             if (hdg < 0) hdg += 360;
-            document.getElementById('nav-data').innerText = `HDG: ${hdg.toString().padStart(3, '0')} | ELV: ${Math.round(lat)}`;
+            document.getElementById('nav-data').innerText = `HDG: ${hdg.toString().padStart(3, '0')}`;
 
-            // Convert Lat/Lon to LookAt Vector
+            // Apply Camera Rotation
             const phi = THREE.MathUtils.degToRad(90 - lat);
             const theta = THREE.MathUtils.degToRad(lon);
             const target = new THREE.Vector3(
@@ -276,11 +280,12 @@
             camera.lookAt(target);
             renderer.render(scene, camera);
 
-            // Labels
+            // Update Labels
             starGroup.children.forEach(mesh => {
                 if(mesh.userData.label) {
                     const v = mesh.position.clone().project(camera);
-                    if(v.z < 1 && Math.abs(v.x) < 0.9 && Math.abs(v.y) < 0.9) {
+                    // Only show labels if fairly central
+                    if(v.z < 1 && Math.abs(v.x) < 0.85 && Math.abs(v.y) < 0.85) {
                         mesh.userData.label.style.display = 'block';
                         mesh.userData.label.style.left = `${(v.x * .5 + .5) * window.innerWidth + 20}px`;
                         mesh.userData.label.style.top = `${(-(v.y * .5) + .5) * window.innerHeight}px`;
@@ -289,14 +294,13 @@
             });
         }
 
-        // --- SWIPE LOGIC ---
         function onPointerDown(event) {
+            // Don't drag if clicking a button
             if (event.target.closest('.action-btn') || event.target.closest('.reset-btn')) return;
             if (event.isPrimary === false) return;
             
             isUserInteracting = true;
-            isSnapping = false; // Stop auto-movement if user touches screen
-            
+            isSnapping = false; // Cancel any active snap
             onPointerDownPointerX = event.clientX;
             onPointerDownPointerY = event.clientY;
             onPointerDownLon = lon;
@@ -313,14 +317,13 @@
                 return; 
             }
 
-            // HOVER CHECK (Reticle)
-            const mouse = new THREE.Vector2(0, 0); 
+            // CHECK HOVER (Always from center screen)
             const raycaster = new THREE.Raycaster();
-            raycaster.setFromCamera(mouse, camera);
-            // Use a slightly larger threshold (Raycaster 'params') isn't easy here, 
-            // so we rely on the large sphere geometry we made earlier (radius 10)
+            raycaster.setFromCamera(new THREE.Vector2(0, 0), camera);
             const hits = raycaster.intersectObjects(starGroup.children);
             
+            const buttons = document.querySelectorAll('.action-btn');
+
             if(hits.length > 0) {
                 const hit = hits[0].object;
                 if(hoveredStar !== hit) {
@@ -328,25 +331,14 @@
                     hoveredStar = hit;
                     hoveredStar.material.color.setHex(0x00ff00);
                     document.getElementById('reticle').classList.add('locked');
-                    document.getElementById('sidebar-ctrl').classList.add('active'); // Light up buttons
-                    
-                    // ** PREPARE SNAP TARGET ** // When user lets go, we will snap to this star
-                    // Note: Coordinates must handle the 360 wrap-around logic
-                    // This simple version snaps to the raw coordinate
-                    targetLon = hit.userData.snapLon; 
-                    targetLat = hit.userData.snapLat;
-                    
-                    // Correction for 360 wrap: ensure we spin the shortest way
-                    // (Simplification: we just snap to nearest absolute for now)
-                    // If lon is 370 and target is 10, we want to go to 370, not back to 10
-                    // This complex math is omitted for stability, simple snap works for local stars
+                    buttons.forEach(b => b.classList.add('active'));
                 }
             } else {
                 if(hoveredStar) {
                     hoveredStar.material.color.setHex(0xffffff);
                     hoveredStar = null;
                     document.getElementById('reticle').classList.remove('locked');
-                    document.getElementById('sidebar-ctrl').classList.remove('active');
+                    buttons.forEach(b => b.classList.remove('active'));
                 }
             }
         }
@@ -354,85 +346,102 @@
         function onPointerUp() { 
             isUserInteracting = false; 
             
-            // ** TRIGGER SNAP **
-            if (hoveredStar) {
-                // If we are hovering a star when we let go, SNAP to it
-                // We calculate the current "cycle" of rotation (e.g. 360, 720) 
-                // to prevent the camera spinning wildly to reset to 0
-                const cycle = Math.floor(lon / 360) * 360;
-                targetLon = hoveredStar.userData.snapLon + cycle;
+            // SNAP LOGIC
+            // If we are looking generally at a star, snap to it perfectly
+            if(hoveredStar) {
+                const angles = getStarAngles(hoveredStar.position);
                 
-                // If the jump is massive (crossing 0/360 boundary), adjust cycle
-                if (targetLon - lon > 180) targetLon -= 360;
-                if (targetLon - lon < -180) targetLon += 360;
+                // Handle 360 wrap-around math for smooth spinning
+                // Find the closest equivalent longitude
+                let currentLon = lon % 360; 
+                if(currentLon < 0) currentLon += 360;
                 
-                targetLat = hoveredStar.userData.snapLat;
+                let diff = angles.lon - currentLon;
+                if(diff > 180) diff -= 360;
+                if(diff < -180) diff += 360;
+                
+                targetLon = lon + diff;
+                targetLat = angles.lat;
                 isSnapping = true;
             }
         }
 
-
-        // --- TRANSLATOR LOGIC ---
-        function cleanData(value, type) {
-            if (!value) return "UNKNOWN";
-            if (type === 'dist') {
-                if (value < 20) return value + " LY (CLOSE RANGE)";
-                if (value > 1000) return value + " LY (DEEP SPACE)";
-                return value + " LIGHT YEARS";
+        // --- BUTTON LOGIC ---
+        function cleanData(val, type) {
+            if(!val) return "UNKNOWN";
+            if(type === 'dist') {
+                if(val < 10) return val + " LY (CLOSE RANGE)";
+                if(val > 1000) return val + " LY (DEEP SPACE)";
+                return val + " LIGHT YEARS";
             }
-            if (type === 'size') {
-                // Remove 'R' and try to parse
-                const num = parseFloat(value);
-                if (!isNaN(num)) {
-                    if (num > 100) return Math.round(num) + "x WIDER THAN SUN";
-                    if (num < 2) return "SIMILAR TO SUN";
-                    return Math.round(num) + "x SUN SIZE";
-                }
-                return value;
+            if(type === 'size') {
+                // "887 R" -> "800x SUN SIZE"
+                const num = parseFloat(val);
+                if(isNaN(num)) return "UNKNOWN SIZE";
+                if(num > 100) return Math.round(num) + "x WIDER THAN SUN";
+                if(num < 2) return "SIMILAR TO SUN";
+                return Math.round(num) + "x SUN SIZE";
             }
-            if (type === 'type') {
-                // Translate Science codes to English
-                if (value.includes('B') || value.includes('O')) return "HOT BLUE STAR";
-                if (value.includes('M')) return "COOL RED STAR";
-                if (value.includes('K')) return "ORANGE STAR";
-                if (value.includes('G')) return "YELLOW SUN-LIKE";
-                if (value.includes('A')) return "WHITE STAR";
+            if(type === 'type') {
+                if(val.includes('B') || val.includes('O')) return "HOT BLUE STAR";
+                if(val.includes('M')) return "COOL RED STAR";
+                if(val.includes('K')) return "ORANGE STAR";
+                if(val.includes('G')) return "YELLOW SUN-LIKE";
+                if(val.includes('A')) return "WHITE STAR";
                 return "STANDARD STAR";
             }
-            return value;
+            return val;
         }
 
         function showData(btnType) {
-            if (!hoveredStar) {
-                // Error animation could go here
+            // FUZZY SEARCH: If no star is locked, find the closest one
+            let target = hoveredStar;
+            if(!target) {
+                // Find closest star to center of view
+                let closestDist = Infinity;
+                let closestStar = null;
+                const raycaster = new THREE.Raycaster();
+                raycaster.setFromCamera(new THREE.Vector2(0, 0), camera);
+                
+                // Check distance to center for ALL stars
+                starGroup.children.forEach(star => {
+                    // Project star position to screen space
+                    const v = star.position.clone().project(camera);
+                    // Distance from center (0,0)
+                    const d = Math.sqrt(v.x*v.x + v.y*v.y);
+                    // Must be visible (z<1) and reasonably close to center
+                    if(v.z < 1 && d < 0.3 && d < closestDist) {
+                        closestDist = d;
+                        closestStar = star;
+                    }
+                });
+                target = closestStar;
+            }
+
+            if (!target) {
+                document.getElementById('obj-header').innerText = "NO TARGET";
+                document.getElementById('obj-body').innerHTML = "<div class='data-label'>STATUS</div><div class='data-value'>ALIGN SENSORS TO STAR</div>";
+                document.getElementById('readout').style.display = 'block';
                 return;
             }
 
-            const d = hoveredStar.userData;
+            const d = target.userData;
             document.getElementById('obj-header').innerText = d.name;
 
             let content = "";
             if (btnType === 'SCAN') {
-                // Navigation Info
                 content = `
-                    <div class='data-label'>RANGE</div>
-                    <div class='data-value'>${cleanData(d.dist, 'dist')}</div>
-                    <div class='data-label'>SECTOR</div>
-                    <div class='data-value'>${d.con || "UNKNOWN"}</div>
+                    <div class='data-label'>RANGE</div><div class='data-value'>${cleanData(d.dist, 'dist')}</div>
+                    <div class='data-label'>SECTOR</div><div class='data-value'>${d.con || "UNKNOWN"}</div>
                 `;
             } else if (btnType === 'ASTRO') {
-                // Science Info
                 content = `
-                    <div class='data-label'>CLASS</div>
-                    <div class='data-value'>${cleanData(d.type, 'type')}</div>
-                    <div class='data-label'>DIMENSIONS</div>
-                    <div class='data-value'>${cleanData(d.size, 'size')}</div>
+                    <div class='data-label'>CLASS</div><div class='data-value'>${cleanData(d.type, 'type')}</div>
+                    <div class='data-label'>SIZE</div><div class='data-value'>${cleanData(d.size, 'size')}</div>
                 `;
             } else if (btnType === 'INTEL') {
-                // Fun Fact
                 content = `
-                    <div class='data-label'>ARCHIVE DATA</div>
-                    <div class='data-value' style='color:#ffcc66; font-style:italic'>"${d.fact}"</div>
+                    <div class='data-label'>DATABASE</div><div class='data-value' style='color:#ffcc66; font-style:italic'>"${d.fact}"</div>
                 `;
             }
 
