@@ -229,10 +229,18 @@
         
         let hoveredStar = null; 
 
+        // LCARS COLORS for specific constellations
         const conColors = {
-            "URSA MAJOR": 0x00ff00, "URSA MINOR": 0xcc00ff, "ORION": 0x00aaff, "SCORPIUS": 0xff3300,
-            "CASSIOPEIA": 0xff0099, "CYGNUS": 0x00ffff, "CRUX": 0xffff00, "CANIS MAJOR": 0x0055ff,
-            "LEO": 0xffaa00, "GEMINI": 0xffaaee
+            "URSA MAJOR": 0x00ff00,    // Green
+            "URSA MINOR": 0xcc00ff,    // Purple
+            "ORION": 0x00aaff,         // Light Blue
+            "SCORPIUS": 0xff3300,      // Red/Orange
+            "CASSIOPEIA": 0xff0099,    // Magenta
+            "CYGNUS": 0x00ffff,        // Cyan
+            "CRUX": 0xffff00,          // Yellow
+            "CANIS MAJOR": 0x0055ff,   // Deep Blue
+            "LEO": 0xffaa00,           // Gold
+            "GEMINI": 0xffaaee         // Pink
         };
         const defaultStarColor = 0xffffff;
 
@@ -324,11 +332,10 @@
                     const decRad = coords[1] * (Math.PI/180);
                     const phi = Math.PI/2 - decRad;
                     
-                    let starColor = 0xffffff;
-                    if(s.desc && s.desc.includes("Blue")) starColor = 0xaaddff;
-                    if(s.desc && s.desc.includes("Red")) starColor = 0xff5555;
-                    if(s.desc && s.desc.includes("Orange")) starColor = 0xffaa55;
-                    if(s.desc && s.desc.includes("Yellow")) starColor = 0xffee00;
+                    // --- RESTORED CONSTELLATION COLORS ---
+                    // Lookup key in Uppercase to match the dictionary
+                    const key = s.con ? s.con.toUpperCase() : "";
+                    const starColor = conColors[key] || defaultStarColor;
 
                     const mesh = new THREE.Mesh(
                         new THREE.SphereGeometry(12, 8, 8), 
@@ -469,7 +476,7 @@
                 const deltaY = event.clientY - onPointerDownPointerY;
                 lon = (onPointerDownLon - deltaX * sensitivity);
                 lat = (onPointerDownLat + deltaY * sensitivity);
-                // --- FIX: INCREASED LOOK ANGLE TO 89.9 DEGREES ---
+                // LOOK ANGLE INCREASED TO 89.9 DEGREES
                 lat = Math.max(-89.9, Math.min(89.9, lat)); 
                 return; 
             }
